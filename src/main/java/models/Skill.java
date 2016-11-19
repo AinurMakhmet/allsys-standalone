@@ -8,15 +8,17 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "skill")
 public class Skill extends DatabaseEntity{
-    @DatabaseField
+    @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
     private String description;
-    @DatabaseField
+    @DatabaseField(canBeNull = false)
     private String level;
 
+    /**
+     * Blank constructor for ORM.
+     */
     public Skill() {
-        // ORMLite needs a no-arg constructor
     }
 
     public Skill(String name, String level) {

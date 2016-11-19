@@ -4,29 +4,29 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  * Created by nura on 19/11/16.
  */
 @DatabaseTable(tableName = "task")
 public class Task extends DatabaseEntity{
-    @DatabaseField
+    @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
     private String description;
     //private String state;
-    @DatabaseField
+    @DatabaseField(columnName = "high_priority")
     private boolean highPriority;
     @DatabaseField
     private int duration;
-    @DatabaseField
+    @DatabaseField(columnName = "latest_completion_time")
     private Date latestCompletionTime;
-    @DatabaseField
+    @DatabaseField(columnName = "earliest_completion_time")
     private Date earliestCompletionTime;
-    @DatabaseField
+    @DatabaseField(columnName = "employee_id", foreign = true, foreignAutoRefresh = true)
     private int employeeId;
-    @DatabaseField
+    @DatabaseField(columnName = "project_id", foreign = true, foreignAutoRefresh = true)
     private int projectId;
     private ArrayList<Integer> skillIdList;
 

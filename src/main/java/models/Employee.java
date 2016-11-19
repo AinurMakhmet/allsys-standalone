@@ -10,17 +10,19 @@ import java.util.ArrayList;
  */
 @DatabaseTable(tableName = "employee")
 public class Employee extends DatabaseEntity{
-    @DatabaseField
+    @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
-    @DatabaseField
+    @DatabaseField(canBeNull = false, columnName = "last_name")
     private String lastName;
-    @DatabaseField
+    @DatabaseField(columnName = "monthly_salary")
     private String monthlySalary;
 
     private ArrayList<Integer> skillIdList;
 
+    /**
+     * Blank constructor for ORM.
+     */
     public Employee() {
-        // ORMLite needs a no-arg constructor
     }
 
     public Employee(String firstName, String lastName) {

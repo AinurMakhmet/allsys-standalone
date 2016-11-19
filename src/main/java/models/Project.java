@@ -8,16 +8,19 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "project")
 public class Project extends DatabaseEntity{
-    @DatabaseField
+    @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
     private String description;
     @DatabaseField
     private String cost;
 
+    /**
+     * Blank constructor for ORM.
+     */
     public Project() {
-        // ORMLite needs a no-arg constructor
     }
+
     public Project(String name) {
         this.name = name;
     }
