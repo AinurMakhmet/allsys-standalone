@@ -1,9 +1,12 @@
 package servers;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import constants.C;
+import constants.DefaultDatabase;
 import models.*;
 
 import java.io.IOException;
@@ -61,7 +64,16 @@ public class SqlServerConnection {
 	 * @param connection The connection source, linked to the DB to be used.
 	 */
 	public static void initDB(ConnectionSource connection) throws SQLException, IOException {
+
 		try {
+			TableUtils.dropTable(connection, Employee.class, false);
+			TableUtils.dropTable(connection, Task.class, false);
+			TableUtils.dropTable(connection, Skill.class, false);
+			TableUtils.dropTable(connection, Project.class, false);
+			TableUtils.dropTable(connection, EmployeeSkill.class, false);
+			TableUtils.dropTable(connection, TaskSkill.class, false);
+
+
 			TableUtils.createTableIfNotExists(connection, Employee.class);
 			TableUtils.createTableIfNotExists(connection, Task.class);
 			TableUtils.createTableIfNotExists(connection, Skill.class);
@@ -73,12 +85,45 @@ public class SqlServerConnection {
 			LocalServer.fatalError("database tables could not be fully created");
 		}
 
-		//TODO: add execution of queries that instnatiat database with the default values
-		//export default database
-		/*for (String q : DefaultDatabase.SqlQueries) {
-			employeeDao.executeRaw(q);
-		}*/
+		insertData(connection);
 
 		//TODO: close connection to DB
+	}
+
+	private static void insertData(ConnectionSource connection) {
+
+
+		//TODO: add execution of queries that instnatiat database with the default values
+		//export default database
+		try {
+			Dao<Employee, Integer> employeeDao = DaoManager.createDao(connection, Employee.class);
+			Dao<Task, Integer> taskDao = DaoManager.createDao(connection, Task.class);
+			Dao<Skill, Integer> skillDao = DaoManager.createDao(connection, Skill.class);
+			Dao<EmployeeSkill, Integer> employeeSkillDao = DaoManager.createDao(connection, EmployeeSkill.class);
+			Dao<TaskSkill, Integer> taskSkillDao = DaoManager.createDao(connection, TaskSkill.class);
+
+			for (String q : DefaultDatabase.InsertQueriesEmployee) {
+				employeeDao.executeRaw(q);
+			}
+
+			for (String q : DefaultDatabase.InsertQueriesTask) {
+				taskDao.executeRaw(q);
+			}
+
+			for (String q : DefaultDatabase.InsertQueriesSkill) {
+				skillDao.executeRaw(q);
+			}
+
+			for (String q : DefaultDatabase.InsertQueriesEmployeeSkill) {
+				employeeSkillDao.executeRaw(q);
+			}
+
+			for (String q : DefaultDatabase.InsertQueriesTaskSkill) {
+				taskSkillDao.executeRaw(q);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			LocalServer.fatalError("database tables could not be fully initialised");
+		}
 	}
 }
