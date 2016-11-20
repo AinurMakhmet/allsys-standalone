@@ -1,12 +1,18 @@
 package models;
 
+import com.j256.ormlite.dao.CloseableIterator;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by nura on 19/11/16.
+ * Model to represent an employee.
  */
 @DatabaseTable(tableName = "employee")
 public class Employee extends DatabaseEntity{
@@ -16,8 +22,11 @@ public class Employee extends DatabaseEntity{
     private String lastName;
     @DatabaseField(columnName = "monthly_salary")
     private String monthlySalary;
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<Task> tasks;
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<EmployeeSkill> skills;
 
-    private ArrayList<Integer> skillIdList;
 
     /**
      * Blank constructor for ORM.
@@ -54,11 +63,67 @@ public class Employee extends DatabaseEntity{
         this.monthlySalary = monthlySalary;
     }
 
-    public ArrayList<Integer> getSkillIdList() {
-        return skillIdList;
+    /**
+     * Gets a list of skills that the employee possess.
+     *
+     * @return a list of skills that the employee possess.
+     * @see models.Skill
+     */
+    public List<Skill> getSkills() throws IOException {
+        ArrayList<Skill > output = new ArrayList<>();
+        try {
+            skills.refreshCollection();
+        } catch (SQLException | NullPointerException e) {
+            return output;
+        }
+        try (CloseableIterator<EmployeeSkill> iterator = skills.closeableIterator()){
+            Skill skill;
+            while (iterator.hasNext()) {
+                skill = iterator.next().getSkill();
+                if (skill != null) output.add(skill);
+            }
+
+            //TODO: review sorting
+            // sort by sequence
+            /*output.sort(new Comparator<Skill>() {
+                @Override
+                public int compare(Skill o1, Skill o2) {
+                    return o1.getSequence() - o2.getSequence();
+                }
+            });*/
+        }
+        return output;
     }
 
-    public boolean setSkillId(int skillId) {
-        return this.skillIdList.add((Integer)skillId);
+    /**
+     * Gets a list of tasks that the employee is assigned to.
+     *
+     * @return a list of tasks the employee is assigned to.
+     * @see models.Task
+     */
+    public List<Task> getTasks() throws IOException {
+        ArrayList<Task> output = new ArrayList<>();
+        try {
+            tasks.refreshCollection();
+        } catch (SQLException | NullPointerException e) {
+            return output;
+        }
+        try (CloseableIterator<Task> iterator = tasks.closeableIterator()){
+            Task task;
+            while (iterator.hasNext()) {
+                task = iterator.next();
+                if (task != null) output.add(task);
+            }
+
+            //TODO: review sorting
+            // sort by sequence
+            /*output.sort(new Comparator<Task>() {
+                @Override
+                public int compare(Task o1, Task o2) {
+                    return o1.getSequence() - o2.getSequence();
+                }
+            });*/
+        }
+        return output;
     }
 }

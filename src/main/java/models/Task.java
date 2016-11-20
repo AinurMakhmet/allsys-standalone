@@ -1,13 +1,19 @@
 package models;
 
+import com.j256.ormlite.dao.CloseableIterator;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by nura on 19/11/16.
+ * Model to represent task.
  */
 @DatabaseTable(tableName = "task")
 public class Task extends DatabaseEntity{
@@ -25,10 +31,12 @@ public class Task extends DatabaseEntity{
     @DatabaseField(columnName = "earliest_completion_time")
     private Date earliestCompletionTime;
     @DatabaseField(columnName = "employee_id", foreign = true, foreignAutoRefresh = true)
-    private int employeeId;
+    private Employee employee;
     @DatabaseField(columnName = "project_id", foreign = true, foreignAutoRefresh = true)
-    private int projectId;
-    private ArrayList<Integer> skillIdList;
+    private Project project;
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<TaskSkill> skills;
+
 
     public Task() {
         // ORMLite needs a no-arg constructor
@@ -86,28 +94,51 @@ public class Task extends DatabaseEntity{
         this.earliestCompletionTime = earliestCompletionTime;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
-    public int getProjectId() {
-        return projectId;
+    public Project getProject() {
+        return project;
     }
 
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
-    public ArrayList<Integer> getSkillIdList() {
-        return skillIdList;
-    }
+    /**
+     * Gets a list of skills that this task requires.
+     *
+     * @return a list of skills that this task requires.
+     * @see models.Skill
+     */
+    public List<Skill> getSkills() throws IOException {
+        ArrayList<Skill > output = new ArrayList<>();
+        try {
+            skills.refreshCollection();
+        } catch (SQLException | NullPointerException e) {
+            return output;
+        }
+        try (CloseableIterator<TaskSkill> iterator = skills.closeableIterator()){
+            Skill skill;
+            while (iterator.hasNext()) {
+                skill = iterator.next().getSkill();
+                if (skill != null) output.add(skill);
+            }
 
-    public boolean addSkillId(int skillId) {
-        return this.skillIdList.add(skillId);
+            //TODO: review sorting
+            // sort by sequence
+            /*output.sort(new Comparator<Skill>() {
+                @Override
+                public int compare(Skill o1, Skill o2) {
+                    return o1.getSequence() - o2.getSequence();
+                }
+            });*/
+        }
+        return output;
     }
-
 }
