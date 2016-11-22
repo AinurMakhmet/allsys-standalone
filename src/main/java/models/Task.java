@@ -5,11 +5,13 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.util.Pair;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,6 +38,8 @@ public class Task extends DatabaseEntity{
     private Project project;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
+
+    public HashMap<Integer, Integer> possibleAssignee = new HashMap<>();
 
 
     public Task() {

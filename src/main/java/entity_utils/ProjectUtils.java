@@ -38,14 +38,9 @@ public class ProjectUtils extends AbstractEntityUtils {
 	 * <p>
 	 * Can return data only for the <code>enabled</code> fields.
 	 *
-	 * @param enabledOnly specifies whether the method should get only <code>enabled Project</code> records
 	 * @return a list of <code>Project</code> objects
 	 */
-	public static List<Project> getAllProjects(boolean enabledOnly) {
-		if (enabledOnly) {
-			return getEntitiesByField(Project.class, "enabled", "1");
-		} else {
-			return getAllEntities(Project.class);
-		}
+	public static List<Project> getAllProjects() {
+		return getAllEntities(Project.class);
 	}
 }

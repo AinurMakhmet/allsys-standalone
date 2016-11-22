@@ -31,6 +31,7 @@ public class DefaultDatabase {
 			"INSERT INTO `skill` (`name`, `level`) VALUES ('java', '5');",
 			"INSERT INTO `skill` (`name`, `level`) VALUES ('scala', '5');",
 			"INSERT INTO `skill` (`name`, `level`) VALUES ('cpp', '5');",
+			"INSERT INTO `skill` (`name`, `level`) VALUES ('git', '5');",
 			//"INSERT INTO `task` (`name`, `level`) VALUES ('java', '5');",
 			//"INSERT INTO `task` (`name`, `level`) VALUES ('java', '5');",
 	};
@@ -40,15 +41,18 @@ public class DefaultDatabase {
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '1');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '2');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '3');",
+			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '4');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '2');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '3');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '3');",
+			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '4');"
 	};
 
 	public static String[] InsertQueriesTaskSkill = new String[]{
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '1');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('2', '2');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('3', '3');",
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('3', '4');"
 	};
 
 }

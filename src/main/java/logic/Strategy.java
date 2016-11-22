@@ -14,6 +14,7 @@ public class Strategy {
     }
     public static void allocate() {
         GreedyAlgorithm greedy= new GreedyAlgorithm();
+        //GreedyAlgorithmScala greedy = new GreedyAlgorithmScala();
         greedy.allocate();
     }
 }

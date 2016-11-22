@@ -39,14 +39,9 @@ public class EmployeeSkillUtils extends AbstractEntityUtils {
 	 * <p>
 	 * Can return data only for the <code>enabled</code> fields.
 	 *
-	 * @param enabledOnly specifies whether the method should get only <code>enabled EmployeeSkill</code> records
 	 * @return a list of <code>EmployeeSkill</code> objects
 	 */
-	public static List<EmployeeSkill> getAllEmployeeSkills(boolean enabledOnly) {
-		if (enabledOnly) {
-			return getEntitiesByField(EmployeeSkill.class, "enabled", "1");
-		} else {
-			return getAllEntities(EmployeeSkill.class);
-		}
+	public static List<EmployeeSkill> getAllEmployeeSkills() {
+		return getAllEntities(EmployeeSkill.class);
 	}
 }

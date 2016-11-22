@@ -38,14 +38,9 @@ public class TaskUtils extends AbstractEntityUtils {
 	 * <p>
 	 * Can return data only for the <code>enabled</code> fields.
 	 *
-	 * @param enabledOnly specifies whether the method should get only <code>enabled Task</code> records
 	 * @return a list of <code>Task</code> objects
 	 */
-	public static List<Task> getAllTasks(boolean enabledOnly) {
-		if (enabledOnly) {
-			return getEntitiesByField(Task.class, "enabled", "1");
-		} else {
-			return getAllEntities(Task.class);
-		}
+	public static List<Task> getAllTasks() {
+		return getAllEntities(Task.class);
 	}
 }
