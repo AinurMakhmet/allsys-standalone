@@ -39,7 +39,7 @@ public class Task extends DatabaseEntity{
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
 
-    public HashMap<Integer, Integer> possibleAssignee = new HashMap<>();
+    public ArrayList<Employee> possibleAssignee = new ArrayList<>();
 
 
     public Task() {
@@ -103,6 +103,7 @@ public class Task extends DatabaseEntity{
     }
 
     public void setEmployee(Employee employee) {
+        possibleAssignee.clear();
         this.employee = employee;
     }
 

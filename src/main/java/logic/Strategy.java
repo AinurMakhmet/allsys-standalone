@@ -1,5 +1,9 @@
 package logic;
 
+import entity_utils.TaskUtils;
+import models.Task;
+import models.TaskSkill;
+
 /**
  * Created by nura on 20/11/16.
  */
@@ -13,8 +17,15 @@ public class Strategy {
     private Strategy() {
     }
     public static void allocate() {
-        GreedyAlgorithm greedy= new GreedyAlgorithm();
+        BipartiteGraph.getInstance();
+        /*GreedyAlgorithm greedy= new GreedyAlgorithm();
         //GreedyAlgorithmScala greedy = new GreedyAlgorithmScala();
-        greedy.allocate();
+        if (greedy.allocate()) {
+            for (Task task: TaskUtils.getAllTasks()) {
+                if (task.getEmployee()!=null) {
+                    System.out.println("Task "+ task.getName()+ " is allocated to employee "+ task.getEmployee().getFirstName() + " " + task.getEmployee().getLastName());
+                }
+            }
+        }*/
     }
 }
