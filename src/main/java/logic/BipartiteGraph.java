@@ -1,7 +1,6 @@
 package logic;
 
 import entity_utils.TaskUtils;
-import javafx.util.Pair;
 import models.Employee;
 import models.Skill;
 import models.Task;
@@ -23,57 +22,72 @@ public class BipartiteGraph {
     }
 
     private BipartiteGraph() {
-        createMatchingEdges();
+        try {
+            createMatchingEdges();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     //list that stores the edges
     private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
 
-    private void createMatchingEdges() {
+    private void createMatchingEdges() throws IOException {
         for (Task task: TaskUtils.getAllTasks()) {
-            System.out.println("Task with id: "+ task.getId()+ " and name "+ task.getName());
-            try {
-                //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
-                ArrayList<Skill> taskSkills = new ArrayList<>();
-                taskSkills.addAll(task.getSkills());
+            //System.out.println("Task with id: "+ task.getId()+ " and name "+ task.getName());
 
-                //index of the skill in the taskSkills that have a minimum number of Employees that posses this skill
-                int indexSmallestSize = 0;
+            //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
+            ArrayList<Skill> taskSkills = new ArrayList<>(task.getSkills());
+            //taskSkills.addAll(task.getSkills());
 
-                int minSize = taskSkills.get(0).getEmployees().size();
-                for (int i = 0; i<taskSkills.size(); i++) {
-                    if (minSize > taskSkills.get(i).getEmployees().size()) {
-                        indexSmallestSize = i;
-                        minSize = taskSkills.get(i).getEmployees().size();
-                    }
-                }
-                task.possibleAssignee.addAll(taskSkills.get(indexSmallestSize).getEmployees());
-                taskSkills.remove(indexSmallestSize);
+            // finds the index of the skill that is possessed by smallest amount of employees.
+            int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
 
-                ArrayList<Employee> employees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
-                for (Skill s : taskSkills){
-                    for (int i=0; i<employees.size(); i++) {
-                        //System.out.println("Employee with id: "+ e.getId() + " and name " +e.getFirstName()+ " "+ e.getLastName() );
-                        //if (!s.getEmployees().contains(employees.get(i))) {
-                        ArrayList<Skill> employeeSkills = (ArrayList<Skill>) employees.get(i).getSkills();
-                        for (int j = 0; j< employeeSkills.size(); j++) {
-                            if (s.getId()==employeeSkills.get(j).getId()) break;
-                            else if (j == employeeSkills.size()-1) {
-                                System.out.println("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
-                                System.out.println("Employee skill: " + employees.get(i).getSkills());
-                                //the employee doesn'task have all the required taskSkills to complete the task,
-                                //so it will be removed from the list of candidates
-                                task.possibleAssignee.remove(employees.get(i));
-                            }
-                        }
-                    }
-                }
-                System.out.println("possible assignee for task "+ task.getName()+ "are ");
-                //printList(task.possibleAssignee);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            task.possibleAssignee.addAll(taskSkills.get(indexSmallestSize).getEmployees());
+            taskSkills.remove(indexSmallestSize);
+
+            ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
+            filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
+
+            //System.out.println("possible assignee for task "+ task.getName()+ "are ");
+            //printList(task.possibleAssignee);
+
+            //adds new entry to the adjacency list
             adjacencyList.add(new AbstractMap.SimpleEntry<Integer, ArrayList>(task.getId(), task.possibleAssignee));
         }
+    }
+
+    private void filterPossibleAssignee(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> definingSkillEmployees) throws IOException {
+        for (Skill s : taskSkills){
+            for (int i=0; i<definingSkillEmployees.size(); i++) {
+                ArrayList<Skill> employeeSkills = (ArrayList<Skill>) definingSkillEmployees.get(i).getSkills();
+                for (int j = 0; j< employeeSkills.size(); j++) {
+                    if (s.getId()==employeeSkills.get(j).getId()) break;
+                    else if (j == employeeSkills.size()-1) {
+                        //System.out.println("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
+                        //System.out.println("Employee skill: " + employees.get(i).getSkills());
+
+                        //the employee doesn'task have all the required taskSkills to complete the task,
+                        //so it will be removed from the list of candidates
+                        task.possibleAssignee.remove(definingSkillEmployees.get(i));
+                    }
+                }
+            }
+        }
+    }
+
+    private int getIndexOfDefiningSkill(ArrayList<Skill> taskSkills) throws IOException {
+        //index of the skill in the taskSkills that have a minimum number of Employees that posses this skill
+        int indexSmallestSize = 0;
+
+        int minSize = taskSkills.get(0).getEmployees().size();
+        for (int i = 0; i<taskSkills.size(); i++) {
+            if (minSize > taskSkills.get(i).getEmployees().size()) {
+                indexSmallestSize = i;
+                minSize = taskSkills.get(i).getEmployees().size();
+            }
+        }
+        return indexSmallestSize;
+
     }
 
     public static void printList(ArrayList<Employee> mp) {

@@ -18,14 +18,13 @@ public class Strategy {
     }
     public static void allocate() {
         BipartiteGraph.getInstance();
-        /*GreedyAlgorithm greedy= new GreedyAlgorithm();
-        //GreedyAlgorithmScala greedy = new GreedyAlgorithmScala();
+        GreedyAlgorithm greedy= new GreedyAlgorithm();
         if (greedy.allocate()) {
             for (Task task: TaskUtils.getAllTasks()) {
                 if (task.getEmployee()!=null) {
                     System.out.println("Task "+ task.getName()+ " is allocated to employee "+ task.getEmployee().getFirstName() + " " + task.getEmployee().getLastName());
                 }
             }
-        }*/
+        }
     }
 }

@@ -1,85 +1,67 @@
 package logic;
 
-import entity_utils.SkillUtils;
 import entity_utils.TaskUtils;
 import models.Employee;
-import models.Skill;
 import models.Task;
-import models.TaskSkill;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by nura on 20/11/16.
  */
-public class GreedyAlgorithm implements AbstractAllocationAlgorithm{
+public class GreedyAlgorithm implements AbstractAllocationAlgorithm, Comparator<Map.Entry<Integer, ArrayList>>{
+
     @Override
-    public void allocate() {
+    public boolean allocate() {
+        ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = BipartiteGraph.getInstance().getAdjacencyList();
+        while(!adjacencyList.isEmpty()) {
+            Collections.sort(adjacencyList, this);
 
-        /*for (Skill skill: SkillUtils.getAllSkills()) {
-            System.out.println("Skill: "+ skill.getName());
-            try {
-                for (Employee e: skill.getEmployees()) {
-                    System.out.println("Employee with id: "+ e.getId() + " and name " +e.getFirstName()+ " "+ e.getLastName() );
-                }
-                for (Task t: skill.getTasks()) {
-                    System.out.println("Task with id: "+ t.getId()+ " and name "+ t.getName());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
+            int indexWithMinPossibleEmployees = adjacencyList.size() - 1;
 
+            //Greedy algorithm allocates the task to the first employee in the list.
+            Employee chosenEmployee = (Employee) adjacencyList.get(indexWithMinPossibleEmployees).getValue().get(0);
+            Task allocated = TaskUtils.getTask(adjacencyList.get(indexWithMinPossibleEmployees).getKey());
+            allocated.setEmployee(chosenEmployee);
+            TaskUtils.updateEntity(allocated);
+            adjacencyList.remove(indexWithMinPossibleEmployees);
 
-
-        for (Task t: TaskUtils.getAllTasks()) {
-            System.out.println("Task with id: "+ t.getId()+ " and name "+ t.getName());
-            try {
-                /*int indexSmallestSize = 0;
-                int minSize = 0;
-                for (int i = 0; i<t.getSkills().size(); i++) {
-                    if (minSize > t.getSkills().get(i).getEmployees().size()) {
-                        indexSmallestSize = i;
-                    }
-                }*/
-                for (Skill s: t.getSkills()) {
-                    //System.out.println("Skill with id: "+ s.getId() + " and name " +s.getName());
-                    for (Employee e: s.getEmployees()) {
-                        //System.out.println("Employee with id: "+ e.getId() + " and name " +e.getFirstName()+ " "+ e.getLastName() );
-                        if (t.possibleAssignee.containsKey(e.getId())) {
-                            t.possibleAssignee.put(e.getId(), t.possibleAssignee.get(e.getId())+1);
-                        } else {
-                            t.possibleAssignee.put(e.getId(), 1);
-                        }
-                    }
-                }
-                Iterator it = t.possibleAssignee.entrySet().iterator();
-               /* while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry)it.next();
-                    //System.out.println(pair.getKey() + " = " + pair.getValue());
-                    //it.remove();
-                    if (pair.getValue()!=(Integer)t.getSkills().size()) {
-
-                        t.possibleAssignee.remove(pair.getKey()); // avoids a ConcurrentModificationException
-                    }
-                }*/
-                printMap(t.possibleAssignee);
-
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!updateEdges(chosenEmployee, adjacencyList)) {
+                System.out.println("Was unable to update appropriately the lists in greedy algorithm");
+                return false;
             }
         }
-
+        return true;
     }
-    public static void printMap(Map mp) {
-        Iterator it = mp.entrySet().iterator();
+
+    private boolean updateEdges(Employee toRemove, ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList) {
+        boolean updated = true;
+        outerLoop:
+        for ( int i = 0; i<adjacencyList.size(); i++) {
+            ArrayList<Employee> listToUpdate = adjacencyList.get(i).getValue();
+            for (Employee e: listToUpdate) {
+                if (toRemove.getId()==e.getId()) {
+                    updated = listToUpdate.remove(e);
+                    if (updated==true) break;
+                    else break outerLoop;
+                }
+            }
+        }
+        return updated;
+    }
+
+    @Override
+    public int compare(Map.Entry<Integer, ArrayList> o1, Map.Entry<Integer, ArrayList> o2) {
+        if (o1.getValue().size() > o2.getValue().size()) return -1;
+        else if (o1.getValue().size() == o2.getValue().size()) return 0;
+        else return 1;
+    }
+
+    public static void printList(ArrayList<Employee> mp) {
+        Iterator it = mp.iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            System.out.println(pair.getKey() + " = " + pair.getValue());
+            Employee e = (Employee)it.next();
+            System.out.println(e.getId());
             it.remove(); // avoids a ConcurrentModificationException
         }
     }

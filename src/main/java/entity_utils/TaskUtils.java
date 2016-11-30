@@ -1,7 +1,12 @@
 package entity_utils;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
 import models.Task;
+import servers.SqlServerConnection;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -42,5 +47,15 @@ public class TaskUtils extends AbstractEntityUtils {
 	 */
 	public static List<Task> getAllTasks() {
 		return getAllEntities(Task.class);
+	}
+
+	/**
+	 * Updates the specified record in the database.
+	 *
+	 * @param task the task to be updated
+	 */
+	public static void updateEntity(Task task) {
+		// set up server connection
+		updateEntity(Task.class, task);
 	}
 }

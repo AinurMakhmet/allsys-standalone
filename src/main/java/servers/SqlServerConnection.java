@@ -48,7 +48,7 @@ public class SqlServerConnection {
 				connection = new JdbcConnectionSource(uri);
 				((JdbcConnectionSource) connection).setUsername(username);
 				((JdbcConnectionSource) connection).setPassword(password);
-				initDB(connection);
+				//initDB(connection);
 			} catch (Exception e) {
 				e.printStackTrace();
 				LocalServer.fatalError("a connection could not be made to the database");
