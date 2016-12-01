@@ -2,7 +2,6 @@ package logic;
 
 import entity_utils.TaskUtils;
 import models.Task;
-import models.TaskSkill;
 
 /**
  * Created by nura on 20/11/16.
@@ -17,7 +16,6 @@ public class Strategy {
     private Strategy() {
     }
     public static void allocate() {
-        BipartiteGraph.getInstance();
         GreedyAlgorithm greedy= new GreedyAlgorithm();
         if (greedy.allocate()) {
             for (Task task: TaskUtils.getAllTasks()) {

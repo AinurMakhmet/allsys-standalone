@@ -8,7 +8,7 @@ public class DefaultDatabase {
 			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Aydin', 'Dede');",
 			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Ahmet', 'Emin');",
 			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Ahu', 'Ekin');",
-//			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Adem', 'Kartal');",
+			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Adem', 'Kartal');",
 //			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Akila', 'Aksoy');",
 //			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Aliye', 'Nas');",
 //			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Alp', 'Albayrak');",
@@ -18,9 +18,9 @@ public class DefaultDatabase {
 
 	public static String[] InsertQueriesTask = new String[]{
 
-			"INSERT INTO `task` (`name`) VALUES ('java-dev');",
-			"INSERT INTO `task` (`name`) VALUES ('scala-dev');",
-			"INSERT INTO `task` (`name`) VALUES ('cpp-dev');",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('java-dev', 'HIGH', '2016-12-1', '2016-12-3', 2);",
+			"INSERT INTO `task` (`name`, `priority`,`earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('scala-dev', 'HIGH', '2016-12-2', '2016-12-3', 2);",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('cpp-dev', 'LOW', '2016-12-1', '2016-12-2', 1);",
 			//"INSERT INTO `task` (`name`) VALUES ('java-test');",
 			//"INSERT INTO `task` (`name`) VALUES ('devops');",
 			//"INSERT INTO `task` (`name`) VALUES ('integration-test');",
@@ -42,10 +42,17 @@ public class DefaultDatabase {
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '2');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '3');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '4');",
+
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '2');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '3');",
+
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '3');",
-			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '4');"
+			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '4');",
+			//"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '1');",
+			//"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '2');",
+			//"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '3');",
+			//"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '4');",
+
 	};
 
 	public static String[] InsertQueriesTaskSkill = new String[]{

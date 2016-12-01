@@ -9,26 +9,45 @@ import java.util.*;
 /**
  * Created by nura on 20/11/16.
  */
-public class GreedyAlgorithm implements AbstractAllocationAlgorithm, Comparator<Map.Entry<Integer, ArrayList>>{
+public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comparator<Map.Entry<Integer, ArrayList>>{
 
     @Override
     public boolean allocate() {
-        ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = BipartiteGraph.getInstance().getAdjacencyList();
-        while(!adjacencyList.isEmpty()) {
-            Collections.sort(adjacencyList, this);
+        //considers task of different priority separately
+        for (Task.Priority priority: Task.Priority.values()) {
+            Collections.sort(unallocatedTasks, new Comparator<Task>() {
+                @Override
+                public int compare(Task o1, Task o2) {
+                    return o1.getEarliestStartTime().compareTo(o2.getEarliestStartTime());
+                }
+            });
+            //TODO: consider task dependecy on time
+            ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new BipartiteGraph(priority, this).getAdjacencyList();
+            while (!adjacencyList.isEmpty()) {
+                Collections.sort(adjacencyList, this);
 
-            int indexWithMinPossibleEmployees = adjacencyList.size() - 1;
+                int indexWithMinPossibleEmployees = adjacencyList.size() - 1;
 
-            //Greedy algorithm allocates the task to the first employee in the list.
-            Employee chosenEmployee = (Employee) adjacencyList.get(indexWithMinPossibleEmployees).getValue().get(0);
-            Task allocated = TaskUtils.getTask(adjacencyList.get(indexWithMinPossibleEmployees).getKey());
-            allocated.setEmployee(chosenEmployee);
-            TaskUtils.updateEntity(allocated);
-            adjacencyList.remove(indexWithMinPossibleEmployees);
+                //System.out.println("looking for scala task: "+ adjacencyList.get(indexWithMinPossibleEmployees).getKey().equals(1));
 
-            if (!updateEdges(chosenEmployee, adjacencyList)) {
-                System.out.println("Was unable to update appropriately the lists in greedy algorithm");
-                return false;
+
+                //If task doesn't have any matching, remove from the adjacency list and considers another task;
+                if (adjacencyList.get(indexWithMinPossibleEmployees).getValue().isEmpty()) {
+                    adjacencyList.remove(indexWithMinPossibleEmployees); continue;
+                }
+
+                //Greedy algorithm allocates the task to the first employee in the list.
+                Employee chosenEmployee = (Employee) adjacencyList.get(indexWithMinPossibleEmployees).getValue().get(0);
+                Task allocated = TaskUtils.getTask(adjacencyList.get(indexWithMinPossibleEmployees).getKey());
+                allocated.setEmployee(chosenEmployee);
+                TaskUtils.updateEntity(allocated);
+                adjacencyList.remove(indexWithMinPossibleEmployees);
+                System.out.println(removeTask(unallocatedTasks, allocated));
+
+                if (!updateEdges(chosenEmployee, adjacencyList)) {
+                    System.out.println("Was unable to update appropriately the lists in greedy algorithm");
+                    return false;
+                }
             }
         }
         return true;
@@ -64,5 +83,14 @@ public class GreedyAlgorithm implements AbstractAllocationAlgorithm, Comparator<
             System.out.println(e.getId());
             it.remove(); // avoids a ConcurrentModificationException
         }
+    }
+
+    private boolean removeTask(List<Task> tasks, Task taskToRemove) {
+        for (Task task: tasks) {
+            if (taskToRemove.getId()==task.getId()) {
+                 return tasks.remove(task);
+            }
+        }
+        return false;
     }
 }

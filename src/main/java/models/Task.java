@@ -2,16 +2,15 @@ package models;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import javafx.util.Pair;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,15 +23,16 @@ public class Task extends DatabaseEntity{
     @DatabaseField
     private String description;
     //private String state;
-    @DatabaseField(columnName = "high_priority")
-    private boolean highPriority;
+    @DatabaseField(columnName = "priority", dataType = DataType.ENUM_STRING, defaultValue = "LOW")
+    private Priority priority;
+    //how many days it takes to complete a task
     @DatabaseField
     private int duration;
     @DatabaseField(columnName = "latest_completion_time")
     private Date latestCompletionTime;
-    @DatabaseField(columnName = "earliest_completion_time")
-    private Date earliestCompletionTime;
-    @DatabaseField(columnName = "employee_id", foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(columnName = "earliest_start_time")
+    private Date earliestStartTime;
+    @DatabaseField(columnName = "employee_id", foreign = true, foreignAutoRefresh = true, defaultValue = "0")
     private Employee employee;
     @DatabaseField(columnName = "project_id", foreign = true, foreignAutoRefresh = true)
     private Project project;
@@ -41,6 +41,9 @@ public class Task extends DatabaseEntity{
 
     public ArrayList<Employee> possibleAssignee = new ArrayList<>();
 
+    public enum Priority {
+        HIGH, MEDIUM, LOW
+    }
 
     public Task() {
         // ORMLite needs a no-arg constructor
@@ -66,12 +69,12 @@ public class Task extends DatabaseEntity{
         this.description = description;
     }
 
-    public boolean isHighPriority() {
-        return highPriority;
+    public Priority getPriority() {
+        return priority;
     }
 
-    public void setHighPriority(boolean highPriority) {
-        this.highPriority = highPriority;
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     public int getDuration() {
@@ -90,12 +93,12 @@ public class Task extends DatabaseEntity{
         this.latestCompletionTime = latestCompletionTime;
     }
 
-    public Date getEarliestCompletionTime() {
-        return earliestCompletionTime;
+    public Date getEarliestStartTime() {
+        return earliestStartTime;
     }
 
     public void setEarliestCompletionTime(Date earliestCompletionTime) {
-        this.earliestCompletionTime = earliestCompletionTime;
+        this.earliestStartTime = earliestStartTime;
     }
 
     public Employee getEmployee() {

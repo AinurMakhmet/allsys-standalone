@@ -1,6 +1,5 @@
 package logic;
 
-import entity_utils.TaskUtils;
 import models.Employee;
 import models.Skill;
 import models.Task;
@@ -15,29 +14,13 @@ import java.util.Map;
  * Class that creates edges between task and employees for the graph.
  */
 public class BipartiteGraph {
-    private static BipartiteGraph ourInstance = new BipartiteGraph();
 
-    public static BipartiteGraph getInstance() {
-        return ourInstance;
-    }
-
-    private BipartiteGraph() {
-        try {
-            createMatchingEdges();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    //list that stores the edges
-    private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
-
-    private void createMatchingEdges() throws IOException {
-        for (Task task: TaskUtils.getAllTasks()) {
-            //System.out.println("Task with id: "+ task.getId()+ " and name "+ task.getName());
-
+    public BipartiteGraph(AbstractAllocationAlgorithm algorithm) {
+        for (Task task: algorithm.unallocatedTasks) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
-            ArrayList<Skill> taskSkills = new ArrayList<>(task.getSkills());
-            //taskSkills.addAll(task.getSkills());
+            ArrayList<Skill> taskSkills = null;
+            try {
+                taskSkills = new ArrayList<>(task.getSkills());
 
             // finds the index of the skill that is possessed by smallest amount of employees.
             int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
@@ -48,13 +31,45 @@ public class BipartiteGraph {
             ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
             filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-            //System.out.println("possible assignee for task "+ task.getName()+ "are ");
-            //printList(task.possibleAssignee);
-
             //adds new entry to the adjacency list
             adjacencyList.add(new AbstractMap.SimpleEntry<Integer, ArrayList>(task.getId(), task.possibleAssignee));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    public BipartiteGraph(Task.Priority priority, AbstractAllocationAlgorithm algorithm) {
+        for (Task task: algorithm.unallocatedTasks) {
+            //System.out.println("Task with id: "+ task.getId()+ " and name "+ task.getName());
+            if (task.getPriority()!=priority) continue;
+            //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
+            try {
+                ArrayList<Skill> taskSkills = new ArrayList<>(task.getSkills());
+                //taskSkills.addAll(task.getSkills());
+
+                // finds the index of the skill that is possessed by smallest amount of employees.
+                int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
+
+                task.possibleAssignee.addAll(taskSkills.get(indexSmallestSize).getEmployees());
+                taskSkills.remove(indexSmallestSize);
+
+                ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
+                filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
+
+                //System.out.println("possible assignee for task "+ task.getName()+ "are ");
+                //printList(task.possibleAssignee);
+
+                //adds new entry to the adjacency list
+                adjacencyList.add(new AbstractMap.SimpleEntry<Integer, ArrayList>(task.getId(), task.possibleAssignee));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //list that stores the edges
+    private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
 
     private void filterPossibleAssignee(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> definingSkillEmployees) throws IOException {
         for (Skill s : taskSkills){

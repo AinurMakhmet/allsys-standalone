@@ -1,12 +1,6 @@
 package entity_utils;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 import models.Task;
-import servers.SqlServerConnection;
-
-import java.sql.SQLException;
 import java.util.List;
 
 /**
