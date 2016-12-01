@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public abstract class AbstractAllocationAlgorithm {
 
-    public ArrayList<Task> unallocatedTasks = (ArrayList<Task>) TaskUtils.getAllTasks();
+    public ArrayList<Task> unallocatedTasks = (ArrayList<Task>) TaskUtils.getAllTasksHaveSkill();
 
     public boolean allocate() {
         return true;

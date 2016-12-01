@@ -19,12 +19,12 @@ public class DefaultDatabase {
 	public static String[] InsertQueriesTask = new String[]{
 
 			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('java-dev', 'HIGH', '2016-12-1', '2016-12-3', 2);",
-			"INSERT INTO `task` (`name`, `priority`,`earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('scala-dev', 'HIGH', '2016-12-2', '2016-12-3', 2);",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('scala-dev', 'HIGH', '2016-12-2', '2016-12-3', 2);",
 			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('cpp-dev', 'LOW', '2016-12-1', '2016-12-2', 1);",
-			//"INSERT INTO `task` (`name`) VALUES ('java-test');",
-			//"INSERT INTO `task` (`name`) VALUES ('devops');",
-			//"INSERT INTO `task` (`name`) VALUES ('integration-test');",
-			//"INSERT INTO `task` (`name`) VALUES ('network-config');",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('java-test', 'HIGH', '2016-12-1', '2016-12-15', 2);",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('devops', 'HIGH', '2016-12-1', '2016-12-10', 7);",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('integration-test', 'HIGH', '2016-12-1', '2016-12-3', 2);",
+			"INSERT INTO `task` (`name`, `priority`, `earliest_start_time`, `latest_completion_time`, `duration`) VALUES ('network-config', 'LOW', '2016-12-2', '2016-12-2', 1);",
 	};
 
 	public static String[] InsertQueriesSkill = new String[]{
