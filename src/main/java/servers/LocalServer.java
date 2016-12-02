@@ -1,6 +1,7 @@
 package servers;
 
 import constants.C;
+import entity_utils.TaskUtils;
 import logic.Strategy;
 import org.apache.commons.configuration.ConfigurationException;
 
@@ -22,6 +23,7 @@ public class LocalServer {
             e.printStackTrace();
         }
         Strategy.getInstance().allocate();
+        TaskUtils.getAllocatedTask();
     }
     /**
      * This will stop the server and effectively kill the application in the event of a fatal error

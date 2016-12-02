@@ -28,10 +28,10 @@ public class Task extends DatabaseEntity{
     //how many days it takes to complete a task
     @DatabaseField
     private int duration;
-    @DatabaseField(columnName = "latest_completion_time")
-    private Date latestCompletionTime;
-    @DatabaseField(columnName = "earliest_start_time")
-    private Date earliestStartTime;
+    @DatabaseField(columnName = "end_time")
+    private Date endTime;
+    @DatabaseField(columnName = "start_time")
+    private Date startTime;
     @DatabaseField(columnName = "employee_id", foreign = true, foreignAutoRefresh = true, defaultValue = "0")
     private Employee employee;
     @DatabaseField(columnName = "project_id", foreign = true, foreignAutoRefresh = true)
@@ -85,20 +85,20 @@ public class Task extends DatabaseEntity{
         this.duration = duration;
     }
 
-    public Date getLatestCompletionTime() {
-        return latestCompletionTime;
+    public Date getEndTime() {
+        return endTime;
     }
 
-    public void setLatestCompletionTime(Date latestCompletionTime) {
-        this.latestCompletionTime = latestCompletionTime;
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
-    public Date getEarliestStartTime() {
-        return earliestStartTime;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public void setEarliestCompletionTime(Date earliestCompletionTime) {
-        this.earliestStartTime = earliestStartTime;
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
     public Employee getEmployee() {
@@ -148,5 +148,28 @@ public class Task extends DatabaseEntity{
             });*/
         }
         return output;
+    }
+
+    /**
+     * Compares two Tasks for time overlapping.
+     *
+     * @param   anotherTask   the Task to be compared.
+     * @return  the value true if the argument Task starts on the same day as
+     *          this Task; or if this Task starts before the argument Task ends;
+     *          or if this Task ends after the Task argument starts.
+     * @exception NullPointerException if <code>anotherDate</code> is null.
+     */
+    public boolean timeOverlapWith(Task anotherTask) {
+        if (getStartTime().equals(anotherTask.getStartTime())
+                || getStartTime().compareTo(anotherTask.getEndTime())<0
+                || getEndTime().compareTo(anotherTask.getStartTime())>0) return true;
+        return false;
+    }
+
+    public String toString() {
+        return "Task "+ name + "(ID = " + getId()+")"
+                + " that starts on " + startTime+ " and ends on " + endTime
+                + " is allocated to employee " + getEmployee().getFirstName()
+                + " " + getEmployee().getLastName()+"(ID = "+ getEmployee().getId()+ ")";
     }
 }

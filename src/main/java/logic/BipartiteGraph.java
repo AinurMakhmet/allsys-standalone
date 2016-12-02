@@ -14,6 +14,8 @@ import java.util.Map;
  * Class that creates edges between task and employees for the graph.
  */
 public class BipartiteGraph {
+    //list that stores the edges
+    private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
 
     public BipartiteGraph(AbstractAllocationAlgorithm algorithm) {
         for (Task task: algorithm.unallocatedTasks) {
@@ -67,9 +69,6 @@ public class BipartiteGraph {
             }
         }
     }
-
-    //list that stores the edges
-    private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
 
     private void filterPossibleAssignee(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> definingSkillEmployees) throws IOException {
         for (Skill s : taskSkills){
