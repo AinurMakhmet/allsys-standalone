@@ -45,6 +45,8 @@ public class Task extends DatabaseEntity{
         HIGH, MEDIUM, LOW
     }
 
+    private String employeeName;
+
     public Task() {
         // ORMLite needs a no-arg constructor
     }
@@ -108,6 +110,11 @@ public class Task extends DatabaseEntity{
     public void setEmployee(Employee employee) {
         possibleAssignee.clear();
         this.employee = employee;
+        employeeName = employee.getFirstName()+ " " + employee.getLastName();
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
     }
 
     public Project getProject() {
