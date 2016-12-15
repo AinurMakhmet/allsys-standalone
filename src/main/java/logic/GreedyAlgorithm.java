@@ -27,9 +27,9 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
             });
             //TODO: consider task dependecy on time
             adjacencyList = new BipartiteGraph(priority, this).getAdjacencyList();
+            Collections.sort(adjacencyList, this);
             while (!adjacencyList.isEmpty()) {
-                Collections.sort(adjacencyList, this);
-
+                
                 //If task doesn't have any matching, remove from the adjacency list and considers another task;
                 while (adjacencyList.get(adjacencyList.size() - 1).getValue().isEmpty()) {
                     adjacencyList.remove(adjacencyList.size() - 1);
@@ -96,8 +96,6 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
     }
 
     private Employee findAvailableEmployee(Task toAllocate, int indexWithMinPossibleEmployees) {
-        boolean availableForTask = true;
-
         choosingNextEmployee:
         for (Employee chosenEmployee: (ArrayList<Employee>) adjacencyList.get(indexWithMinPossibleEmployees).getValue()) {
             try {
