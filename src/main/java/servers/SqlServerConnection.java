@@ -66,20 +66,10 @@ public class SqlServerConnection {
 	public static void initDB(ConnectionSource connection) throws SQLException, IOException {
 
 		try {
-			TableUtils.dropTable(connection, Employee.class, false);
-			TableUtils.dropTable(connection, Task.class, false);
-			TableUtils.dropTable(connection, Skill.class, false);
-			TableUtils.dropTable(connection, Project.class, false);
-			TableUtils.dropTable(connection, EmployeeSkill.class, false);
-			TableUtils.dropTable(connection, TaskSkill.class, false);
+			dropTables(connection);
 
+			createTables(connection);
 
-			TableUtils.createTableIfNotExists(connection, Employee.class);
-			TableUtils.createTableIfNotExists(connection, Task.class);
-			TableUtils.createTableIfNotExists(connection, Skill.class);
-			TableUtils.createTableIfNotExists(connection, Project.class);
-			TableUtils.createTableIfNotExists(connection, EmployeeSkill.class);
-			TableUtils.createTableIfNotExists(connection, TaskSkill.class);
 		} catch (NullPointerException | SQLException e) {
 			e.printStackTrace();
 			LocalServer.fatalError("database tables could not be fully created");
@@ -88,6 +78,24 @@ public class SqlServerConnection {
 		insertData(connection);
 
 		//TODO: close connection to DB
+	}
+
+	private static void dropTables(ConnectionSource connection) throws SQLException {
+		TableUtils.dropTable(connection, Employee.class, false);
+		TableUtils.dropTable(connection, Task.class, false);
+		TableUtils.dropTable(connection, Skill.class, false);
+		TableUtils.dropTable(connection, Project.class, false);
+		TableUtils.dropTable(connection, EmployeeSkill.class, false);
+		TableUtils.dropTable(connection, TaskSkill.class, false);
+	}
+
+	private static void createTables(ConnectionSource connection) throws SQLException {
+		TableUtils.createTableIfNotExists(connection, Employee.class);
+		TableUtils.createTableIfNotExists(connection, Task.class);
+		TableUtils.createTableIfNotExists(connection, Skill.class);
+		TableUtils.createTableIfNotExists(connection, Project.class);
+		TableUtils.createTableIfNotExists(connection, EmployeeSkill.class);
+		TableUtils.createTableIfNotExists(connection, TaskSkill.class);
 	}
 
 	private static void insertData(ConnectionSource connection) {
