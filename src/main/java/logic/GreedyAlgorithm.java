@@ -3,6 +3,7 @@ package logic;
 import entity_utils.TaskUtils;
 import models.Employee;
 import models.Task;
+import models.graph_models.GreedyGraph;
 
 import java.io.IOException;
 import java.util.*;
@@ -26,7 +27,7 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
                 }
             });
             //TODO: consider task dependecy on time
-            adjacencyList = new BipartiteGraph(priority, this).getAdjacencyList();
+            adjacencyList = new GreedyGraph(priority, this).getAdjacencyList();
             Collections.sort(adjacencyList, this);
             while (!adjacencyList.isEmpty()) {
                 

@@ -1,5 +1,6 @@
-package logic;
+package models.graph_models;
 
+import logic.AbstractAllocationAlgorithm;
 import models.Employee;
 import models.Skill;
 import models.Task;
@@ -13,11 +14,14 @@ import java.util.Map;
 /**
  * Class that creates edges between task and employees for the graph.
  */
-public class BipartiteGraph {
+public class GreedyGraph {
     //list that stores the edges
     private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
+    //private ArrayList<Vertex> adListBipartite = new ArrayList<>();
+    //public static Vertex sink = new Vertex();
+    //public static Vertex source = new Vertex();
 
-    public BipartiteGraph(AbstractAllocationAlgorithm algorithm) {
+    /*public GreedyGraph(AbstractAllocationAlgorithm algorithm) {
         for (Task task: algorithm.unallocatedTasks) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             ArrayList<Skill> taskSkills = null;
@@ -32,35 +36,34 @@ public class BipartiteGraph {
 
             ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
             filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
-
             //adds new entry to the adjacency list
-            adjacencyList.add(new AbstractMap.SimpleEntry<Integer, ArrayList>(task.getId(), task.possibleAssignee));
+            adListBipartite.add(task);
+            source.addOutcomingEdge(task);
+            task.addIncomingEdge(source);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
-    public BipartiteGraph(Task.Priority priority, AbstractAllocationAlgorithm algorithm) {
+*/
+    public GreedyGraph(Task.Priority priority, AbstractAllocationAlgorithm algorithm) {
         for (Task task: algorithm.unallocatedTasks) {
-            //System.out.println("Task with id: "+ task.getId()+ " and name "+ task.getName());
             if (task.getPriority()!=priority) continue;
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             try {
                 ArrayList<Skill> taskSkills = new ArrayList<>(task.getSkills());
-                //taskSkills.addAll(task.getSkills());
 
                 // finds the index of the skill that is possessed by smallest amount of employees.
                 int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
 
-                task.possibleAssignee.addAll(taskSkills.get(indexSmallestSize).getEmployees());
+                task.possibleAssignee = (ArrayList<Employee>) taskSkills.get(indexSmallestSize).getEmployees();
                 taskSkills.remove(indexSmallestSize);
 
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                //System.out.println("possible assignee for task "+ task.getName()+ "are ");
-                //printList(task.possibleAssignee);
+                System.out.println("possible assignee for task "+ task.getName()+ "are ");
+                printList(task.possibleAssignee);
 
                 //adds new entry to the adjacency list
                 adjacencyList.add(new AbstractMap.SimpleEntry<Integer, ArrayList>(task.getId(), task.possibleAssignee));
@@ -75,7 +78,9 @@ public class BipartiteGraph {
             for (int i=0; i<definingSkillEmployees.size(); i++) {
                 ArrayList<Skill> employeeSkills = (ArrayList<Skill>) definingSkillEmployees.get(i).getSkills();
                 for (int j = 0; j< employeeSkills.size(); j++) {
-                    if (s.getId()==employeeSkills.get(j).getId()) break;
+                    if (s.getId()==employeeSkills.get(j).getId())  {
+                        break;
+                    }
                     else if (j == employeeSkills.size()-1) {
                         //System.out.println("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
                         //System.out.println("Employee skill: " + employees.get(i).getSkills());

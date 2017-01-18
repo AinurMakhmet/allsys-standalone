@@ -6,18 +6,25 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.util.Pair;
+import models.bipartite_matching.Vertex;
+import models.bipartite_matching.VertexType;
 
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Model to represent task.
  */
 @DatabaseTable(tableName = "task")
-public class Task extends DatabaseEntity{
+public class Task extends Vertex implements DatabaseEntity{
+    @DatabaseField(generatedId = true)
+    private Integer id;
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -39,7 +46,15 @@ public class Task extends DatabaseEntity{
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
 
-    public ArrayList<Employee> possibleAssignee = new ArrayList<>();
+    public ArrayList<Employee> possibleAssignee;
+    private Set<Pair<Task, Integer>> inFlows = new HashSet<>();
+    private Set<Pair<Vertex, Integer>> outFlows = new HashSet<>();
+
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
     public enum Priority {
         HIGH, MEDIUM, LOW
@@ -47,8 +62,8 @@ public class Task extends DatabaseEntity{
 
     private String employeeName;
 
+    // ORMLite needs a no-arg constructor
     public Task() {
-        // ORMLite needs a no-arg constructor
     }
 
     public Task(String name) {
@@ -175,8 +190,8 @@ public class Task extends DatabaseEntity{
 
     public String toString() {
         return "Task "+ name + "(ID = " + getId()+")"
-                + " that starts on " + startTime+ " and ends on " + endTime
-                + " is allocated to employee " + getEmployee().getFirstName()
-                + " " + getEmployee().getLastName()+"(ID = "+ getEmployee().getId()+ ")";
+                + " that starts on " + startTime+ " and ends on " + endTime;
+//                + " is allocated to employee " + getEmployee().getFirstName()
+//                + " " + getEmployee().getLastName()+"(ID = "+ getEmployee().getId()+ ")";
     }
 }

@@ -7,7 +7,9 @@ import com.j256.ormlite.table.DatabaseTable;
  * Model to represent a particular skill that a particular task requires.
  */
 @DatabaseTable(tableName = "task_skill")
-public class TaskSkill extends DatabaseEntity{
+public class TaskSkill implements DatabaseEntity{
+    @DatabaseField(generatedId = true)
+    private Integer id;
     @DatabaseField(columnName = "task_id", foreign = true, foreignAutoRefresh = true, canBeNull = false)
     private Task task;
     @DatabaseField(columnName = "skill_id", foreign = true, foreignAutoRefresh = true, canBeNull = false)
@@ -35,4 +37,8 @@ public class TaskSkill extends DatabaseEntity{
         return task;
     }
 
+    @Override
+    public Integer getId() {
+        return id;
+    }
 }

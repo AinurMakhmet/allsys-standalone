@@ -15,7 +15,9 @@ import java.util.List;
  * Model to represent a skill.
  */
 @DatabaseTable(tableName = "skill")
-public class Skill extends DatabaseEntity{
+public class Skill implements DatabaseEntity{
+    @DatabaseField(generatedId = true)
+    private Integer id;
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -81,7 +83,9 @@ public class Skill extends DatabaseEntity{
             Employee employee;
             while (iterator.hasNext()) {
                 employee = iterator.next().getEmployee();
-                if (employee != null) output.add(employee);
+                if (employee != null) {
+                    output.add(employee);
+                }
             }
 
             //TODO: review sorting
@@ -126,5 +130,10 @@ public class Skill extends DatabaseEntity{
             });*/
         }
         return output;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 }

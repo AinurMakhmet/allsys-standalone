@@ -5,6 +5,8 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import models.bipartite_matching.Vertex;
+import models.bipartite_matching.VertexType;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,7 +17,9 @@ import java.util.List;
  * Model to represent an employee.
  */
 @DatabaseTable(tableName = "employee")
-public class Employee extends DatabaseEntity{
+public class Employee extends Vertex implements DatabaseEntity{
+    @DatabaseField(generatedId = true)
+    private Integer id;
     @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
     @DatabaseField(canBeNull = false, columnName = "last_name")
@@ -27,7 +31,6 @@ public class Employee extends DatabaseEntity{
     @ForeignCollectionField(eager = true)
     private ForeignCollection<EmployeeSkill> skills;
 
-
     /**
      * Blank constructor for ORM.
      */
@@ -37,6 +40,10 @@ public class Employee extends DatabaseEntity{
     public Employee(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getFirstName() {

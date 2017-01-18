@@ -2,6 +2,7 @@ package logic;
 
 import entity_utils.TaskUtils;
 import models.Task;
+import models.bipartite_matching.FlowNetwork;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -15,6 +16,10 @@ public abstract class AbstractAllocationAlgorithm {
     ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList;
 
     public boolean allocate() {
+        return true;
+    }
+
+    public boolean allocate(FlowNetwork network) {
         return true;
     }
 }

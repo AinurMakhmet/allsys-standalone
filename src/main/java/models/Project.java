@@ -15,7 +15,9 @@ import java.util.List;
  * Model to represent a project.
  */
 @DatabaseTable(tableName = "project")
-public class Project extends DatabaseEntity{
+public class Project implements DatabaseEntity{
+    @DatabaseField(generatedId = true)
+    private Integer id;
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -90,5 +92,10 @@ public class Project extends DatabaseEntity{
             });*/
         }
         return output;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 }
