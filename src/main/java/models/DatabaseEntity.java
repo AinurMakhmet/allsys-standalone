@@ -1,15 +1,12 @@
 package models;
 
 import com.j256.ormlite.field.DatabaseField;
+import models.graph_models.BipartiteGraphNode;
 
 /**
  * Created by nura on 19/11/16.
  */
-public abstract class DatabaseEntity {
-    @DatabaseField(generatedId = true)
-    private int id;
+public interface DatabaseEntity {
 
-    public int getId() {
-        return id;
-    }
+    public Integer getId();
 }

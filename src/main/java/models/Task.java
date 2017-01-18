@@ -6,6 +6,8 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import models.graph_models.BipartiteGraphNode;
+import models.graph_models.BipartiteGraphNodeType;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -17,7 +19,9 @@ import java.util.List;
  * Model to represent task.
  */
 @DatabaseTable(tableName = "task")
-public class Task extends DatabaseEntity{
+public class Task extends BipartiteGraphNode implements DatabaseEntity{
+    @DatabaseField(generatedId = true)
+    private Integer id;
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -39,7 +43,13 @@ public class Task extends DatabaseEntity{
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
 
-    public ArrayList<Employee> possibleAssignee = new ArrayList<>();
+    public ArrayList<BipartiteGraphNode> connectedEmployeeNodes = new ArrayList<>();
+    public ArrayList<Employee> possibleAssignee;
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 
     public enum Priority {
         HIGH, MEDIUM, LOW
@@ -49,10 +59,12 @@ public class Task extends DatabaseEntity{
 
     public Task() {
         // ORMLite needs a no-arg constructor
+        nodeType = BipartiteGraphNodeType.TASK;
     }
 
     public Task(String name) {
         this.name = name;
+        nodeType = BipartiteGraphNodeType.TASK;
     }
 
     public String getName() {
@@ -175,8 +187,8 @@ public class Task extends DatabaseEntity{
 
     public String toString() {
         return "Task "+ name + "(ID = " + getId()+")"
-                + " that starts on " + startTime+ " and ends on " + endTime
-                + " is allocated to employee " + getEmployee().getFirstName()
-                + " " + getEmployee().getLastName()+"(ID = "+ getEmployee().getId()+ ")";
+                + " that starts on " + startTime+ " and ends on " + endTime;
+//                + " is allocated to employee " + getEmployee().getFirstName()
+//                + " " + getEmployee().getLastName()+"(ID = "+ getEmployee().getId()+ ")";
     }
 }

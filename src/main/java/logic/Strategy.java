@@ -1,7 +1,8 @@
 package logic;
 
 import entity_utils.TaskUtils;
-import models.Task;
+import models.graph_models.BipartiteGraph;
+import models.graph_models.NetworkGraph;
 
 /**
  * Created by nura on 20/11/16.
@@ -16,9 +17,13 @@ public class Strategy {
     private Strategy() {
     }
     public static void allocate() {
-        GreedyAlgorithm greedy= new GreedyAlgorithm();
+        BipartiteGraph bipartiteGraph = new BipartiteGraph();
+        bipartiteGraph.printGraph();
+        //NetworkGraph networkGraph = new NetworkGraph(bipartiteGraph);
+        //networkGraph.printGraph();
+        /*GreedyAlgorithm greedy= new GreedyAlgorithm();
         if (greedy.allocate()) {
             TaskUtils.getAllocatedTask().forEach(task -> System.out.println(task.toString()));
-        }
+        }*/
     }
 }

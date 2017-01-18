@@ -1,5 +1,6 @@
 package logic;
 
+import entity_utils.TaskUtils;
 import models.Employee;
 import models.Task;
 import models.graph_models.GreedyGraph;
@@ -13,7 +14,7 @@ import java.util.*;
  * It starts with a task that has the least number of possible assignees.
  * Algorithm takes into consideration the priorities of the task.
  */
-public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comparator<Map.Entry<Integer, ArrayList>>{
+public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm implements Comparator<Map.Entry<Integer, ArrayList>>{
 
     @Override
     public boolean allocate() {
@@ -28,7 +29,7 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
             //TODO: consider task dependecy on time
             adjacencyList = new GreedyGraph(priority, this).getAdjacencyList();
             Collections.sort(adjacencyList, this);
-            /*while (!adjacencyList.isEmpty()) {
+            while (!adjacencyList.isEmpty()) {
                 
                 //If task doesn't have any matching, remove from the adjacency list and considers another task;
                 while (adjacencyList.get(adjacencyList.size() - 1).getValue().isEmpty()) {
@@ -45,11 +46,11 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
                 adjacencyList.remove(indexWithMinPossibleEmployees);
                 System.out.println(removeTask(unallocatedTasks, toAllocate));
 
-                *//*if (!updateEdges(chosenEmployee, adjacencyList)) {
+                /*if (!updateEdges(chosenEmployee, adjacencyList)) {
                     System.out.println("Was unable to update appropriately the lists in greedy algorithm");
                     return false;
-                }*//*
-            }*/
+                }*/
+            }
         }
         return true;
     }
