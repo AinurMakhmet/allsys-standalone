@@ -21,17 +21,17 @@ public class BipartiteGraphEdge {
         end2.addEdge(this);
     }
 
-    public Flow convertToFlow() {
-        Flow flow;
+    public DirectedEdge convertToDirectedEdge() {
+        DirectedEdge directedEdge;
         if (end1.getNodeType()==BipartiteGraphNodeType.TASK) {
-            flow = new Flow(end1, end2);
-            end1.addOutcomingFlow(flow);
-            end2.addIncomingFlow(flow);
+            directedEdge = new DirectedEdge(end1, end2);
+            end1.addOutcomingEdge(directedEdge);
+            end2.addIncomingEdge(directedEdge);
         }
-        flow = new Flow(end2, end1);
-        end2.addOutcomingFlow(flow);
-        end1.addIncomingFlow(flow);
-        return flow;
+        directedEdge = new DirectedEdge(end2, end1);
+        end2.addOutcomingEdge(directedEdge);
+        end1.addIncomingEdge(directedEdge);
+        return directedEdge;
 
     }
 

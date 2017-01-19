@@ -18,11 +18,11 @@ public class Strategy {
     }
     public static void allocate() {
         BipartiteGraph bipartiteGraph = new BipartiteGraph();
-        bipartiteGraph.printGraph();
-        //NetworkGraph networkGraph = new NetworkGraph(bipartiteGraph);
-        //networkGraph.printGraph();
-        /*GreedyAlgorithm greedy= new GreedyAlgorithm();
-        if (greedy.allocate()) {
+        //bipartiteGraph.printGraph();
+        NetworkGraph networkGraph = new NetworkGraph(bipartiteGraph);
+        networkGraph.printGraph();
+        //GreedyAlgorithm greedy= new GreedyAlgorithm();
+        /*if (greedy.allocate()) {
             TaskUtils.getAllocatedTask().forEach(task -> System.out.println(task.toString()));
         }*/
     }

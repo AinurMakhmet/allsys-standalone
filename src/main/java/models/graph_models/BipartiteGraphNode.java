@@ -1,6 +1,6 @@
 package models.graph_models;
 
-import logic.Strategy;
+import javafx.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,10 +8,14 @@ import java.util.Set;
 /**
  * Created by nura on 15/01/17.
  */
-public class BipartiteGraphNode {
+public abstract class BipartiteGraphNode {
     private Set<BipartiteGraphEdge> edges = new HashSet<>();
-    private Set<Flow> incomingFlows = new HashSet<>();
-    private Set<Flow> outcomingFlows = new HashSet<>();
+    private Set<DirectedEdge> incomingEdges = new HashSet<>();
+    private Set<DirectedEdge> outcomingEdges = new HashSet<>();
+    private Set<BipartiteGraphEdge> matchings = new HashSet<>();
+    private Pair<BipartiteGraphNode, Integer> inFlow;
+    private Pair<BipartiteGraphNode, Integer> outFlow;
+
     public BipartiteGraphNodeType nodeType;
 
     protected BipartiteGraphNode() {
@@ -36,28 +40,36 @@ public class BipartiteGraphNode {
     }
 
 
-    public Set<Flow> getIncomingFlows() {
-        return incomingFlows;
+    public Set<DirectedEdge> getIncomingEdges() {
+        return incomingEdges;
     }
 
-    public void addIncomingFlow(Flow flow) {
-        incomingFlows.add(flow);
+    public void addIncomingEdge(DirectedEdge directedEdge) {
+        incomingEdges.add(directedEdge);
     }
 
-    public void setIncomingFlows(Set<Flow> flows) {
-        incomingFlows = flows;
+    public void setIncomingEdges(Set<DirectedEdge> directedEdges) {
+        incomingEdges = directedEdges;
     }
 
-    public Set<Flow> getOutcomingFlows() {
-        return outcomingFlows;
+    public Set<DirectedEdge> getOutcomingEdges() {
+        return outcomingEdges;
     }
 
-    public void addOutcomingFlow(Flow flow) {
-        outcomingFlows.add(flow);
+    public void addOutcomingEdge(DirectedEdge directedEdge) {
+        outcomingEdges.add(directedEdge);
     }
 
-    public void setOutcomingFlows(Set<Flow> flows) {
-        outcomingFlows = flows;
+    public void setOutcomingEdges(Set<DirectedEdge> directedEdges) {
+        outcomingEdges = directedEdges;
+    }
+
+    public void setInFlow(Pair<BipartiteGraphNode, Integer> flow) {
+        inFlow = flow;
+    }
+
+    public void setOutFlow(Pair<BipartiteGraphNode, Integer> flow) {
+        outFlow = flow;
     }
 
 }

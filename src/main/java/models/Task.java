@@ -6,6 +6,7 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.util.Pair;
 import models.graph_models.BipartiteGraphNode;
 import models.graph_models.BipartiteGraphNodeType;
 
@@ -13,7 +14,9 @@ import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Model to represent task.
@@ -43,8 +46,10 @@ public class Task extends BipartiteGraphNode implements DatabaseEntity{
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
 
-    public ArrayList<BipartiteGraphNode> connectedEmployeeNodes = new ArrayList<>();
     public ArrayList<Employee> possibleAssignee;
+    private Set<Pair<Task, Integer>> inFlows = new HashSet<>();
+    private Set<Pair<BipartiteGraphNode, Integer>> outFlows = new HashSet<>();
+
 
     @Override
     public Integer getId() {

@@ -38,8 +38,8 @@ public class GreedyGraph {
             filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
             //adds new entry to the adjacency list
             adListBipartite.add(task);
-            source.addOutcomingFlow(task);
-            task.addIncomingFlow(source);
+            source.addOutcomingEdge(task);
+            task.addIncomingEdge(source);
             } catch (IOException e) {
                 e.printStackTrace();
             }

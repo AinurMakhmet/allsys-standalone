@@ -14,7 +14,7 @@ import java.util.*;
 public class BipartiteGraph {
     private Map<Integer, Task> taskMap = new HashMap<>();
     private Map<Integer, Employee> employeeMap = new HashMap<>();
-    private Set<BipartiteGraphEdge> matching = new HashSet<>();
+    private Set<BipartiteGraphEdge> allMatchings = new HashSet<>();
     private Set<BipartiteGraphEdge> largestMatching = new HashSet<>();
 
 
@@ -38,7 +38,7 @@ public class BipartiteGraph {
 
                 for (Employee employee: task.possibleAssignee) {
                     employeeMap.put(employee.getId(), employee);
-                    matching.add(new BipartiteGraphEdge(task, employee));
+                    allMatchings.add(new BipartiteGraphEdge(task, employee));
                 }
                 //adds new entry to the adjacency list
                 taskMap.put(task.getId(), task);
@@ -90,10 +90,13 @@ public class BipartiteGraph {
         taskMap.values().forEach(task ->System.out.println("task " + task.getId()));
         System.out.println("---------Set of employees---------: ");
         employeeMap.values().forEach(employee ->System.out.println("employee " + employee.getId()));
-        System.out.println("---------Set of matching edges---------: ");
+        System.out.println("---------Set of allMatchings edges---------: ");
         taskMap.values().forEach(
-                task -> task.getEdges().forEach(
-                        edge ->System.out.println("employee " + edge.getEmployee().getId())));
+                task -> {
+                        System.out.print("task " + task.getId() + ": ");
+                        task.getEdges().forEach(edge ->System.out.print("employee " + edge.getEmployee().getId()+ ", "));
+                        System.out.println();
+                });
         System.out.println("==============BIPARTITE GRAPH END==============");
     }
 
@@ -105,8 +108,8 @@ public class BipartiteGraph {
         return employeeMap;
     }
 
-    public Set<BipartiteGraphEdge> getMatching() {
-        return matching;
+    public Set<BipartiteGraphEdge> getAllMatchings() {
+        return allMatchings;
     }
 
     public Set<BipartiteGraphEdge> getLargestMatching() {

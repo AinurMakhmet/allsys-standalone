@@ -10,11 +10,12 @@ import java.util.*;
  */
 public class NetworkGraph {
     private Map<Integer, Task> taskMap = new HashMap<>();
-    private Map<Integer, Employee> employeeMap = new HashMap<>();private Set<Flow> flows = new HashSet<>();
+    private Map<Integer, Employee> employeeMap = new HashMap<>();
+    private Set<DirectedEdge> directedEdges = new HashSet<>();
     private BipartiteGraph bipartiteGraph;
 
-    private BipartiteGraphNode sink = new BipartiteGraphNode().setNodeType(BipartiteGraphNodeType.SINK);
-    private BipartiteGraphNode source = new BipartiteGraphNode().setNodeType(BipartiteGraphNodeType.SOURCE);
+    private SinkNode sink = SinkNode.getInstance();
+    private SourceNode source = SourceNode.getInstance();
 
     public NetworkGraph(BipartiteGraph bipartiteGraph) {
         this.bipartiteGraph = bipartiteGraph;
@@ -22,36 +23,30 @@ public class NetworkGraph {
         employeeMap = bipartiteGraph.getEmployeeMap();
         convertEdgesToFlows();
         for (Task t: taskMap.values()) {
-            Flow fromSource = new Flow(source, t);
-            source.addOutcomingFlow(fromSource);
-            t.addIncomingFlow(fromSource);
+            DirectedEdge fromSource = new DirectedEdge(source, t);
+            source.addOutcomingEdge(fromSource);
+            t.addIncomingEdge(fromSource);
         }
         for (Employee e: employeeMap.values()) {
-            Flow toSink = new Flow(e, sink);
-            sink.addIncomingFlow(toSink);
-            e.addOutcomingFlow(toSink);
+            DirectedEdge toSink = new DirectedEdge(e, sink);
+            sink.addIncomingEdge(toSink);
+            e.addOutcomingEdge(toSink);
         }
-        buildNetwork();
-
     }
 
     private void convertEdgesToFlows() {
-        for (BipartiteGraphEdge e: bipartiteGraph.getMatching()) {
-            flows.add(e.convertToFlow());
+        for (BipartiteGraphEdge e: bipartiteGraph.getAllMatchings()) {
+            directedEdges.add(e.convertToDirectedEdge());
         }
     }
 
-    public NetworkGraph buildNetwork() {
-        return this;
-    }
-
-    private static void printList(BipartiteGraphNode node, Set<Flow> mp) {
+    private static void printList(BipartiteGraphNode node, Set<DirectedEdge> mp) {
         Iterator it = mp.iterator();
         while (it.hasNext()) {
-            Flow flow = (Flow)it.next();
-            BipartiteGraphNode nodeToPrint = flow.getFlowSink();
+            DirectedEdge directedEdge = (DirectedEdge)it.next();
+            BipartiteGraphNode nodeToPrint = directedEdge.getNodeTo();
             if (nodeToPrint.getNodeType().equals(node.getNodeType())) {
-                nodeToPrint = flow.getFlowSink();
+                nodeToPrint = directedEdge.getNodeTo();
             }
             if (nodeToPrint.getNodeType().equals(BipartiteGraphNodeType.EMPLOYEE)) {
                 Employee employee = (Employee) nodeToPrint;
@@ -64,11 +59,11 @@ public class NetworkGraph {
         }
     }
 
-    private static void printFlowSources(Set<Flow> mp) {
+    private static void printFlowSources(Set<DirectedEdge> mp) {
         Iterator it = mp.iterator();
         while (it.hasNext()) {
-            Flow flow = (Flow)it.next();
-            BipartiteGraphNode nodeToPrint = flow.getFlowSource();
+            DirectedEdge directedEdge = (DirectedEdge)it.next();
+            BipartiteGraphNode nodeToPrint = directedEdge.getNodeFrom();
             if (nodeToPrint.getNodeType().equals(BipartiteGraphNodeType.EMPLOYEE)) {
                 Employee employee = (Employee) nodeToPrint;
                 System.out.print(" employee "+ employee.getId() + ", ");
@@ -80,11 +75,11 @@ public class NetworkGraph {
         }
     }
 
-    private static void printFlowSinks(Set<Flow> mp) {
+    private static void printFlowSinks(Set<DirectedEdge> mp) {
         Iterator it = mp.iterator();
         while (it.hasNext()) {
-            Flow flow = (Flow)it.next();
-            BipartiteGraphNode nodeToPrint = flow.getFlowSink();
+            DirectedEdge directedEdge = (DirectedEdge)it.next();
+            BipartiteGraphNode nodeToPrint = directedEdge.getNodeTo();
             if (nodeToPrint.getNodeType().equals(BipartiteGraphNodeType.EMPLOYEE)) {
                 Employee employee = (Employee) nodeToPrint;
                 System.out.print(" employee "+ employee.getId() + ", ");
@@ -99,27 +94,23 @@ public class NetworkGraph {
     public void printGraph() {
         System.out.println("==============NETWORK START==============");
         System.out.println("-------Flows from SOURCE to---------: ");
-        source.getOutcomingFlows().forEach(flow -> System.out.println(" task " + ((Task)flow.getFlowSink()).getId()));
+        source.getOutcomingEdges().forEach(directedEdge -> System.out.println(" task " + ((Task) directedEdge.getNodeTo()).getId()));
         System.out.println("---------Flows from TASK---------: ");
         /*for (Task task: taskMap.values()) {
             System.out.print("Flows from task " + task.getId() + " to: ");
-            printFlowSinks(task.getOutcomingFlows());
+            printFlowSinks(task.getOutcomingEdges());
             System.out.println();
         }*/
 
         taskMap.values().forEach(
               task -> {
                   System.out.print("Flows from task " + task.getId() + " to: ");
-                  task.getOutcomingFlows().forEach(
-                          flow -> System.out.print(" employee " + ((Employee) flow.getFlowSink()).getId() + ", "));
+                  task.getOutcomingEdges().forEach(
+                          directedEdge -> System.out.print(" employee " + ((Employee) directedEdge.getNodeTo()).getId() + ", "));
                   System.out.println();});
 
         System.out.println("---------Flows to SINK---------: ");
-        sink.getIncomingFlows().forEach(flow -> System.out.println(" employee " + ((Employee)flow.getFlowSource()).getId()));
+        sink.getIncomingEdges().forEach(directedEdge -> System.out.println(" employee " + ((Employee) directedEdge.getNodeFrom()).getId()));
         System.out.println("==============NETWORK END==============");
-    }
-
-    public void addFlow() {
-
     }
 }

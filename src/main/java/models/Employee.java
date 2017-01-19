@@ -5,13 +5,16 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import javafx.util.Pair;
 import models.graph_models.BipartiteGraphNode;
 import models.graph_models.BipartiteGraphNodeType;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Model to represent an employee.
@@ -30,7 +33,6 @@ public class Employee extends BipartiteGraphNode implements DatabaseEntity{
     private ForeignCollection<Task> tasks;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<EmployeeSkill> skills;
-
 
     /**
      * Blank constructor for ORM.
