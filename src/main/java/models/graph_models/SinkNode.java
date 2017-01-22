@@ -1,12 +1,15 @@
+/*
 package models.graph_models;
 
-import javafx.util.Pair;
-import models.Employee;
+import models.bipartite_matching.Vertex;
+import models.bipartite_matching.VertexType;
 
+*/
 /**
  * Created by nura on 19/01/17.
- */
-public class SinkNode extends BipartiteGraphNode {
+ *//*
+
+public class SinkNode extends Vertex {
     private static SinkNode ourInstance = new SinkNode();
 
     public static SinkNode getInstance() {
@@ -14,6 +17,7 @@ public class SinkNode extends BipartiteGraphNode {
     }
 
     private SinkNode() {
-        setNodeType(BipartiteGraphNodeType.SINK);
+        setNodeType(VertexType.SINK);
     }
 }
+*/

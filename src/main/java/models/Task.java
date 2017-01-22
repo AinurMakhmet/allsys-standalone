@@ -7,8 +7,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import javafx.util.Pair;
-import models.graph_models.BipartiteGraphNode;
-import models.graph_models.BipartiteGraphNodeType;
+import models.bipartite_matching.Vertex;
+import models.bipartite_matching.VertexType;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -22,7 +22,7 @@ import java.util.Set;
  * Model to represent task.
  */
 @DatabaseTable(tableName = "task")
-public class Task extends BipartiteGraphNode implements DatabaseEntity{
+public class Task extends Vertex implements DatabaseEntity{
     @DatabaseField(generatedId = true)
     private Integer id;
     @DatabaseField(canBeNull = false)
@@ -48,7 +48,7 @@ public class Task extends BipartiteGraphNode implements DatabaseEntity{
 
     public ArrayList<Employee> possibleAssignee;
     private Set<Pair<Task, Integer>> inFlows = new HashSet<>();
-    private Set<Pair<BipartiteGraphNode, Integer>> outFlows = new HashSet<>();
+    private Set<Pair<Vertex, Integer>> outFlows = new HashSet<>();
 
 
     @Override
@@ -62,14 +62,12 @@ public class Task extends BipartiteGraphNode implements DatabaseEntity{
 
     private String employeeName;
 
+    // ORMLite needs a no-arg constructor
     public Task() {
-        // ORMLite needs a no-arg constructor
-        nodeType = BipartiteGraphNodeType.TASK;
     }
 
     public Task(String name) {
         this.name = name;
-        nodeType = BipartiteGraphNodeType.TASK;
     }
 
     public String getName() {

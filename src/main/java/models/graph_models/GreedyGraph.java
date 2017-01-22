@@ -17,9 +17,9 @@ import java.util.Map;
 public class GreedyGraph {
     //list that stores the edges
     private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
-    //private ArrayList<BipartiteGraphNode> adListBipartite = new ArrayList<>();
-    //public static BipartiteGraphNode sink = new BipartiteGraphNode();
-    //public static BipartiteGraphNode source = new BipartiteGraphNode();
+    //private ArrayList<Vertex> adListBipartite = new ArrayList<>();
+    //public static Vertex sink = new Vertex();
+    //public static Vertex source = new Vertex();
 
     /*public GreedyGraph(AbstractAllocationAlgorithm algorithm) {
         for (Task task: algorithm.unallocatedTasks) {

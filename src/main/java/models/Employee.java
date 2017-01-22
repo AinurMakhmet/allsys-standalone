@@ -5,22 +5,19 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import javafx.util.Pair;
-import models.graph_models.BipartiteGraphNode;
-import models.graph_models.BipartiteGraphNodeType;
+import models.bipartite_matching.Vertex;
+import models.bipartite_matching.VertexType;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Model to represent an employee.
  */
 @DatabaseTable(tableName = "employee")
-public class Employee extends BipartiteGraphNode implements DatabaseEntity{
+public class Employee extends Vertex implements DatabaseEntity{
     @DatabaseField(generatedId = true)
     private Integer id;
     @DatabaseField(canBeNull = false, columnName = "first_name")
@@ -38,13 +35,11 @@ public class Employee extends BipartiteGraphNode implements DatabaseEntity{
      * Blank constructor for ORM.
      */
     public Employee() {
-        nodeType = BipartiteGraphNodeType.EMPLOYEE;
     }
 
     public Employee(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        nodeType = BipartiteGraphNodeType.EMPLOYEE;
     }
 
     public Integer getId() {

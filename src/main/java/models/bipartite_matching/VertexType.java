@@ -1,9 +1,9 @@
-package models.graph_models;
+package models.bipartite_matching;
 
 /**
  * Created by nura on 18/01/17.
  */
-public enum BipartiteGraphNodeType {
+public enum VertexType {
     TASK,
     EMPLOYEE,
     SOURCE,
