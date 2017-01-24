@@ -13,12 +13,13 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     FlowNetwork residualNetwork = new FlowNetwork(new BipartiteGraph());
     FlowNetwork originalNetwork;
     //LinkedList<Pair<Integer, EdgeMetaData>> augmentingPath;
-    Queue<Vertex> augmentedPath = new LinkedList<>();
+    Queue<Vertex> augmentedPathDFS = new LinkedList<>();
+    Map<Vertex, Vertex> augmentedPathBFS;
     Set<Vertex> adjacentVertices;
     private final Integer SOURCE_ID = -1;
     private final Integer SINK_ID = -2;
-    private Vertex sinkNode = new Vertex(SINK_ID, VertexType.SINK);
-    private Vertex sourceNode = new Vertex(SOURCE_ID, VertexType.SOURCE);
+    private Vertex sinkVertex = new Vertex(SINK_ID, VertexType.SINK);
+    private Vertex sourceVertex = new Vertex(SOURCE_ID, VertexType.SOURCE);
     private int pathNumber = 0;
     //Vertex currentVertex;
 
@@ -29,22 +30,47 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
-        while (findAugmentingPathDFS()) {
+        while (findAugmentingPathBFS()) {
             System.out.println("Path Number "+ ++pathNumber);
-            augmentedPath.forEach(vertex -> System.out.println(vertex.toString()));
-            constructResidualNetwork();
+            //augmentedPathDFS.forEach(vertex -> System.out.println(vertex.toString()));
+            constructResidualNetworkBFS();
             residualNetwork.printGraph();
 
         }
         return true;
     }
 
+
+    private boolean findAugmentingPathBFS() {
+        augmentedPathBFS = new HashMap<>();
+        Queue<Vertex> traversalQueue = new LinkedList<>();
+        traversalQueue.add(sourceVertex);
+        sourceVertex.setVisited(true);
+        Vertex nextVertex = sourceVertex;
+
+        while (!traversalQueue.isEmpty()) {
+            Vertex currentVertex = traversalQueue.remove();
+            while((nextVertex=findUnvisitedChild(currentVertex))!=null) {
+                nextVertex.setVisited(true);
+                if (!traversalQueue.contains(nextVertex)){
+                    traversalQueue.add(nextVertex);
+                    augmentedPathBFS.putIfAbsent(nextVertex, currentVertex);
+                }
+                if (nextVertex.getVertexType()==VertexType.SINK) {
+                    sinkVertex = nextVertex;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean findAugmentingPathDFS() {
-        augmentedPath = new LinkedList<>();
-        //augmentedPath.add(sourceNode);
+        augmentedPathDFS = new LinkedList<>();
+        //augmentedPathDFS.add(sourceVertex);
         Stack<Vertex> traversalStack = new Stack<>();
-        traversalStack.push(sourceNode);
-        sourceNode.setVisited(true);
+        traversalStack.push(sourceVertex);
+        sourceVertex.setVisited(true);
 
         while (!traversalStack.empty() && traversalStack.peek().getVertexType()!=VertexType.SINK) {
             Vertex currentVertex = traversalStack.peek();
@@ -59,7 +85,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
                 return false;
             }
         }
-        augmentedPath.addAll(traversalStack);
+        augmentedPathDFS.addAll(traversalStack);
         return true;
     }
 
@@ -95,28 +121,46 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         return vertexToReturn;
     }
 
-    public void constructResidualNetwork() {
-        while (!augmentedPath.isEmpty()) {
-            Vertex currentVertex = augmentedPath.poll();
+
+    public void constructResidualNetworkBFS() {
+        Vertex childVertex = sinkVertex;
+        Vertex currentVertex = childVertex;
+        while (currentVertex.getVertexType()!=VertexType.SOURCE) {
+            //TODO: understand why map returns null for currentVertex;
+            currentVertex = (Vertex)augmentedPathBFS.get(childVertex);
+            
             currentVertex.setVisited(false);
-            Vertex childVertex  = augmentedPath.peek();
-            if (currentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
-                residualNetwork.getSource().getValue().remove(childVertex);
-                residualNetwork.getTaskMap().get(childVertex.getVertexId()).add(currentVertex);
-            } else if (currentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.EMPLOYEE) {
-                residualNetwork.getTaskMap().get(currentVertex.getVertexId()).remove(childVertex);
-                residualNetwork.getEmployeeMap().get(childVertex.getVertexId()).add(currentVertex);
-            } else if (currentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.TASK) {
-                residualNetwork.getEmployeeMap().get(currentVertex.getVertexId()).remove(childVertex);
-                residualNetwork.getTaskMap().get(childVertex.getVertexId()).add(currentVertex);
-            } else if (currentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SINK) {
-                residualNetwork.getEmployeeMap().get(currentVertex.getVertexId()).remove(childVertex);
-                residualNetwork.getSink().getValue().add(currentVertex);
-            }//the last case will never be executed;
-            else if (currentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.SOURCE) {
-                residualNetwork.getTaskMap().get(currentVertex.getVertexId()).remove(childVertex);
-                residualNetwork.getSource().getValue().add(currentVertex);
-            }
+            doAddDeleteVertices(currentVertex, childVertex);
+            childVertex = currentVertex;
+        }
+    }
+
+    private void doAddDeleteVertices(Vertex currentVertex, Vertex childVertex) {
+        if (currentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
+            residualNetwork.getSource().getValue().remove(childVertex);
+            residualNetwork.getTaskMap().get(childVertex.getVertexId()).add(currentVertex);
+        } else if (currentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.EMPLOYEE) {
+            residualNetwork.getTaskMap().get(currentVertex.getVertexId()).remove(childVertex);
+            residualNetwork.getEmployeeMap().get(childVertex.getVertexId()).add(currentVertex);
+        } else if (currentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.TASK) {
+            residualNetwork.getEmployeeMap().get(currentVertex.getVertexId()).remove(childVertex);
+            residualNetwork.getTaskMap().get(childVertex.getVertexId()).add(currentVertex);
+        } else if (currentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SINK) {
+            residualNetwork.getEmployeeMap().get(currentVertex.getVertexId()).remove(childVertex);
+            residualNetwork.getSink().getValue().add(currentVertex);
+        }//the last case will never be executed;
+        else if (currentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.SOURCE) {
+            residualNetwork.getTaskMap().get(currentVertex.getVertexId()).remove(childVertex);
+            residualNetwork.getSource().getValue().add(currentVertex);
+        }
+    }
+
+    public void constructResidualNetworkDFS() {
+        while (!augmentedPathDFS.isEmpty()) {
+            Vertex currentVertex = augmentedPathDFS.poll();
+            currentVertex.setVisited(false);
+            Vertex childVertex  = augmentedPathDFS.peek();
+            doAddDeleteVertices(currentVertex, childVertex);
         }
     }
 
@@ -302,21 +346,21 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     /* private LinkedList findAugmentingPathBFS() {
         System.out.println("Augementing path is:");
         augmentingPath = new LinkedList<>();
-        augmentedPath.add(sourceNode);
+        augmentedPathDFS.add(sourceVertex);
         currentVertexType = VertexType.SOURCE;
-        sourceNode.getValue().setVisited(true);
-        augmentingPath.add(sourceNode);
+        sourceVertex.getValue().setVisited(true);
+        augmentingPath.add(sourceVertex);
         System.out.println("source");
 
         adjacentVertices = residualNetwork.getSource().getValue().getEdges();
-        while (!augmentedPath.isEmpty()) {
-            Pair<Integer, EdgeMetaData> edge = augmentedPath.poll();
+        while (!augmentedPathDFS.isEmpty()) {
+            Pair<Integer, EdgeMetaData> edge = augmentedPathDFS.poll();
             Pair<Integer, EdgeMetaData> nextEdge;
             if ((nextEdge=findUnvisitedChild(edge.getKey(), currentVertexType))!=null) {
                 nextEdge.getValue().setVisited(true);
                 augmentingPath.add(nextEdge);
                 System.out.println("printing node" + nextEdge.getKey());
-                augmentedPath.add(nextEdge);
+                augmentedPathDFS.add(nextEdge);
             }
         }
         return augmentingPath;

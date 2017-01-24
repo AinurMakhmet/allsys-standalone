@@ -50,5 +50,26 @@ public class Vertex {
                 ", vertexType=" + vertexType+
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Vertex vertex = (Vertex) o;
+
+        if (isVisited() != vertex.isVisited()) return false;
+        if (!getVertexId().equals(vertex.getVertexId())) return false;
+        return getVertexType() == vertex.getVertexType();
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getVertexId().hashCode();
+        result = 31 * result + getVertexType().hashCode();
+        result = 31 * result + (isVisited() ? 1 : 0);
+        return result;
+    }
 }
 
