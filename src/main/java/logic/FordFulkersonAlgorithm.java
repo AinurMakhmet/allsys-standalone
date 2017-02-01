@@ -32,7 +32,8 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
             System.out.println("Path Number "+ ++pathNumber);
-            //augmentedPathDFS.forEach(vertex -> System.out.println(vertex.toString()));
+//            augmentedPathBFS.forEach(vertex -> System.out.println(vertex.toString()));
+
             constructResidualNetworkBFS();
             residualNetwork.printGraph();
 
@@ -121,17 +122,34 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         return vertexToReturn;
     }
 
-
+//TODO: understand indexing and al....
     public void constructResidualNetworkBFS() {
         Vertex childVertex = sinkVertex;
         Vertex currentVertex = childVertex;
+
+        Stack path = new Stack();
+        path.push(currentVertex);
         while (currentVertex.getVertexType()!=VertexType.SOURCE) {
             //TODO: understand why map returns null for currentVertex;
             currentVertex = (Vertex)augmentedPathBFS.get(childVertex);
-            
-            currentVertex.setVisited(false);
-            doAddDeleteVertices(currentVertex, childVertex);
+            //doAddDeleteVertices(currentVertex, childVertex);
+            path.push(currentVertex);
             childVertex = currentVertex;
+        }
+        //augmentedPathBFS.keySet().forEach(vertex->vertex.setVisited(false));
+        //augmentedPathBFS.values().forEach(vertex -> vertex.setVisited(false));
+
+        /*while (!path.isEmpty()) {
+            System.out.println(path.pop().toString());
+        }*/
+        augmentedPathDFS.clear();
+        augmentedPathDFS.addAll(path);
+        while (!augmentedPathDFS.isEmpty()) {
+            currentVertex = augmentedPathDFS.poll();
+            //currentVertex.setVisited(false);
+            childVertex  = augmentedPathDFS.peek();
+            doAddDeleteVertices(childVertex, currentVertex);
+            currentVertex.setVisited(false);
         }
     }
 

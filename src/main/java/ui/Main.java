@@ -39,7 +39,7 @@ public class Main extends Application {
             e.printStackTrace();
         }
         Strategy.getInstance().allocate();
-        TaskUtils.getAllocatedTask();
+        //TaskUtils.getAllocatedTask();
 
         //launch(args);
     }

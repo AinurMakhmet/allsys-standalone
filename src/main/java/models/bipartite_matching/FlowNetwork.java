@@ -149,7 +149,7 @@ public class FlowNetwork {
         System.out.println("==============NETWORK START==============");
         System.out.println("-------Flows from SOURCE to---------: ");
         Set<Vertex> sourceEdges = source.getValue();
-        sourceEdges.forEach(vertex -> System.out.println("source: t" + vertex.getVertexId()));
+        sourceEdges.forEach(vertex -> System.out.println("source: t" + vertex.toString()));
         System.out.println("---------Flows from TASK---------: ");
         taskMap.keySet().forEach(
               taskId -> {
@@ -160,7 +160,7 @@ public class FlowNetwork {
                               if (vertex.getVertexType()==VertexType.SOURCE) {
                                   System.out.print("source, ");
                               } else {
-                                System.out.print("e" + vertex.getVertexId() + ", ");//+ " "+ edgeData);
+                                System.out.print("e" + vertex.toString() + ", ");//+ " "+ edgeData);
                               }
                           });
                   System.out.println();});
@@ -176,7 +176,7 @@ public class FlowNetwork {
                                 if (vertex.getVertexType()==VertexType.SINK) {
                                     System.out.print("sink, ");// + edgeData);
                                 } else {
-                                    System.out.print("t" + vertex.getVertexId() + ", ");//+ " "+ edgeData);
+                                    System.out.print("t" + vertex.toString() + ", ");//+ " "+ edgeData);
                                 }
                             });
                     System.out.println();});
@@ -185,7 +185,7 @@ public class FlowNetwork {
 
         Set<Vertex> sinkEdges = sink.getValue();
         if (sinkEdges !=null){
-            sinkEdges.forEach(vertex -> System.out.println("sink  : e" + vertex.getVertexId() + ",  "));// + sinkEdges.get(employeeId).toString()));
+            sinkEdges.forEach(vertex -> System.out.println("sink  : e" + vertex.toString() + ",  "));// + sinkEdges.get(employeeId).toString()));
         }
         System.out.println("==============NETWORK END==============");
         System.out.println();

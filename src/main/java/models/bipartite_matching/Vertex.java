@@ -6,7 +6,7 @@ package models.bipartite_matching;
 public class Vertex {
     private Integer vertexId;
     private VertexType vertexType;
-    private boolean visited;
+    private boolean isVisited;
 
     public Vertex() {
 
@@ -35,11 +35,11 @@ public class Vertex {
     }
 
     public boolean isVisited() {
-        return visited;
+        return isVisited;
     }
 
     public Vertex setVisited(boolean visited) {
-        this.visited = visited;
+        this.isVisited = visited;
         return this;
     }
 
@@ -48,6 +48,7 @@ public class Vertex {
         return "Vertex{" +
                 "vertexId=" + vertexId +
                 ", vertexType=" + vertexType+
+                ", isVisited=" + isVisited +
                 '}';
     }
 

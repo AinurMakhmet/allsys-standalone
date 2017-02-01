@@ -53,7 +53,7 @@ public class BipartiteGraph {
                     adjacentVerticesOfEmployee.add( new Vertex(task.getId(), VertexType.TASK));
                     employeeMap.put(employeeId, adjacentVerticesOfEmployee);
                 }
-
+                
                 taskMap.put(task.getId(), adjacentVerticesOfTask);
             } catch (IOException e) {
                 e.printStackTrace();
