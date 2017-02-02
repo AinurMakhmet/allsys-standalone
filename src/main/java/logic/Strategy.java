@@ -19,9 +19,9 @@ public class Strategy {
         BipartiteGraph bipartiteGraph = new BipartiteGraph();
         bipartiteGraph.printGraph();
         FlowNetwork networkGraph = new FlowNetwork(bipartiteGraph);
-        //networkGraph.printGraph();
+        networkGraph.printGraph();
         FordFulkersonAlgorithm algorithm = new FordFulkersonAlgorithm();
-        algorithm.allocate(networkGraph);
+        algorithm.allocate();
         //GreedyAlgorithm greedy= new GreedyAlgorithm();
         /*if (greedy.allocate()) {
             TaskUtils.getAllocatedTask().forEach(task -> System.out.println(task.toString()));

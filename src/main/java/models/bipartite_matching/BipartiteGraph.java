@@ -12,8 +12,8 @@ import java.util.*;
  * Created by nura on 15/01/17.
  */
 public class BipartiteGraph {
-    private Map<Integer, Set<Vertex>> taskMap = new HashMap<>();
-    private Map<Integer, Set<Vertex>> employeeMap = new HashMap<>();
+    private Map<Vertex, Map<Vertex, Boolean>> taskMap = new HashMap<>();
+    private Map<Vertex, Map<Vertex, Boolean>> employeeMap = new HashMap<>();
     private int totalTaskMatches = 0;
     private int totalEmployeeMatches = 0;
 
@@ -36,25 +36,29 @@ public class BipartiteGraph {
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                Set<Vertex> adjacentVerticesOfTask = new HashSet<>();
+
+                Vertex taskVertex = new Vertex(task.getId(), VertexType.TASK);
+                Map<Vertex, Boolean> adjacentVerticesOfTask = new HashMap<>();
                 //adds new entries to the adjacency map of both tasks and employees
                 for (Employee employee: task.possibleAssignee) {
-                    totalTaskMatches++;
-                    adjacentVerticesOfTask.add( new Vertex(employee.getId(), VertexType.EMPLOYEE));
+                    Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
+                    //Integer employeeId = employee.getId();
+                    Map<Vertex, Boolean> adjacentVerticesOfEmployee = new HashMap<>();
 
-                    Integer employeeId = employee.getId();
-                    Set<Vertex> adjacentVerticesOfEmployee = new HashSet<>();
-                    if (employeeMap.containsKey(employeeId)) {
-                        adjacentVerticesOfEmployee = employeeMap.get(employeeId);
+                    if (employeeMap.containsKey(employeeVertex)) {
+                        adjacentVerticesOfEmployee = employeeMap.get(employeeVertex);
                     } else {
-                        adjacentVerticesOfEmployee = new HashSet<>();
+                        adjacentVerticesOfEmployee = new HashMap<>();
                     }
                     totalEmployeeMatches++;
-                    adjacentVerticesOfEmployee.add( new Vertex(task.getId(), VertexType.TASK));
-                    employeeMap.put(employeeId, adjacentVerticesOfEmployee);
+                    adjacentVerticesOfEmployee.put(taskVertex, false);
+                    employeeMap.put(employeeVertex, adjacentVerticesOfEmployee);
+
+                    totalTaskMatches++;
+                    adjacentVerticesOfTask.put(employeeVertex, false);
                 }
-                
-                taskMap.put(task.getId(), adjacentVerticesOfTask);
+
+                taskMap.put(taskVertex, adjacentVerticesOfTask);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -101,23 +105,23 @@ public class BipartiteGraph {
         System.out.println("==============BIPARTITE GRAPH START==============");
 
         System.out.println("-------Set of tasks---------: ");
-        taskMap.keySet().forEach(taskId ->System.out.println("task " + taskId));
+        taskMap.keySet().forEach(taskVertex ->System.out.println("task " + taskVertex.getVertexId()));
 
         System.out.println("---------Set of employees---------: ");
-        employeeMap.keySet().forEach(employeeId ->System.out.println("employee " + employeeId));
+        employeeMap.keySet().forEach(employeeVertex ->System.out.println("employee " + employeeVertex.getVertexId()));
 
         System.out.println("---------Set of all task matches---------: ");
-        for (Integer taskId: taskMap.keySet()) {
-            System.out.print("task " + taskId + ": ");
-            taskMap.get(taskId).forEach(vertex -> {
+        for (Vertex taskVertex: taskMap.keySet()) {
+            System.out.print("task " + taskVertex.getVertexId() + ": ");
+            taskMap.get(taskVertex).forEach((vertex, isVisited) -> {
                 System.out.print("employee " + (Integer)vertex.getVertexId()+ ", ");
             });
             System.out.println();
         }
         System.out.println("---------Set of all employee matches---------: ");
-        for (Integer employeeId: employeeMap.keySet()) {
-            System.out.print("employee " + employeeId + ": ");
-            employeeMap.get(employeeId).forEach(vertex ->  {
+        for (Vertex employeeVertex: employeeMap.keySet()) {
+            System.out.print("employee " + employeeVertex.getVertexId() + ": ");
+            employeeMap.get(employeeVertex).forEach((vertex, isVisited) ->  {
                 System.out.print("task " + (Integer)vertex.getVertexId()+ ", ");
             });
             System.out.println();
@@ -126,11 +130,11 @@ public class BipartiteGraph {
         System.out.println("==============BIPARTITE GRAPH END==============");
     }
 
-    public Map<Integer, Set<Vertex>> getTaskMap() {
+    public Map<Vertex, Map<Vertex, Boolean>> getTaskMap() {
         return taskMap;
     }
 
-    public Map<Integer, Set<Vertex>> getEmployeeMap() {
+    public Map<Vertex, Map<Vertex, Boolean>> getEmployeeMap() {
         return employeeMap;
     }
 }

@@ -41,6 +41,6 @@ public class Main extends Application {
         Strategy.getInstance().allocate();
         //TaskUtils.getAllocatedTask();
 
-        //launch(args);
+        launch(args);
     }
 }

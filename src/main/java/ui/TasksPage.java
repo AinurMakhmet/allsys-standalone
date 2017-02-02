@@ -19,7 +19,7 @@ public class TasksPage extends AbstractPage implements ChangeListener{
     TableView table;
     String[] cardValues;
     final ObservableList<Task> data = FXCollections.observableArrayList(
-            TaskUtils.getAllocatedTask());
+            TaskUtils.getAllTasks());
 
     private static TasksPage ourInstance = new TasksPage();
 

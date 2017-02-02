@@ -6,7 +6,6 @@ package models.bipartite_matching;
 public class Vertex {
     private Integer vertexId;
     private VertexType vertexType;
-    private boolean isVisited;
 
     public Vertex() {
 
@@ -34,21 +33,11 @@ public class Vertex {
         return this;
     }
 
-    public boolean isVisited() {
-        return isVisited;
-    }
-
-    public Vertex setVisited(boolean visited) {
-        this.isVisited = visited;
-        return this;
-    }
-
     @Override
     public String toString() {
         return "Vertex{" +
                 "vertexId=" + vertexId +
                 ", vertexType=" + vertexType+
-                ", isVisited=" + isVisited +
                 '}';
     }
 
@@ -59,7 +48,6 @@ public class Vertex {
 
         Vertex vertex = (Vertex) o;
 
-        if (isVisited() != vertex.isVisited()) return false;
         if (!getVertexId().equals(vertex.getVertexId())) return false;
         return getVertexType() == vertex.getVertexType();
 
@@ -69,7 +57,6 @@ public class Vertex {
     public int hashCode() {
         int result = getVertexId().hashCode();
         result = 31 * result + getVertexType().hashCode();
-        result = 31 * result + (isVisited() ? 1 : 0);
         return result;
     }
 }
