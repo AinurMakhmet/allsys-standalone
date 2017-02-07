@@ -1,7 +1,8 @@
 package logic;
 
-import models.bipartite_matching.BipartiteGraph;
-import models.bipartite_matching.FlowNetwork;
+import models.Task;
+
+import java.util.List;
 
 /**
  * Created by nura on 20/11/16.
@@ -15,13 +16,10 @@ public class Strategy {
 
     private Strategy() {
     }
-    public static void allocate() {
-        BipartiteGraph bipartiteGraph = new BipartiteGraph();
-        bipartiteGraph.printGraph();
-        FlowNetwork networkGraph = new FlowNetwork(bipartiteGraph);
-        networkGraph.printGraph();
+
+    public static void allocate(List<Task> tasksToAllocate) {
         FordFulkersonAlgorithm algorithm = new FordFulkersonAlgorithm();
-        algorithm.allocate();
+        algorithm.allocate(tasksToAllocate);
         //GreedyAlgorithm greedy= new GreedyAlgorithm();
         /*if (greedy.allocate()) {
             TaskUtils.getAllocatedTask().forEach(task -> System.out.println(task.toString()));

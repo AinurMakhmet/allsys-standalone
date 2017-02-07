@@ -1,15 +1,16 @@
 package servers;
 
 import constants.C;
-import entity_utils.TaskUtils;
-import logic.Strategy;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import org.apache.commons.configuration.ConfigurationException;
+import ui.MainUI;
 
 /**
  * This class creates and manages the server for the entire system.
  * Its main jobs are to set up the server, route pages, and handle top-level security.
  */
-public class LocalServer {
+public class LocalServer extends Application{
     /**
      * Create the server and perform initial configuration.
      * @param args Any command line arguments; ignored in this application.
@@ -22,9 +23,14 @@ public class LocalServer {
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
-        Strategy.getInstance().allocate();
-        TaskUtils.getAllocatedTask();
+        launch(args);
     }
+
+    @Override
+    public void start(Stage stage) throws Exception{
+        MainUI.getInstance().startUI(stage);
+    }
+
     /**
      * This will stop the server and effectively kill the application in the event of a fatal error
      * @param message The message to be delivered to the user

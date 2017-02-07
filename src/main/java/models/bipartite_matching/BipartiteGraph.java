@@ -1,6 +1,5 @@
 package models.bipartite_matching;
 
-import entity_utils.TaskUtils;
 import models.Employee;
 import models.Skill;
 import models.Task;
@@ -18,8 +17,8 @@ public class BipartiteGraph {
     private int totalEmployeeMatches = 0;
 
 
-    public BipartiteGraph() {
-        for (Task task: (ArrayList<Task>) TaskUtils.getAllTasksValidForAllocation()) {
+    public BipartiteGraph(List<Task> tasksToAllocate) {
+        for (Task task: (ArrayList<Task>)tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             ArrayList<Skill> taskSkills = null;
             try {

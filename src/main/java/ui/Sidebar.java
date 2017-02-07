@@ -101,15 +101,23 @@ public class Sidebar extends VBox implements EventHandler {
     @Override
     public void handle(Event event) {
         visitedPageLink.getStyleClass().remove("menu-item-clicked");
-        ((Hyperlink)event.getSource()).getStyleClass().remove("menu-item-non-clicked");
-        ((Hyperlink)event.getSource()).getStyleClass().add("menu-item-clicked");
+        ((Hyperlink) event.getSource()).getStyleClass().remove("menu-item-non-clicked");
+        ((Hyperlink) event.getSource()).getStyleClass().add("menu-item-clicked");
 
-        if (event.getSource()==skillsLink)
-            Main.borderPane.setCenter(SkillsPage.getInstance());
-        else if (event.getSource()==employeesLink)
-            Main.borderPane.setCenter(EmployeesPage.getInstance());
-        else if (event.getSource()==tasksLink)
-            Main.borderPane.setCenter(TasksPage.getInstance());
+        if (event.getSource() == skillsLink) {
+            MainUI.borderPane.setCenter(SkillsPage.getInstance());
+            MainUI.borderPane.setRight(SkillsPage.getInstance().addCard());
+        } else if (event.getSource() == employeesLink) {
+            MainUI.borderPane.setCenter(EmployeesPage.getInstance());
+            MainUI.borderPane.setRight(EmployeesPage.getInstance().addCard());
+        } else if (event.getSource()==tasksLink) {
+            MainUI.borderPane.setCenter(TasksPage.getInstance());
+            MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
+        } else if (event.getSource()==allocationRoomLink) {
+            MainUI.borderPane.setCenter(AllocationPage.getInstance());
+            MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
+        }
+
         visitedPageLink = (Hyperlink)event.getSource();
     }
 

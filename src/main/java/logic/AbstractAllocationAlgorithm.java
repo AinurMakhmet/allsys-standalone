@@ -5,6 +5,7 @@ import models.Task;
 import models.bipartite_matching.FlowNetwork;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,7 +20,7 @@ public abstract class AbstractAllocationAlgorithm {
         return true;
     }
 
-    public boolean allocate(FlowNetwork network) {
+    public boolean allocate(List<Task> tasksToAllocate) {
         return true;
     }
 }
