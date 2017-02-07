@@ -10,15 +10,18 @@ import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import models.Skill;
 import models.Task;
+
+import java.io.IOException;
 
 /**
  * Created by nura on 06/12/16.
  */
 public class TasksPage extends AbstractPage implements ChangeListener{
-    TableView table;
-    String[] cardValues;
-    final ObservableList<Task> data = FXCollections.observableArrayList(
+    static TableView table;
+    static String[] cardValues;
+    static final ObservableList<Task> data = FXCollections.observableArrayList(
             TaskUtils.getAllTasks());
 
     private static TasksPage ourInstance = new TasksPage();
@@ -32,9 +35,8 @@ public class TasksPage extends AbstractPage implements ChangeListener{
         setCenter(addTable("Tasks"));
     }
 
-    @Override
-    public TableView addTable(String pageName) {
-        table = super.addTable(pageName);
+    static TableView addTable(String pageName) {
+        table = AbstractPage.addTable(pageName);
         TableColumn id = new TableColumn("ID");
         TableColumn name = new TableColumn("Name");
         TableColumn employee = new TableColumn("Employee");
@@ -66,15 +68,37 @@ public class TasksPage extends AbstractPage implements ChangeListener{
 
 
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-
+            if (newSelection!=null) {
+                try {
+                    String skills = "---";
+                    if (((Task) newSelection).getSkills()!=null){
+                        skills="";
+                        for (Skill skill : ((Task) newSelection).getSkills()) {
+                            skills += skill.getName() + ", ";
+                        }
+                    }
+                    cardValues= new String[]{
+                            ((Task)newSelection).getId().toString(),
+                            ((Task)newSelection).getName(),
+                            ((Task) newSelection).getDescription(),
+                            ((Task) newSelection).getStartTime().toString(),
+                            ((Task) newSelection).getEndTime().toString(),
+                            skills,
+                            ((Task) newSelection).getEmployee()==null ? "not allocated" : ((Task) newSelection).getEmployee().getFirstName()+ ((Task) newSelection).getEmployee().getLastName()
+                    };
+                    setNewCard(cardValues);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         });
 
         return table;
     }
 
-    public VBox addCard() {
+    VBox addCard() {
         String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Skills required", "Allocated to employee"};
-        String[] cardValues = {"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "Aydin Dede"};
+        cardValues = new String[]{"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "Aydin Dede"};
         return super.addCard(names, cardValues);
     }
 

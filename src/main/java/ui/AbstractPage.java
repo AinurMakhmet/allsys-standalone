@@ -15,11 +15,15 @@ import javafx.scene.text.Text;
  * Created by nura on 06/12/16.
  */
 public abstract class AbstractPage extends BorderPane{
+    static VBox cardVBox;
+    static String[] cardPropertyNames;
+    HBox top;
+
 
     public AbstractPage() {
         super();
         setPadding(new Insets(10));
-        HBox top = new HBox();
+        top = new HBox();
         top.setPadding(new Insets(10));
         top.setSpacing(8);
         TextField search = new TextField();
@@ -31,7 +35,7 @@ public abstract class AbstractPage extends BorderPane{
         setTop(top);
     }
 
-    public TableView addTable(String pageName) {
+    static TableView addTable(String pageName) {
         TableView table = new TableView();
         final Label label = new Label(pageName);
         label.setFont(new Font("Arial", 20));
@@ -41,16 +45,22 @@ public abstract class AbstractPage extends BorderPane{
         return table;
     }
 
-    public VBox addCard(String[] propertyNames, String[] propertyValues) {
-        VBox vbox = new VBox();
-        vbox.setPadding(new Insets(30, 20, 10, 10));
-        vbox.setSpacing(8);
-        vbox.getStyleClass().add("card");
+    VBox addCard(String[] propertyNames, String[] propertyValues) {
+        cardVBox = new VBox();
+        cardVBox.setPadding(new Insets(30, 20, 10, 10));
+        cardVBox.setSpacing(8);
+        cardVBox.getStyleClass().add("card");
+        cardPropertyNames = propertyNames;
+        setNewCard(propertyValues);
 
+        return cardVBox;
+    }
 
-        for (int i=0; i<propertyNames.length; i++) {
+    static void setNewCard(String[] propertyValues) {
+        cardVBox.getChildren().clear();
+        for (int i=0; i<propertyValues.length; i++) {
 
-            Text propertyName = new Text(propertyNames[i]+": ");
+            Text propertyName = new Text(cardPropertyNames[i]+": ");
             propertyName.setFont(Font.font("Arial", FontWeight.BOLD, 12));
             Text propertyValue = new Text(propertyValues[i]);
             propertyValue.setFont(Font.font("Arial", 12));
@@ -59,8 +69,7 @@ public abstract class AbstractPage extends BorderPane{
             hbox.getChildren().add(propertyName);
             hbox.getChildren().add(propertyValue);
 
-            vbox.getChildren().add(hbox);
+            cardVBox.getChildren().add(hbox);
         }
-        return vbox;
     }
 }

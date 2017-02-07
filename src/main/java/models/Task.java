@@ -22,7 +22,7 @@ import java.util.Set;
  * Model to represent task.
  */
 @DatabaseTable(tableName = "task")
-public class Task extends Vertex implements DatabaseEntity{
+public class Task implements DatabaseEntity{
     @DatabaseField(generatedId = true)
     private Integer id;
     @DatabaseField(canBeNull = false)

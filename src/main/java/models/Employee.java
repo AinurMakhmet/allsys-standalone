@@ -17,7 +17,7 @@ import java.util.List;
  * Model to represent an employee.
  */
 @DatabaseTable(tableName = "employee")
-public class Employee extends Vertex implements DatabaseEntity{
+public class Employee implements DatabaseEntity{
     @DatabaseField(generatedId = true)
     private Integer id;
     @DatabaseField(canBeNull = false, columnName = "first_name")

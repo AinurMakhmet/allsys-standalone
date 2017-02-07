@@ -1,5 +1,9 @@
 package logic;
 
+import entity_utils.EmployeeUtils;
+import entity_utils.TaskUtils;
+import models.Employee;
+import models.Task;
 import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
 import models.bipartite_matching.Vertex;
@@ -10,7 +14,7 @@ import java.util.*;
  * Algorithm that
  */
 public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
-    private FlowNetwork residualNetwork = new FlowNetwork(new BipartiteGraph());
+    private FlowNetwork residualNetwork;
     private Queue<Vertex> augmentedPathQueue = new LinkedList<>();
     private Map<Vertex, Vertex> augmentedPathBFS;
     private Map<Vertex, Boolean> adjacentVertices;
@@ -20,7 +24,8 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     public Map<Vertex, Vertex> matching = new HashMap<>();
 
     @Override
-    public boolean allocate() {
+    public boolean allocate(List<Task> tasksToAllocate) {
+        residualNetwork = new FlowNetwork(new BipartiteGraph(tasksToAllocate));
 
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
@@ -99,7 +104,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         return vertexToReturn;
     }
 
-    public void constructResidualNetworkBFS() {
+    private void constructResidualNetworkBFS() {
         Vertex childVertex = SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
