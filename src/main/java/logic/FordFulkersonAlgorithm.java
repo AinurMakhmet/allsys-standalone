@@ -24,7 +24,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     public Map<Vertex, Vertex> matching = new HashMap<>();
 
     @Override
-    public boolean allocate(List<Task> tasksToAllocate) {
+    public List<Task> allocate(List<Task> tasksToAllocate) {
         residualNetwork = new FlowNetwork(new BipartiteGraph(tasksToAllocate));
 
         //Starts constructing a path from the source;
@@ -37,8 +37,14 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
 
         }
         findMatching();
-        matching.forEach((a, b)-> System.out.println(a + " is matched to " + b));
-        return true;
+        matching.forEach((a, b)-> {
+            Task task = TaskUtils.getTask(a.getVertexId());
+            task.setRecommendedAssignee(EmployeeUtils.getEmployee(b.getVertexId()));
+            //TODO: at the moment only adds the task with recommendation,all tasks should be in the recommendedAllocation no matter if the don't have recommended assignee.
+            recommendedAllocation.add(task);
+            System.out.println(a + " is matched to " + b);
+        });
+        return recommendedAllocation;
     }
 
     private void findMatching() {

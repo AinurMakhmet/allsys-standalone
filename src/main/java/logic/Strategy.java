@@ -1,5 +1,6 @@
 package logic;
 
+import entity_utils.TaskUtils;
 import models.Task;
 
 import java.util.List;
@@ -21,8 +22,7 @@ public class Strategy {
         FordFulkersonAlgorithm algorithm = new FordFulkersonAlgorithm();
         algorithm.allocate(tasksToAllocate);
         //GreedyAlgorithm greedy= new GreedyAlgorithm();
-        /*if (greedy.allocate()) {
-            TaskUtils.getAllocatedTask().forEach(task -> System.out.println(task.toString()));
-        }*/
+        //greedy.allocate(tasksToAllocate).forEach(task -> System.out.println(task.toString()));
+
     }
 }

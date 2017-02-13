@@ -1,6 +1,7 @@
 package logic;
 
 import entity_utils.TaskUtils;
+import javafx.util.Pair;
 import models.Employee;
 import models.Task;
 import models.graph_models.GreedyGraph;
@@ -14,11 +15,12 @@ import java.util.*;
  * It starts with a task that has the least number of possible assignees.
  * Algorithm takes into consideration the priorities of the task.
  */
-public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comparator<Map.Entry<Integer, ArrayList>>{
+public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comparator<Pair<Integer, ArrayList>>{
 
     @Override
-    public boolean allocate() {
+    public List<Task> allocate(List<Task> tasksToAllocate) {
         //considers task of different priority separately
+        unallocatedTasks = (ArrayList<Task>) tasksToAllocate;
         for (Task.Priority priority: Task.Priority.values()) {
             Collections.sort(unallocatedTasks, new Comparator<Task>() {
                 @Override
@@ -26,65 +28,41 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
                     return o1.getStartTime().compareTo(o2.getStartTime());
                 }
             });
+
             //TODO: consider task dependecy on time
-            adjacencyList = new GreedyGraph(priority, this).getAdjacencyList();
-            Collections.sort(adjacencyList, this);
-            while (!adjacencyList.isEmpty()) {
+            listOfAdjacencyLists = new GreedyGraph(priority, this).getListOfAdjacencyLists();
+            Collections.sort(listOfAdjacencyLists, this);
+            while (!listOfAdjacencyLists.isEmpty()) {
                 
-                //If task doesn't have any matching, remove from the adjacency list and considers another task;
-                while (adjacencyList.get(adjacencyList.size() - 1).getValue().isEmpty()) {
-                    adjacencyList.remove(adjacencyList.size() - 1);
-                }
-                int indexWithMinPossibleEmployees = adjacencyList.size() - 1;
+                int indexWithMinPossibleEmployees = listOfAdjacencyLists.size() - 1;
 
                 //Greedy algorithm allocates the task to the first employee in the list.
-                Task toAllocate = TaskUtils.getTask(adjacencyList.get(indexWithMinPossibleEmployees).getKey());
+                //Get the new task
+                Task toAllocate = TaskUtils.getTask(listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getKey());
                 Employee chosenEmployee = findAvailableEmployee(toAllocate, indexWithMinPossibleEmployees);
 
-                toAllocate.setEmployee(chosenEmployee);
-                TaskUtils.updateEntity(toAllocate);
-                adjacencyList.remove(indexWithMinPossibleEmployees);
-                System.out.println(removeTask(unallocatedTasks, toAllocate));
-
-                /*if (!updateEdges(chosenEmployee, adjacencyList)) {
-                    System.out.println("Was unable to update appropriately the lists in greedy algorithm");
-                    return false;
-                }*/
-            }
-        }
-        return true;
-    }
-
-    private boolean updateEdges(Employee toRemove) {
-        boolean updated = true;
-        outerLoop:
-        for ( int i = 0; i<adjacencyList.size(); i++) {
-            ArrayList<Employee> listToUpdate = adjacencyList.get(i).getValue();
-            for (Employee e: listToUpdate) {
-                if (toRemove.getId()==e.getId()) {
-                    updated = listToUpdate.remove(e);
-                    if (updated==true) break;
-                    else break outerLoop;
+                if (chosenEmployee!=null) {
+                    toAllocate.setRecommendedAssignee(chosenEmployee);
+                    //TODO: the entity is not yet updated, ask the user if to persist the allocation;
+                    //TaskUtils.updateEntity(toAllocate);
+                    if (!updateEdges(chosenEmployee)) {
+                        System.out.println("Was unable to update appropriately the lists in greedy algorithm");
+                        throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
+                    }
                 }
+                recommendedAllocation.add(toAllocate);
+                listOfAdjacencyLists.remove(indexWithMinPossibleEmployees);
+                System.out.println(removeTask(unallocatedTasks, toAllocate));
             }
         }
-        return updated;
+        return recommendedAllocation;
     }
 
     @Override
-    public int compare(Map.Entry<Integer, ArrayList> o1, Map.Entry<Integer, ArrayList> o2) {
+    public int compare(Pair<Integer, ArrayList> o1, Pair<Integer, ArrayList> o2) {
         if (o1.getValue().size() > o2.getValue().size()) return -1;
         else if (o1.getValue().size() == o2.getValue().size()) return 0;
         else return 1;
-    }
-
-    public static void printList(ArrayList<Employee> mp) {
-        Iterator it = mp.iterator();
-        while (it.hasNext()) {
-            Employee e = (Employee)it.next();
-            System.out.println(e.getId());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
     }
 
     private boolean removeTask(List<Task> tasks, Task taskToRemove) {
@@ -96,9 +74,26 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm implements Comp
         return false;
     }
 
+    private boolean updateEdges(Employee toRemove) {
+        boolean updated = true;
+        outerLoop:
+        for ( int i = 0; i<listOfAdjacencyLists.size(); i++) {
+            ArrayList<Employee> listToUpdate = listOfAdjacencyLists.get(i).getValue();
+            for (Employee e: listToUpdate) {
+                if (toRemove.getId()==e.getId()) {
+                    updated = listToUpdate.remove(e);
+                    if (updated==true) break;
+                    else break outerLoop;
+                }
+            }
+        }
+        return updated;
+    }
+
+
     private Employee findAvailableEmployee(Task toAllocate, int indexWithMinPossibleEmployees) {
         choosingNextEmployee:
-        for (Employee chosenEmployee: (ArrayList<Employee>) adjacencyList.get(indexWithMinPossibleEmployees).getValue()) {
+        for (Employee chosenEmployee: (ArrayList<Employee>) listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getValue()) {
             try {
                 if (chosenEmployee.getTasks()==null || chosenEmployee.getTasks().size()==0)
                     return chosenEmployee;
