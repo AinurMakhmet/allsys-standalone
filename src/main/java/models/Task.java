@@ -47,6 +47,7 @@ public class Task implements DatabaseEntity{
     private ForeignCollection<TaskSkill> skills;
 
     public ArrayList<Employee> possibleAssignee;
+    private Employee recommendedAssignee;
     private Set<Pair<Task, Integer>> inFlows = new HashSet<>();
     private Set<Pair<Vertex, Integer>> outFlows = new HashSet<>();
 
@@ -123,13 +124,23 @@ public class Task implements DatabaseEntity{
     }
 
     public void setEmployee(Employee employee) {
-        possibleAssignee.clear();
+        if (possibleAssignee!=null && possibleAssignee.size()>0) {
+            possibleAssignee.clear();
+        }
         this.employee = employee;
         employeeName = employee.getFirstName()+ " " + employee.getLastName();
     }
 
     public String getEmployeeName() {
         return employeeName;
+    }
+
+    public Employee getRecommendedAssignee() {
+        return recommendedAssignee;
+    }
+
+    public void setRecommendedAssignee(Employee recommendedAssignee) {
+        this.recommendedAssignee = recommendedAssignee;
     }
 
     public Project getProject() {
@@ -189,9 +200,15 @@ public class Task implements DatabaseEntity{
     }
 
     public String toString() {
-        return "Task "+ name + "(ID = " + getId()+")"
+        String toReturn =  "Task "+ name + "(ID = " + getId()+")"
                 + " that starts on " + startTime+ " and ends on " + endTime;
-//                + " is allocated to employee " + getEmployee().getFirstName()
-//                + " " + getEmployee().getLastName()+"(ID = "+ getEmployee().getId()+ ")";
+
+        if (recommendedAssignee!=null) {
+            toReturn += " is recommended to be assigned to employee " + recommendedAssignee.getFirstName()
+                    + " " + recommendedAssignee.getLastName() + "(ID = " + recommendedAssignee.getId() + ")";
+        } else {
+            toReturn+=" with no recommended assignee";
+        }
+            return toReturn;
     }
 }

@@ -1,51 +1,21 @@
 package models.graph_models;
 
+import javafx.util.Pair;
 import logic.AbstractAllocationAlgorithm;
 import models.Employee;
 import models.Skill;
 import models.Task;
 
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class that creates edges between task and employees for the graph.
  */
 public class GreedyGraph {
     //list that stores the edges
-    private ArrayList<Map.Entry<Integer, ArrayList>> adjacencyList = new ArrayList<>();
-    //private ArrayList<Vertex> adListBipartite = new ArrayList<>();
-    //public static Vertex sink = new Vertex();
-    //public static Vertex source = new Vertex();
+    private List<Pair<Integer, ArrayList>> listOfAdjacencyLists = new ArrayList<>();
 
-    /*public GreedyGraph(AbstractAllocationAlgorithm algorithm) {
-        for (Task task: algorithm.unallocatedTasks) {
-            //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
-            ArrayList<Skill> taskSkills = null;
-            try {
-                taskSkills = new ArrayList<>(task.getSkills());
-
-            // finds the index of the skill that is possessed by smallest amount of employees.
-            int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
-
-            task.possibleAssignee.addAll(taskSkills.get(indexSmallestSize).getEmployees());
-            taskSkills.remove(indexSmallestSize);
-
-            ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
-            filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
-            //adds new entry to the adjacency list
-            adListBipartite.add(task);
-            source.addOutcomingEdge(task);
-            task.addIncomingEdge(source);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-*/
     public GreedyGraph(Task.Priority priority, AbstractAllocationAlgorithm algorithm) {
         for (Task task: algorithm.unallocatedTasks) {
             if (task.getPriority()!=priority) continue;
@@ -65,8 +35,10 @@ public class GreedyGraph {
                 System.out.println("possible assignee for task "+ task.getName()+ "are ");
                 printList(task.possibleAssignee);
 
-                //adds new entry to the adjacency list
-                adjacencyList.add(new AbstractMap.SimpleEntry<Integer, ArrayList>(task.getId(), task.possibleAssignee));
+                //adds new entry to the list of adjacency lists only if task have any possible matches;
+                if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
+                    listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -110,19 +82,14 @@ public class GreedyGraph {
     }
 
     public static void printList(ArrayList<Employee> mp) {
-        Iterator it = mp.iterator();
-        while (it.hasNext()) {
-            Employee e = (Employee)it.next();
-            System.out.println(e.getId());
-            it.remove(); // avoids a ConcurrentModificationException
-        }
+        mp.forEach(employee-> System.out.println(employee.getId()));
     }
 
     /**
      *
-     * @return the adjacency list that represents the bipartite graph of employees and tasks
+     * @return the llist of adjacency lists that represents the bipartite graph of employees and tasks
      */
-    public ArrayList<Map.Entry<Integer, ArrayList>> getAdjacencyList() {
-        return adjacencyList;
+    public List<Pair<Integer, ArrayList>> getListOfAdjacencyLists() {
+        return listOfAdjacencyLists;
     }
 }
