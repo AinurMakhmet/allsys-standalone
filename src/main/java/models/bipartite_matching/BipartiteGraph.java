@@ -83,6 +83,23 @@ public class BipartiteGraph {
                 }
             }
         }
+
+        choosingNextEmployee:
+        for (Employee employee: (ArrayList<Employee>) task.possibleAssignee) {
+            try {
+                if (employee.getTasks()==null || employee.getTasks().size()==0)
+                    continue choosingNextEmployee;
+                else {
+                    for (Task employeeTask : employee.getTasks()) {
+                        if (task.timeOverlapWith(employeeTask))
+                            task.possibleAssignee.remove(employee);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     private int getIndexOfDefiningSkill(ArrayList<Skill> taskSkills) throws IOException {

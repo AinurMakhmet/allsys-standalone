@@ -17,8 +17,8 @@ public abstract class AbstractAllocationAlgorithm {
     List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
     List<Task> recommendedAllocation = new LinkedList<>();
 
-    public boolean allocate() {
-        return true;
+    public List<Task> allocate(Task.Priority priority, List<Task> tasksToAllocate) {
+        return null;
     }
 
     public List<Task> allocate(List<Task> tasksToAllocate) {

@@ -193,9 +193,15 @@ public class Task implements DatabaseEntity{
      * @exception NullPointerException if <code>anotherDate</code> is null.
      */
     public boolean timeOverlapWith(Task anotherTask) {
+        //TODO: check the whether it is strongly greater and strongly less 0;
+/*
         if (getStartTime().equals(anotherTask.getStartTime())
-                || getStartTime().compareTo(anotherTask.getEndTime())<0
-                || getEndTime().compareTo(anotherTask.getStartTime())>0) return true;
+                || getStartTime().compareTo(anotherTask.getEndTime())<=0
+                || getEndTime().compareTo(anotherTask.getStartTime())>=0) return true;
+*/
+        if (getStartTime().equals(anotherTask.getStartTime())
+                || getStartTime().before(anotherTask.getEndTime())
+                || getEndTime().after(anotherTask.getStartTime())) return true;
         return false;
     }
 

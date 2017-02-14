@@ -3,26 +3,48 @@ package logic;
 import entity_utils.TaskUtils;
 import models.Task;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by nura on 20/11/16.
  */
 public class Strategy {
-    private static Strategy ourInstance = new Strategy();
 
-    public static Strategy getInstance() {
-        return ourInstance;
-    }
+    public static List<Task> getLargestMatching(List<Task> tasksToAllocate) {
+        List<Task> result = new ArrayList<>();
+        List<Task> highPriorityTasks = new ArrayList<>();
+        List<Task> mediumPriorityTasks = new ArrayList<>();
+        List<Task> lowPriorityTasks = new ArrayList<>();
+        for (Task task: tasksToAllocate) {
+            switch (task.getPriority()) {
+                case HIGH:
+                    highPriorityTasks.add(task);
+                    break;
+                case MEDIUM:
+                    mediumPriorityTasks.add(task);
+                    break;
+                case LOW:
+                    lowPriorityTasks.add(task);
+                    break;
+            }
+        }
 
-    private Strategy() {
-    }
-
-    public static void allocate(List<Task> tasksToAllocate) {
         FordFulkersonAlgorithm algorithm = new FordFulkersonAlgorithm();
-        algorithm.allocate(tasksToAllocate);
-        //GreedyAlgorithm greedy= new GreedyAlgorithm();
-        //greedy.allocate(tasksToAllocate).forEach(task -> System.out.println(task.toString()));
+        result.addAll(algorithm.allocate(highPriorityTasks));
 
+        algorithm = new FordFulkersonAlgorithm();
+        result.addAll(algorithm.allocate(mediumPriorityTasks));
+
+        algorithm = new FordFulkersonAlgorithm();
+        result.addAll(algorithm.allocate(lowPriorityTasks));
+
+        return result;
+    }
+
+    public static List<Task> getMatchingUsingGreedy(List<Task> tasksToAllocate) {
+        GreedyAlgorithm greedy= new GreedyAlgorithm();
+        List<Task> result = greedy.allocate(tasksToAllocate);
+        result.forEach(task -> System.out.println(task.toString()));
+        return result;
     }
 }

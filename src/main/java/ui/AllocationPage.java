@@ -21,6 +21,7 @@ import models.Task;
 
 import javax.swing.plaf.basic.BasicOptionPaneUI;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nura on 06/12/16.
@@ -45,7 +46,7 @@ public class AllocationPage extends AbstractPage {
         recommendButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Strategy.allocate(TaskUtils.getAllTasksValidForAllocation());
+                List<Task> result = Strategy.getLargestMatching(TaskUtils.getAllTasksValidForAllocation());
                 taskTable.refresh();
             }
         });
