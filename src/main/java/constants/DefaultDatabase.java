@@ -22,7 +22,7 @@ public class DefaultDatabase {
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('scala-dev', 'HIGH', '2016-12-2', '2016-12-3', 2);",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('cpp-dev', 'LOW', '2016-12-1', '2016-12-2', 1);",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('java-test', 'HIGH', '2016-12-1', '2016-12-15', 2);",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('devops', 'HIGH', '2016-12-1', '2016-12-10', 7);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`, `employee_id`) VALUES ('devops', 'HIGH', '2016-12-1', '2016-12-10', 7, 1);",
 //			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('integration-test', 'HIGH', '2016-12-1', '2016-12-3', 2);",
 //			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('bipartite_matching-config', 'LOW', '2016-12-2', '2016-12-2', 1);",
 	};

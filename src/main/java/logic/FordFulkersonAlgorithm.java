@@ -44,6 +44,11 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
             recommendedAllocation.add(task);
             System.out.println(a + " is matched to " + b);
         });
+        tasksToAllocate.forEach(task -> {
+            if (!recommendedAllocation.contains(task)) {
+                recommendedAllocation.add(task);
+            }
+        });
         return recommendedAllocation;
     }
 

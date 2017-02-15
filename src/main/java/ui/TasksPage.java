@@ -12,6 +12,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import models.Skill;
 import models.Task;
+import scala.reflect.internal.util.TableDef;
 
 import java.io.IOException;
 
@@ -36,37 +37,7 @@ public class TasksPage extends AbstractPage implements ChangeListener{
     }
 
     static TableView addTable(String pageName) {
-        table = AbstractPage.addTable(pageName);
-        TableColumn id = new TableColumn("ID");
-        TableColumn name = new TableColumn("Name");
-        TableColumn employee = new TableColumn("Employee");
-        TableColumn startTime = new TableColumn("Start time");
-        TableColumn endTime = new TableColumn("End Time");
-
-        id.setMinWidth(50);
-        id.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("id"));
-
-        name.setMinWidth(100);
-        name.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("name"));
-
-        employee.setMinWidth(150);
-        employee.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("employeeName"));
-
-        startTime.setMinWidth(100);
-        startTime.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("startTime"));
-
-        endTime.setMinWidth(100);
-        endTime.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("endTime"));
-
-        table.getColumns().addAll(id, name, startTime, endTime, employee);
-        table.setItems(data);
-
-
+        table = setTable(pageName);
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection!=null) {
                 try {
@@ -84,7 +55,7 @@ public class TasksPage extends AbstractPage implements ChangeListener{
                             ((Task) newSelection).getStartTime().toString(),
                             ((Task) newSelection).getEndTime().toString(),
                             skills,
-                            ((Task) newSelection).getEmployee()==null ? "not allocated" : ((Task) newSelection).getEmployee().getFirstName()+ ((Task) newSelection).getEmployee().getLastName()
+                            ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
                     };
                     setNewCard(cardValues);
                 } catch (IOException e) {
@@ -96,9 +67,44 @@ public class TasksPage extends AbstractPage implements ChangeListener{
         return table;
     }
 
+    static TableView setTable(String pageName) {
+        TableView tableToReturn = AbstractPage.addTable(pageName);
+        TableColumn id = new TableColumn("ID");
+        TableColumn name = new TableColumn("Name");
+        TableColumn employeeName = new TableColumn("Employee");
+        TableColumn startTime = new TableColumn("Start time");
+        TableColumn endTime = new TableColumn("End Time");
+
+        id.setMinWidth(50);
+        id.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("id"));
+
+        name.setMinWidth(100);
+        name.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("name"));
+
+        employeeName.setMinWidth(150);
+        employeeName.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("employeeName"));
+
+        startTime.setMinWidth(100);
+        startTime.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("startTime"));
+
+        endTime.setMinWidth(100);
+        endTime.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("endTime"));
+
+        tableToReturn.getColumns().addAll(id, name, startTime, endTime, employeeName);
+        tableToReturn.setItems(data);
+
+        return tableToReturn;
+
+    }
+
     VBox addCard() {
         String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Skills required", "Allocated to employee"};
-        cardValues = new String[]{"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "Aydin Dede"};
+        cardValues = new String[]{"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "Employee name here"};
         return super.addCard(names, cardValues);
     }
 

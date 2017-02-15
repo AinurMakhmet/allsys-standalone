@@ -84,15 +84,18 @@ public class BipartiteGraph {
             }
         }
 
+        Iterator it = task.possibleAssignee.iterator();
+
         choosingNextEmployee:
-        for (Employee employee: (ArrayList<Employee>) task.possibleAssignee) {
+        while (it.hasNext()) {
+            Employee employee = (Employee) it.next();
             try {
                 if (employee.getTasks()==null || employee.getTasks().size()==0)
                     continue choosingNextEmployee;
                 else {
                     for (Task employeeTask : employee.getTasks()) {
                         if (task.timeOverlapWith(employeeTask))
-                            task.possibleAssignee.remove(employee);
+                            it.remove();
                     }
                 }
             } catch (IOException e) {

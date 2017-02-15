@@ -17,9 +17,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import logic.Strategy;
 import models.Employee;
+import models.Skill;
 import models.Task;
 
 import javax.swing.plaf.basic.BasicOptionPaneUI;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +48,12 @@ public class AllocationPage extends AbstractPage {
         recommendButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                List<Task> result = Strategy.getLargestMatching(TaskUtils.getAllTasksValidForAllocation());
-                taskTable.refresh();
+                List<Task> tasksToAllocate = data;
+                List<Task> result = Strategy.getLargestMatching(tasksToAllocate);
+                data.clear();
+                //data.removeAll();
+                data.addAll(result);
+                taskTable.setItems(data);
             }
         });
         Button allocateButton = new Button("Allocate");
@@ -61,20 +67,47 @@ public class AllocationPage extends AbstractPage {
     }
 
     void addTables() {
-        taskTable = TasksPage.addTable("Tasks");
+        taskTable = TasksPage.setTable("Tasks");
         //TODO: add new column for recommendation
-        //TableColumn employee = new TableColumn("Recommended Assignee (Employee)");
-        //employee.setMinWidth(150);
-        //employee.setCellValueFactory(
-        //        new PropertyValueFactory<Task, String>("employeeName"));
+        TableColumn matchedEmployeeCol = new TableColumn("Recommended Assignee (Employee)");
+        matchedEmployeeCol.setMinWidth(150);
+        matchedEmployeeCol.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("recommendedAssigneeName"));
 
-        //taskTable.getItems().add();
+        taskTable.getColumns().add(matchedEmployeeCol);
+
+        taskTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection!=null) {
+                try {
+                    String skills = "---";
+                    if (((Task) newSelection).getSkills()!=null){
+                        skills="";
+                        for (Skill skill : ((Task) newSelection).getSkills()) {
+                            skills += skill.getName() + ", ";
+                        }
+                    }
+                    cardValues= new String[]{
+                            ((Task)newSelection).getId().toString(),
+                            ((Task)newSelection).getName(),
+                            ((Task) newSelection).getDescription(),
+                            ((Task) newSelection).getStartTime().toString(),
+                            ((Task) newSelection).getEndTime().toString(),
+                            skills,
+                            ((Task) newSelection).getRecommendedAssigneeName()==null ? "not recommendation" : ((Task) newSelection).getRecommendedAssigneeName(),
+                            ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
+                    };
+                    setNewCard(cardValues);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         pageHBox.getChildren().add(taskTable);
     }
 
     VBox addCard() {
-        String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Skills required", "Allocated to employee"};
-        String[] cardValues = {"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "Aydin Dede"};
+        String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Skills required", "Recommended Assignee", "Allocated to employee"};
+        String[] cardValues = {"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "", "Aydin Dede"};
         return super.addCard(names, cardValues);
     }
 

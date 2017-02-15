@@ -48,8 +48,6 @@ public class Task implements DatabaseEntity{
 
     public ArrayList<Employee> possibleAssignee;
     private Employee recommendedAssignee;
-    private Set<Pair<Task, Integer>> inFlows = new HashSet<>();
-    private Set<Pair<Vertex, Integer>> outFlows = new HashSet<>();
 
 
     @Override
@@ -57,11 +55,32 @@ public class Task implements DatabaseEntity{
         return id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        if (!getId().equals(task.getId())) return false;
+        return getName().equals(task.getName());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getName().hashCode();
+        return result;
+    }
+
     public enum Priority {
         HIGH, MEDIUM, LOW
     }
 
     private String employeeName;
+
+    private String recommendedAssigneeName;
 
     // ORMLite needs a no-arg constructor
     public Task() {
@@ -132,6 +151,9 @@ public class Task implements DatabaseEntity{
     }
 
     public String getEmployeeName() {
+        if (employeeName==null && employee!=null) {
+            employeeName = employee.getFirstName() + " "+ employee.getLastName();
+        }
         return employeeName;
     }
 
@@ -140,7 +162,17 @@ public class Task implements DatabaseEntity{
     }
 
     public void setRecommendedAssignee(Employee recommendedAssignee) {
+
         this.recommendedAssignee = recommendedAssignee;
+        recommendedAssigneeName = recommendedAssignee.getFirstName()+ " " + recommendedAssignee.getLastName();
+    }
+
+    public String getRecommendedAssigneeName() {
+        return recommendedAssigneeName;
+    }
+
+    public void setRecommendedAssigneeName(String recommendedAssigneeName) {
+        this.recommendedAssigneeName = recommendedAssigneeName;
     }
 
     public Project getProject() {

@@ -115,7 +115,7 @@ public class Sidebar extends VBox implements EventHandler {
             MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
         } else if (event.getSource()==allocationRoomLink) {
             MainUI.borderPane.setCenter(AllocationPage.getInstance());
-            MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
+            MainUI.borderPane.setRight(AllocationPage.getInstance().addCard());
         }
 
         visitedPageLink = (Hyperlink)event.getSource();
