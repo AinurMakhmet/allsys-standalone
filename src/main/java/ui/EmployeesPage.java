@@ -20,6 +20,7 @@ public class EmployeesPage extends AbstractPage {
     static final ObservableList<Employee> data = FXCollections.observableArrayList(
             EmployeeUtils.getAllEmployees());
 
+    static TableView table;
     static String[] cardValues;
 
     private static EmployeesPage ourInstance = new EmployeesPage();
@@ -35,7 +36,7 @@ public class EmployeesPage extends AbstractPage {
 
 
     static TableView addTable(String pageName) {
-        TableView table = AbstractPage.addTable(pageName);
+        table = AbstractPage.addTable(pageName);
         TableColumn id = new TableColumn("ID");
         TableColumn firstName = new TableColumn("First Name");
         TableColumn lastName= new TableColumn("Last Name");

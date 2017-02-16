@@ -16,9 +16,8 @@ public class GreedyGraph {
     //list that stores the edges
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists = new ArrayList<>();
 
-    public GreedyGraph(Task.Priority priority, AbstractAllocationAlgorithm algorithm) {
-        for (Task task: algorithm.unallocatedTasks) {
-            if (task.getPriority()!=priority) continue;
+    public GreedyGraph(List<Task> tasksToAllocate) {
+        for (Task task: tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             try {
                 ArrayList<Skill> taskSkills = new ArrayList<>(task.getSkills());

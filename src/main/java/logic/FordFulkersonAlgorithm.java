@@ -11,20 +11,24 @@ import models.bipartite_matching.Vertex;
 import java.util.*;
 
 /**
- * Algorithm that
+ * Ford-Fulkerson algorithm finds largest matching possible for a given set of tasks.
+ * The algorithm uses BFS to find the augmented path.
  */
 public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
-    private FlowNetwork residualNetwork;
-    private Queue<Vertex> augmentedPathQueue = new LinkedList<>();
-    private Map<Vertex, Vertex> augmentedPathBFS;
-    private Map<Vertex, Boolean> adjacentVertices;
-    private final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
-    private final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
-    private int pathNumber = 0;
-    public Map<Vertex, Vertex> matching = new HashMap<>();
+    private static FlowNetwork residualNetwork;
+    private static Queue<Vertex> augmentedPathQueue;
+    private static Map<Vertex, Vertex> augmentedPathBFS;
+    private static Map<Vertex, Boolean> adjacentVertices;
+    private static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
+    private static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
+    private static int pathNumber;
+    public static Map<Vertex, Vertex> matching;
 
-    @Override
-    public List<Task> allocate(List<Task> tasksToAllocate) {
+    public static List<Task> allocate(List<Task> tasksToAllocate) {
+        recommendedAllocation = new LinkedList<>();
+        augmentedPathQueue = new LinkedList<>();
+        matching = new HashMap<>();
+        pathNumber = 0;
         residualNetwork = new FlowNetwork(new BipartiteGraph(tasksToAllocate));
 
         //Starts constructing a path from the source;
@@ -40,7 +44,6 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         matching.forEach((a, b)-> {
             Task task = TaskUtils.getTask(a.getVertexId());
             task.setRecommendedAssignee(EmployeeUtils.getEmployee(b.getVertexId()));
-            //TODO: at the moment only adds the task with recommendation,all tasks should be in the recommendedAllocation no matter if the don't have recommended assignee.
             recommendedAllocation.add(task);
             System.out.println(a + " is matched to " + b);
         });
@@ -52,7 +55,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         return recommendedAllocation;
     }
 
-    private void findMatching() {
+    private static void findMatching() {
         residualNetwork.getSink().getValue().keySet().forEach(
                 employeeVertex-> {
                     residualNetwork.getEmployeeMap().get(employeeVertex).keySet().forEach(
@@ -61,7 +64,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     }
 
 
-    private boolean findAugmentingPathBFS() {
+    private static boolean findAugmentingPathBFS() {
         augmentedPathBFS = new HashMap<>();
         Queue<Vertex> traversalQueue = new LinkedList<>();
         traversalQueue.add(SOURCE_VERTEX);
@@ -83,7 +86,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     }
 
 
-    private Vertex findUnvisitedChild(Vertex parentVertex) {
+    private static Vertex findUnvisitedChild(Vertex parentVertex) {
         Vertex toReturn = null;
         switch (parentVertex.getVertexType()) {
             case SOURCE:
@@ -115,7 +118,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         return vertexToReturn;
     }
 
-    private void constructResidualNetworkBFS() {
+    private static void constructResidualNetworkBFS() {
         Vertex childVertex = SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
@@ -151,7 +154,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
                 });
     }
 
-    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+    private static void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getTaskMap().get(childVertex).put(parentVertex, false);

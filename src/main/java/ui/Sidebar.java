@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import models.Employee;
 
 /**
  * Creates sidebar that contains menu and page filters for search
@@ -120,5 +121,4 @@ public class Sidebar extends VBox implements EventHandler {
 
         visitedPageLink = (Hyperlink)event.getSource();
     }
-
 }

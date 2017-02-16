@@ -1,5 +1,8 @@
 package ui;
 
+import entity_utils.EmployeeUtils;
+import entity_utils.SkillUtils;
+import entity_utils.TaskUtils;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
@@ -23,7 +26,7 @@ public class MainUI {
         //Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main-view.fxml"));
         stage.setTitle("Allsys - Task Allocation system");
 
-        Scene scene = new Scene(borderPane, 800, 500);
+        Scene scene = new Scene(borderPane, 1000, 500);
         scene.setFill(Color.GHOSTWHITE);
         scene.getStylesheets().add(String.valueOf(getClass().getClassLoader().getResource("main.css")));
 
@@ -33,4 +36,20 @@ public class MainUI {
         stage.setScene(scene);
         stage.show();
     }
+
+    static void refreshTables() {
+        TasksPage.data.clear();
+        TasksPage.data.addAll(TaskUtils.getAllTasks());
+        TasksPage.table.refresh();
+        EmployeesPage.data.clear();
+        EmployeesPage.data.addAll(EmployeeUtils.getAllEmployees());
+        EmployeesPage.table.refresh();
+        SkillsPage.data.clear();
+        SkillsPage.data.addAll(SkillUtils.getAllSkills());
+        SkillsPage.table.refresh();
+        AllocationPage.data.clear();
+        AllocationPage.data.addAll(TaskUtils.getAllTasks());
+        AllocationPage.table.refresh();
+    }
+
 }

@@ -20,6 +20,7 @@ public class SkillsPage extends AbstractPage{
     static final ObservableList<Skill> data = FXCollections.observableArrayList(
             SkillUtils.getAllSkills());
     static String[] cardValues;
+    static TableView table;
     private static SkillsPage ourInstance = new SkillsPage();
 
     public static SkillsPage getInstance() {
@@ -33,7 +34,7 @@ public class SkillsPage extends AbstractPage{
 
 
     static TableView addTable(String pageName) {
-        TableView table = AbstractPage.addTable(pageName);
+        table = AbstractPage.addTable(pageName);
         TableColumn id = new TableColumn("ID");
         TableColumn name = new TableColumn("Name");
         TableColumn level = new TableColumn("Level");

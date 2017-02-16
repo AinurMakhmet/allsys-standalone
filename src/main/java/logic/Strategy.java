@@ -14,11 +14,20 @@ public class Strategy {
      * @param tasksToAllocate
      * @return
      */
-    public static List<Task> getLargestMatching(List<Task> tasksToAllocate) {
-        List<Task> result = new ArrayList<>();
-        List<Task> highPriorityTasks = new ArrayList<>();
-        List<Task> mediumPriorityTasks = new ArrayList<>();
-        List<Task> lowPriorityTasks = new ArrayList<>();
+    static List<Task> result;
+    static List<Task> highPriorityTasks;
+    static List<Task> mediumPriorityTasks;
+    static List<Task> lowPriorityTasks;
+
+    /**
+     * distribute tasks of different priority into separate list to deal with them separately
+     * @param tasksToAllocate
+     */
+    public static void distributeByPriority(List<Task> tasksToAllocate) {
+        result = new ArrayList<>();
+        highPriorityTasks = new ArrayList<>();
+        mediumPriorityTasks = new ArrayList<>();
+        lowPriorityTasks = new ArrayList<>();
         for (Task task: tasksToAllocate) {
             if(task.getEmployee()==null && task.getEndTime()!=null && task.getStartTime()!=null) {
                 switch (task.getPriority()) {
@@ -37,21 +46,36 @@ public class Strategy {
             result.add(task);
         }
 
-        FordFulkersonAlgorithm algorithm = new FordFulkersonAlgorithm();
-        result.addAll(algorithm.allocate(highPriorityTasks));
-
-        algorithm = new FordFulkersonAlgorithm();
-        result.addAll(algorithm.allocate(mediumPriorityTasks));
-
-        algorithm = new FordFulkersonAlgorithm();
-        result.addAll(algorithm.allocate(lowPriorityTasks));
+    }
+    public static List<Task> getLargestMatching(List<Task> tasksToAllocate) {
+        distributeByPriority(tasksToAllocate);
+        int numTries = 1;
+        //int numTries = 1;
+        long begTime = System.currentTimeMillis();
+        for (int i = 0; i < numTries; ++i) {
+            result.addAll(FordFulkersonAlgorithm.allocate(highPriorityTasks));
+            result.addAll(FordFulkersonAlgorithm.allocate(mediumPriorityTasks));
+            result.addAll(FordFulkersonAlgorithm.allocate(lowPriorityTasks));
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.printf("FF: Total time for %10d tries: %d ms\n", numTries, (endTime-begTime));
 
         return result;
     }
 
     public static List<Task> getMatchingUsingGreedy(List<Task> tasksToAllocate) {
-        GreedyAlgorithm greedy= new GreedyAlgorithm();
-        List<Task> result = greedy.allocate(tasksToAllocate);
+        distributeByPriority(tasksToAllocate);
+
+        int numTries = 1;
+        long begTime = System.currentTimeMillis();
+        for (int i = 0; i < numTries; ++i) {
+            result.addAll(GreedyAlgorithm.allocate(highPriorityTasks));
+            result.addAll(GreedyAlgorithm.allocate(mediumPriorityTasks));
+            result.addAll(GreedyAlgorithm.allocate(lowPriorityTasks));
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.printf("GREEDY: Total time for %10d tries: %d ms\n", numTries, (endTime-begTime));
+
         result.forEach(task -> System.out.println(task.toString()));
         return result;
     }

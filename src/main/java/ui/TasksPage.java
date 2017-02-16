@@ -54,6 +54,7 @@ public class TasksPage extends AbstractPage implements ChangeListener{
                             ((Task) newSelection).getDescription(),
                             ((Task) newSelection).getStartTime().toString(),
                             ((Task) newSelection).getEndTime().toString(),
+                            ((Task) newSelection).getPriority().toString(),
                             skills,
                             ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
                     };
@@ -74,6 +75,8 @@ public class TasksPage extends AbstractPage implements ChangeListener{
         TableColumn employeeName = new TableColumn("Employee");
         TableColumn startTime = new TableColumn("Start time");
         TableColumn endTime = new TableColumn("End Time");
+        TableColumn priorityLevel = new TableColumn("Priority Level");
+
 
         id.setMinWidth(50);
         id.setCellValueFactory(
@@ -95,7 +98,10 @@ public class TasksPage extends AbstractPage implements ChangeListener{
         endTime.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("endTime"));
 
-        tableToReturn.getColumns().addAll(id, name, startTime, endTime, employeeName);
+        priorityLevel.setMinWidth(130);
+        priorityLevel.setCellValueFactory(new PropertyValueFactory<Task, String>("priority"));
+
+        tableToReturn.getColumns().addAll(id, name, startTime, endTime, priorityLevel, employeeName);
         tableToReturn.setItems(data);
 
         return tableToReturn;
@@ -103,8 +109,8 @@ public class TasksPage extends AbstractPage implements ChangeListener{
     }
 
     VBox addCard() {
-        String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Skills required", "Allocated to employee"};
-        cardValues = new String[]{"1", "Java development", "", "2016-12-01", "2016-12-03", "Java, git, JUnit, Spring", "Employee name here"};
+        String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Priority Level", "Skills required", "Allocated to employee"};
+        cardValues = new String[]{"1", "Java development", "", "2016-12-01", "2016-12-03", "Priority Level", "Java, git, JUnit, Spring", "Employee name here"};
         return super.addCard(names, cardValues);
     }
 

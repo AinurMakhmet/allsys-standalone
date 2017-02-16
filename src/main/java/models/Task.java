@@ -164,7 +164,11 @@ public class Task implements DatabaseEntity{
     public void setRecommendedAssignee(Employee recommendedAssignee) {
 
         this.recommendedAssignee = recommendedAssignee;
-        recommendedAssigneeName = recommendedAssignee.getFirstName()+ " " + recommendedAssignee.getLastName();
+        if (recommendedAssignee!=null) {
+            recommendedAssigneeName = recommendedAssignee.getFirstName()+ " " + recommendedAssignee.getLastName();
+        } else {
+            recommendedAssigneeName=null;
+        }
     }
 
     public String getRecommendedAssigneeName() {
