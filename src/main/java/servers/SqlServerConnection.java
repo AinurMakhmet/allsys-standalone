@@ -7,8 +7,11 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import constants.C;
 import constants.DefaultDatabase;
+import constants.ReadFromFileDatabase;
 import models.*;
+import scalability.LargeDatasetGenerator;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -98,7 +101,7 @@ public class SqlServerConnection {
 		TableUtils.createTableIfNotExists(connection, TaskSkill.class);
 	}
 
-	private static void insertData(ConnectionSource connection) {
+	private static void insertData(ConnectionSource connection) throws FileNotFoundException {
 
 
 		//TODO: add execution of queries that instnatiat database with the default values
@@ -109,6 +112,16 @@ public class SqlServerConnection {
 			Dao<Skill, Integer> skillDao = DaoManager.createDao(connection, Skill.class);
 			Dao<EmployeeSkill, Integer> employeeSkillDao = DaoManager.createDao(connection, EmployeeSkill.class);
 			Dao<TaskSkill, Integer> taskSkillDao = DaoManager.createDao(connection, TaskSkill.class);
+
+			LargeDatasetGenerator.generateTestFiles();
+
+			ReadFromFileDatabase.createInsertQueries(
+					"src/main/resources/large_dataset/Employees.txt",
+					"src/main/resources/large_dataset/Tasks.txt",
+					"src/main/resources/large_dataset/Skills.txt",
+					"src/main/resources/large_dataset/EmployeeSkills.txt",
+					"src/main/resources/large_dataset/TaskSkills.txt"
+			);
 
 			for (String q : DefaultDatabase.InsertQueriesEmployee) {
 				employeeDao.executeRaw(q);

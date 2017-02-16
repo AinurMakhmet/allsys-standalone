@@ -1,0 +1,5 @@
+INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Aaron', 'Aaberg');
+INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Aaron', 'Aaby');
+INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Abbey', 'Aadland');
+INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Abbie', 'Aagaard');
+INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Abby', 'Aakre');

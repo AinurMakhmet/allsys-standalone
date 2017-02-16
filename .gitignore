@@ -1,5 +1,9 @@
 *.class
 
+target/classes/large_dataset/*
+
+
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
