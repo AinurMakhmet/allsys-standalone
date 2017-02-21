@@ -38,18 +38,15 @@ public class MainUI {
     }
 
     static void refreshTables() {
-        TasksPage.data.clear();
-        TasksPage.data.addAll(TaskUtils.getAllTasks());
-        TasksPage.table.refresh();
-        EmployeesPage.data.clear();
-        EmployeesPage.data.addAll(EmployeeUtils.getAllEmployees());
-        EmployeesPage.table.refresh();
-        SkillsPage.data.clear();
-        SkillsPage.data.addAll(SkillUtils.getAllSkills());
-        SkillsPage.table.refresh();
-        AllocationPage.data.clear();
-        AllocationPage.data.addAll(TaskUtils.getAllTasks());
-        AllocationPage.table.refresh();
+        TasksPage.getInstance().data.clear();
+        TasksPage.getInstance().data.addAll(TaskUtils.getAllTasks());
+        TasksPage.getInstance().table.refresh();
+        EmployeesPage.getInstance().data.clear();
+        EmployeesPage.getInstance().data.addAll(EmployeeUtils.getAllEmployees());
+        EmployeesPage.getInstance().table.refresh();
+        SkillsPage.getInstance().data.clear();
+        SkillsPage.getInstance().data.addAll(SkillUtils.getAllSkills());
+        SkillsPage.getInstance().table.refresh();
     }
 
 }

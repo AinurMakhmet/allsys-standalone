@@ -17,11 +17,11 @@ import java.io.IOException;
  * Created by nura on 06/12/16.
  */
 public class EmployeesPage extends AbstractPage {
-    static final ObservableList<Employee> data = FXCollections.observableArrayList(
+    final ObservableList<Employee> data = FXCollections.observableArrayList(
             EmployeeUtils.getAllEmployees());
 
-    static TableView table;
-    static String[] cardValues;
+    TableView table;
+    private String[] cardValues;
 
     private static EmployeesPage ourInstance = new EmployeesPage();
 
@@ -31,12 +31,13 @@ public class EmployeesPage extends AbstractPage {
 
     private EmployeesPage() {
         super();
+        search.setPromptText("Search employees");
         setCenter(addTable("Employees"));
     }
 
-
-    static TableView addTable(String pageName) {
-        table = AbstractPage.addTable(pageName);
+    @Override
+    TableView addTable(String pageName) {
+        table = super.addTable(pageName);
         TableColumn id = new TableColumn("ID");
         TableColumn firstName = new TableColumn("First Name");
         TableColumn lastName= new TableColumn("Last Name");

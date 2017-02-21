@@ -15,12 +15,11 @@ import models.Employee;
  * Creates sidebar that contains menu and page filters for search
  */
 public class Sidebar extends VBox implements EventHandler {
-    Hyperlink tasksLink =  new Hyperlink("Assignments");
-    Hyperlink employeesLink =  new Hyperlink("Employees");
-    Hyperlink skillsLink =  new Hyperlink("Skills");
-    Hyperlink allocationRoomLink  =  new Hyperlink("Allocation room");
-    Hyperlink importDataLink =  new Hyperlink("Import Data");
-    Hyperlink visitedPageLink = tasksLink;
+    private Hyperlink tasksLink =  new Hyperlink("Assignments");
+    private Hyperlink employeesLink =  new Hyperlink("Employees");
+    private Hyperlink skillsLink =  new Hyperlink("Skills");
+    private Hyperlink importDataLink =  new Hyperlink("Import Data");
+    private Hyperlink visitedPageLink = tasksLink;
 
     private Sidebar() {
         this.setPadding(new Insets(0));
@@ -41,13 +40,12 @@ public class Sidebar extends VBox implements EventHandler {
         tasksLink.setOnAction(this);
         employeesLink.setOnAction(this);
         skillsLink.setOnAction(this);
-        allocationRoomLink.setOnAction(this);
 
         Hyperlink pageHyperlinks[] = new Hyperlink[] {
                 tasksLink,
                 employeesLink,
                 skillsLink,
-                allocationRoomLink,
+                //allocationRoomLink,
                 importDataLink
         };
 
@@ -114,9 +112,6 @@ public class Sidebar extends VBox implements EventHandler {
         } else if (event.getSource()==tasksLink) {
             MainUI.borderPane.setCenter(TasksPage.getInstance());
             MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
-        } else if (event.getSource()==allocationRoomLink) {
-            MainUI.borderPane.setCenter(AllocationPage.getInstance());
-            MainUI.borderPane.setRight(AllocationPage.getInstance().addCard());
         }
 
         visitedPageLink = (Hyperlink)event.getSource();

@@ -15,9 +15,10 @@ import javafx.scene.text.Text;
  * Created by nura on 06/12/16.
  */
 public abstract class AbstractPage extends BorderPane{
-    static VBox cardVBox;
-    static String[] cardPropertyNames;
+    private VBox cardVBox;
+    private String[] cardPropertyNames;
     HBox top;
+    TextField search;
 
 
     public AbstractPage() {
@@ -26,16 +27,14 @@ public abstract class AbstractPage extends BorderPane{
         top = new HBox();
         top.setPadding(new Insets(10));
         top.setSpacing(8);
-        TextField search = new TextField();
-        search.setPromptText("Search");
+        search = new TextField();
 
         top.getChildren().add(search);
-
         top.setAlignment(Pos.CENTER);
         setTop(top);
     }
 
-    static TableView addTable(String pageName) {
+    TableView addTable(String pageName) {
         TableView table = new TableView();
         final Label label = new Label(pageName);
         label.setFont(new Font("Arial", 20));
@@ -56,7 +55,7 @@ public abstract class AbstractPage extends BorderPane{
         return cardVBox;
     }
 
-    static void setNewCard(String[] propertyValues) {
+    void setNewCard(String[] propertyValues) {
         cardVBox.getChildren().clear();
         for (int i=0; i<propertyValues.length; i++) {
 

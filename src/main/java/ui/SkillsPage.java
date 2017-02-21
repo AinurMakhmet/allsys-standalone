@@ -17,10 +17,10 @@ import java.io.IOException;
  * Created by nura on 06/12/16.
  */
 public class SkillsPage extends AbstractPage{
-    static final ObservableList<Skill> data = FXCollections.observableArrayList(
+    final ObservableList<Skill> data = FXCollections.observableArrayList(
             SkillUtils.getAllSkills());
-    static String[] cardValues;
-    static TableView table;
+    private String[] cardValues;
+    TableView table;
     private static SkillsPage ourInstance = new SkillsPage();
 
     public static SkillsPage getInstance() {
@@ -29,12 +29,13 @@ public class SkillsPage extends AbstractPage{
 
     private SkillsPage() {
         super();
+        search.setPromptText("Search skills");
         setCenter(addTable("Skills"));
     }
 
-
-    static TableView addTable(String pageName) {
-        table = AbstractPage.addTable(pageName);
+    @Override
+    TableView addTable(String pageName) {
+        table = super.addTable(pageName);
         TableColumn id = new TableColumn("ID");
         TableColumn name = new TableColumn("Name");
         TableColumn level = new TableColumn("Level");
