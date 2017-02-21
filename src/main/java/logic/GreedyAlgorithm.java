@@ -14,12 +14,25 @@ import java.util.*;
  * to the first available employee in the list.
  * It starts with a task that has the least number of possible assignees.
  */
-public class GreedyAlgorithm extends AbstractAllocationAlgorithm {
+public class GreedyAlgorithm extends Strategy {
 
-    public static List<Task> allocate(List<Task> tasksToAllocate) {
+    private static GreedyAlgorithm ourInstance = new GreedyAlgorithm();
+
+    public static GreedyAlgorithm getInstance() {
+        return ourInstance;
+    }
+
+    @Override
+    public List<Task> allocate(List<Task> tasksToAllocate) {
         //TODO: consider task dependecy on time
         recommendedAllocation = new LinkedList<>();
+        long begTime = System.currentTimeMillis();
         listOfAdjacencyLists = new GreedyGraph(tasksToAllocate).getListOfAdjacencyLists();
+        long endTime = System.currentTimeMillis();
+        System.out.printf(getClass().getSimpleName()+": Total time for constrcuting data structure: %d ms\n", (endTime-begTime));
+
+        begTime = System.currentTimeMillis();
+        numOfUnnalocatedTasks=0;
         Collections.sort(listOfAdjacencyLists, new Comparator<Pair<Integer, ArrayList>>() {
             @Override
             public int compare(Pair<Integer, ArrayList> o1, Pair<Integer, ArrayList> o2) {
@@ -45,11 +58,16 @@ public class GreedyAlgorithm extends AbstractAllocationAlgorithm {
                     System.out.println("Was unable to update appropriately the lists in greedy algorithm");
                     throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
                 }
+            } else {
+                numOfUnnalocatedTasks++;
             }
             recommendedAllocation.add(toAllocate);
             listOfAdjacencyLists.remove(indexWithMinPossibleEmployees);
             tasksToAllocate.remove(toAllocate);
         }
+        endTime = System.currentTimeMillis();
+        System.out.printf(getClass().getSimpleName()+": Total time for running algorithm: %d ms\n", (endTime-begTime));
+
         return recommendedAllocation;
     }
 

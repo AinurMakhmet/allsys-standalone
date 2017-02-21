@@ -2,7 +2,6 @@ package logic;
 
 import entity_utils.EmployeeUtils;
 import entity_utils.TaskUtils;
-import models.Employee;
 import models.Task;
 import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
@@ -14,48 +13,63 @@ import java.util.*;
  * Ford-Fulkerson algorithm finds largest matching possible for a given set of tasks.
  * The algorithm uses BFS to find the augmented path.
  */
-public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
-    private static FlowNetwork residualNetwork;
-    private static Queue<Vertex> augmentedPathQueue;
-    private static Map<Vertex, Vertex> augmentedPathBFS;
-    private static Map<Vertex, Boolean> adjacentVertices;
+public class FordFulkersonAlgorithm extends Strategy {
+    private FlowNetwork residualNetwork;
+    private Queue<Vertex> augmentedPathQueue;
+    private Map<Vertex, Vertex> augmentedPathBFS;
+    private Map<Vertex, Boolean> adjacentVertices;
     private static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
     private static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
-    private static int pathNumber;
-    public static Map<Vertex, Vertex> matching;
+    private int pathNumber;
+    public Map<Vertex, Vertex> matching;
 
-    public static List<Task> allocate(List<Task> tasksToAllocate) {
+    private static FordFulkersonAlgorithm ourInstance = new FordFulkersonAlgorithm();
+
+    public static FordFulkersonAlgorithm getInstance() {
+        return ourInstance;
+    }
+
+
+    @Override
+    public List<Task> allocate(List<Task> tasksToAllocate) {
         recommendedAllocation = new LinkedList<>();
         augmentedPathQueue = new LinkedList<>();
         matching = new HashMap<>();
         pathNumber = 0;
+        numOfUnnalocatedTasks=0;
+        long begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(tasksToAllocate));
+        long endTime = System.currentTimeMillis();
+        System.out.printf(getClass().getSimpleName()+": Total time for constrcuting data structure: %d ms\n", (endTime-begTime));
 
+        begTime = System.currentTimeMillis();
         //Starts constructing a path from the source;
-        residualNetwork.printGraph();
+        //residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
-            System.out.println("Path Number "+ ++pathNumber);
+            //System.out.println("Path Number "+ ++pathNumber);
             constructResidualNetworkBFS();
-            residualNetwork.printGraph();
-
+            //residualNetwork.printGraph();
         }
         findMatching();
         matching.forEach((a, b)-> {
             Task task = TaskUtils.getTask(a.getVertexId());
             task.setRecommendedAssignee(EmployeeUtils.getEmployee(b.getVertexId()));
             recommendedAllocation.add(task);
-            System.out.println(a + " is matched to " + b);
+            //System.out.println(a + " is matched to " + b);
         });
         tasksToAllocate.forEach(task -> {
             if (!recommendedAllocation.contains(task)) {
+                numOfUnnalocatedTasks++;
                 recommendedAllocation.add(task);
             }
         });
+        endTime = System.currentTimeMillis();
+        System.out.printf(getClass().getSimpleName()+": Total time for running algorithm: %d ms\n", (endTime-begTime));
         return recommendedAllocation;
     }
 
-    private static void findMatching() {
+    private void findMatching() {
         residualNetwork.getSink().getValue().keySet().forEach(
                 employeeVertex-> {
                     residualNetwork.getEmployeeMap().get(employeeVertex).keySet().forEach(
@@ -64,7 +78,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     }
 
 
-    private static boolean findAugmentingPathBFS() {
+    private boolean findAugmentingPathBFS() {
         augmentedPathBFS = new HashMap<>();
         Queue<Vertex> traversalQueue = new LinkedList<>();
         traversalQueue.add(SOURCE_VERTEX);
@@ -86,7 +100,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
     }
 
 
-    private static Vertex findUnvisitedChild(Vertex parentVertex) {
+    private Vertex findUnvisitedChild(Vertex parentVertex) {
         Vertex toReturn = null;
         switch (parentVertex.getVertexType()) {
             case SOURCE:
@@ -118,7 +132,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
         return vertexToReturn;
     }
 
-    private static void constructResidualNetworkBFS() {
+    private void constructResidualNetworkBFS() {
         Vertex childVertex = SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
@@ -130,7 +144,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
             childVertex = parentVertex;
         }
 
-        path.forEach(vertex ->System.out.println(vertex));
+        //path.forEach(vertex ->System.out.println(vertex));
 
         augmentedPathQueue.clear();
         augmentedPathQueue.addAll(path);
@@ -154,7 +168,7 @@ public class FordFulkersonAlgorithm extends AbstractAllocationAlgorithm {
                 });
     }
 
-    private static void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getTaskMap().get(childVertex).put(parentVertex, false);

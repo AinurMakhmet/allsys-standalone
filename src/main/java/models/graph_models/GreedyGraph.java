@@ -1,7 +1,6 @@
 package models.graph_models;
 
 import javafx.util.Pair;
-import logic.AbstractAllocationAlgorithm;
 import models.Employee;
 import models.Skill;
 import models.Task;
@@ -31,8 +30,8 @@ public class GreedyGraph {
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                System.out.println("possible assignee for task "+ task.getName()+ "are ");
-                printList(task.possibleAssignee);
+                //System.out.println("possible assignee for task "+ task.getName()+ " are ");
+                //printList(task.possibleAssignee);
 
                 //adds new entry to the list of adjacency lists only if task have any possible matches;
                 if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {

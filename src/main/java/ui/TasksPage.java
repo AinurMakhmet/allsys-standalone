@@ -14,10 +14,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import logic.Strategy;
+import logic.FordFulkersonAlgorithm;
+import logic.GreedyAlgorithm;
+import logic.StrategyContext;
 import models.Skill;
 import models.Task;
-import scala.reflect.internal.util.TableDef;
 
 import java.io.IOException;
 import java.util.List;
@@ -164,10 +165,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     public void handle(ActionEvent event) {
         tasksToAllocate = data;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
-            result = Strategy.getMatchingUsingGreedy(tasksToAllocate);
+            result = new StrategyContext(GreedyAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
             System.out.println("GREEDY");
         } else if (((Button)event.getSource()).equals(ffRecButton)) {
-            result = Strategy.getLargestMatching(tasksToAllocate);
+            result = new StrategyContext(FordFulkersonAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
             System.out.println("FF");
         } else {
             return;
@@ -175,7 +176,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         data.clear();
         data.addAll(result);
         table.setItems(data);
-        //System.out.print("Total number of unallocated tasks: "+ Strategy.numberOfUnnalocatedTasks);
-        //System.out.println("Among them number of tasks non-valid for allocation: "+ Strategy.numberOfTasksUnvalidForAllocation);
+        //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
+        //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);
     }
 }

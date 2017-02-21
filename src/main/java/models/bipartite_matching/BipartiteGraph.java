@@ -18,7 +18,7 @@ public class BipartiteGraph {
 
 
     public BipartiteGraph(List<Task> tasksToAllocate) {
-        for (Task task: (ArrayList<Task>)tasksToAllocate) {
+        for (Task task: tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             ArrayList<Skill> taskSkills = null;
             try {
