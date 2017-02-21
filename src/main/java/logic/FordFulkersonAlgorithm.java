@@ -2,6 +2,7 @@ package logic;
 
 import entity_utils.EmployeeUtils;
 import entity_utils.TaskUtils;
+import models.Employee;
 import models.Task;
 import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
@@ -22,6 +23,7 @@ public class FordFulkersonAlgorithm extends Strategy {
     private static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
     private int pathNumber;
     public Map<Vertex, Vertex> matching;
+    private long begTime, endTime;
 
     private static FordFulkersonAlgorithm ourInstance = new FordFulkersonAlgorithm();
 
@@ -33,32 +35,19 @@ public class FordFulkersonAlgorithm extends Strategy {
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
         recommendedAllocation = new LinkedList<>();
-        augmentedPathQueue = new LinkedList<>();
-        matching = new HashMap<>();
-        pathNumber = 0;
-        numOfUnnalocatedTasks=0;
-        long begTime = System.currentTimeMillis();
-        residualNetwork = new FlowNetwork(new BipartiteGraph(tasksToAllocate));
-        long endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Total time for constrcuting data structure: %d ms\n", (endTime-begTime));
 
+        List<Task> remainingTasksToAllocate = tasksToAllocate;
         begTime = System.currentTimeMillis();
-        //Starts constructing a path from the source;
-        //residualNetwork.printGraph();
-        //TODO: BFS, DFS is non-deterministic!!!!!!!
-        while (findAugmentingPathBFS()) {
-            //System.out.println("Path Number "+ ++pathNumber);
-            constructResidualNetworkBFS();
-            //residualNetwork.printGraph();
+        while(remainingTasksToAllocate.size()>0) {
+            if (canAllocateMoreTasks(remainingTasksToAllocate)) {
+                remainingTasksToAllocate = doNextAllocationRound(remainingTasksToAllocate);
+            } else {
+                break;
+            }
         }
-        findMatching();
-        matching.forEach((a, b)-> {
-            Task task = TaskUtils.getTask(a.getVertexId());
-            task.setRecommendedAssignee(EmployeeUtils.getEmployee(b.getVertexId()));
-            recommendedAllocation.add(task);
-            //System.out.println(a + " is matched to " + b);
-        });
-        tasksToAllocate.forEach(task -> {
+
+
+        remainingTasksToAllocate.forEach(task -> {
             if (!recommendedAllocation.contains(task)) {
                 numOfUnnalocatedTasks++;
                 recommendedAllocation.add(task);
@@ -67,6 +56,40 @@ public class FordFulkersonAlgorithm extends Strategy {
         endTime = System.currentTimeMillis();
         System.out.printf(getClass().getSimpleName()+": Total time for running algorithm: %d ms\n", (endTime-begTime));
         return recommendedAllocation;
+    }
+
+    private boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
+        begTime = System.currentTimeMillis();
+        residualNetwork = new FlowNetwork(new BipartiteGraph(FordFulkersonAlgorithm.class, remainingTasksToAllocate));
+        endTime = System.currentTimeMillis();
+        System.out.printf(getClass().getSimpleName()+": Total time for constrcuting data structure: %d ms\n", (endTime-begTime));
+        return residualNetwork.getSource().getValue().size()>0;
+    }
+
+    private List<Task> doNextAllocationRound(List<Task> remainingTasksToAllocate) {
+        matching = new HashMap<>();
+        augmentedPathQueue = new LinkedList<>();
+        pathNumber = 0;
+        numOfUnnalocatedTasks=0;
+        //Starts constructing a path from the source;
+        residualNetwork.printGraph();
+        //TODO: BFS, DFS is non-deterministic!!!!!!!
+        while (findAugmentingPathBFS()) {
+            //System.out.println("Path Number "+ ++pathNumber);
+            constructResidualNetworkBFS();
+            //residualNetwork.printGraph();
+        }
+        residualNetwork.printGraph();
+        findMatching();
+        matching.forEach((a, b)-> {
+            Task task = TaskUtils.getTask(a.getVertexId());
+            remainingTasksToAllocate.remove(task);
+            Employee employee = EmployeeUtils.getEmployee(b.getVertexId());
+            task.setRecommendedAssignee(employee);
+            recommendedAllocation.add(task);
+            System.out.println(task.getName() + " is matched to " + employee.getFirstName());
+        });
+        return remainingTasksToAllocate;
     }
 
     private void findMatching() {

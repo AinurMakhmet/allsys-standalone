@@ -13,7 +13,6 @@ import java.util.List;
  */
 public abstract class Strategy {
     public List<Task> unallocatedTasks;
-    static List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
     List<Task> recommendedAllocation;
     public int numOfUnnalocatedTasks=0;
     public List<Task> allocate(List<Task> tasksToAllocate) {

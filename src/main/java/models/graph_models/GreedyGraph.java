@@ -1,3 +1,4 @@
+/*
 package models.graph_models;
 
 import javafx.util.Pair;
@@ -8,9 +9,11 @@ import models.Task;
 import java.io.IOException;
 import java.util.*;
 
+*/
 /**
  * Class that creates edges between task and employees for the graph.
- */
+ *//*
+
 public class GreedyGraph {
     //list that stores the edges
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists = new ArrayList<>();
@@ -18,20 +21,22 @@ public class GreedyGraph {
     public GreedyGraph(List<Task> tasksToAllocate) {
         for (Task task: tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
+            ArrayList<Skill> taskSkills;
             try {
-                ArrayList<Skill> taskSkills = new ArrayList<>(task.getSkills());
+                taskSkills = new ArrayList<>(task.getSkills());
 
                 // finds the index of the skill that is possessed by smallest amount of employees.
                 int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
 
                 task.possibleAssignee = (ArrayList<Employee>) taskSkills.get(indexSmallestSize).getEmployees();
+
                 taskSkills.remove(indexSmallestSize);
 
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                //System.out.println("possible assignee for task "+ task.getName()+ " are ");
-                //printList(task.possibleAssignee);
+                System.out.println("possible assignee for task "+ task.getName()+ " are ");
+                task.possibleAssignee.forEach(employee-> System.out.println(employee.getId()));
 
                 //adds new entry to the list of adjacency lists only if task have any possible matches;
                 if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
@@ -79,15 +84,14 @@ public class GreedyGraph {
 
     }
 
-    public static void printList(ArrayList<Employee> mp) {
-        mp.forEach(employee-> System.out.println(employee.getId()));
-    }
-
-    /**
+    */
+/**
      *
      * @return the llist of adjacency lists that represents the bipartite graph of employees and tasks
-     */
+     *//*
+
     public List<Pair<Integer, ArrayList>> getListOfAdjacencyLists() {
         return listOfAdjacencyLists;
     }
 }
+*/

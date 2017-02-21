@@ -60,10 +60,10 @@ public class FlowNetwork {
         System.out.println();
         System.out.println();
         System.out.println("==============NETWORK START==============");
-        System.out.println("-------Flows from SOURCE to---------: ");
+        System.out.println("-------Edges from SOURCE to---------: ");
         Map<Vertex, Boolean> sourceEdges = SOURCE.getValue();
         sourceEdges.forEach((vertex, isVisited) -> System.out.println("source: t" + vertex.getVertexId()));
-        System.out.println("---------Flows from TASK---------: ");
+        System.out.println("---------Edges from TASK---------: ");
         taskMap.keySet().forEach(
               taskVertex -> {
                   System.out.print("t" + taskVertex.getVertexId() + "    : ");
@@ -78,7 +78,7 @@ public class FlowNetwork {
                           });
                   System.out.println();});
 
-        System.out.println("---------Flows from EMPLOYEE---------: ");
+        System.out.println("---------Edges from EMPLOYEE---------: ");
         employeeMap.keySet().forEach(
                 employeeVertex -> {
                     System.out.print("e" + employeeVertex.getVertexId() + "    : ");
@@ -93,7 +93,7 @@ public class FlowNetwork {
                             });
                     System.out.println();});
 
-        System.out.println("---------Flows to SINK---------: ");
+        System.out.println("---------Edges to SINK---------: ");
 
         Map<Vertex, Boolean> sinkEdges = SINK.getValue();
         if (sinkEdges !=null){

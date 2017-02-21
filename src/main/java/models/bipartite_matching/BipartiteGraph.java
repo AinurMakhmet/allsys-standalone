@@ -1,5 +1,8 @@
 package models.bipartite_matching;
 
+import javafx.util.Pair;
+import logic.GreedyAlgorithm;
+import logic.Strategy;
 import models.Employee;
 import models.Skill;
 import models.Task;
@@ -15,9 +18,12 @@ public class BipartiteGraph {
     private Map<Vertex, Map<Vertex, Boolean>> employeeMap = new HashMap<>();
     private int totalTaskMatches = 0;
     private int totalEmployeeMatches = 0;
+    private List<Pair<Integer, ArrayList>> listOfAdjacencyLists = new ArrayList<>();
+    Strategy strategy;
+    Class strategyClass;
 
-
-    public BipartiteGraph(List<Task> tasksToAllocate) {
+    public BipartiteGraph(Class strategyClass, List<Task> tasksToAllocate) {
+        this.strategyClass = strategyClass;
         for (Task task: tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             ArrayList<Skill> taskSkills = null;
@@ -35,33 +41,44 @@ public class BipartiteGraph {
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
+                System.out.println("possible assignee for task "+ task.getName()+ " are ");
+                task.possibleAssignee.forEach(employee-> System.out.println(employee.getId()));
 
-                Vertex taskVertex = new Vertex(task.getId(), VertexType.TASK);
-                Map<Vertex, Boolean> adjacentVerticesOfTask = new HashMap<>();
-                //adds new entries to the adjacency map of both tasks and employees
-                for (Employee employee: task.possibleAssignee) {
-                    Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
-                    //Integer employeeId = employee.getId();
-                    Map<Vertex, Boolean> adjacentVerticesOfEmployee = new HashMap<>();
+                if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
+                    listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
 
-                    if (employeeMap.containsKey(employeeVertex)) {
-                        adjacentVerticesOfEmployee = employeeMap.get(employeeVertex);
-                    } else {
-                        adjacentVerticesOfEmployee = new HashMap<>();
+                    if (!strategyClass.equals(GreedyAlgorithm.class)) {
+                        initialiseMaps(task);
                     }
-                    totalEmployeeMatches++;
-                    adjacentVerticesOfEmployee.put(taskVertex, false);
-                    employeeMap.put(employeeVertex, adjacentVerticesOfEmployee);
-
-                    totalTaskMatches++;
-                    adjacentVerticesOfTask.put(employeeVertex, false);
                 }
-
-                taskMap.put(taskVertex, adjacentVerticesOfTask);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void initialiseMaps(Task task) {
+        Vertex taskVertex = new Vertex(task.getId(), VertexType.TASK);
+        Map<Vertex, Boolean> adjacentVerticesOfTask = new HashMap<>();
+        //adds new entries to the adjacency map of both tasks and employees
+        for (Employee employee: task.possibleAssignee) {
+            Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
+            //Integer employeeId = employee.getId();
+            Map<Vertex, Boolean> adjacentVerticesOfEmployee = new HashMap<>();
+
+            if (employeeMap.containsKey(employeeVertex)) {
+                adjacentVerticesOfEmployee = employeeMap.get(employeeVertex);
+            } else {
+                adjacentVerticesOfEmployee = new HashMap<>();
+            }
+            totalEmployeeMatches++;
+            adjacentVerticesOfEmployee.put(taskVertex, false);
+            employeeMap.put(employeeVertex, adjacentVerticesOfEmployee);
+
+            totalTaskMatches++;
+            adjacentVerticesOfTask.put(employeeVertex, false);
+        }
+        taskMap.put(taskVertex, adjacentVerticesOfTask);
     }
 
     private void filterPossibleAssignee(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> definingSkillEmployees) throws IOException {
@@ -84,16 +101,23 @@ public class BipartiteGraph {
             }
         }
 
+
+        if (!strategyClass.equals(GreedyAlgorithm.class)) {
+            removeCandiatesWithTimeOverlappingTasks(task);
+        }
+    }
+
+    private void removeCandiatesWithTimeOverlappingTasks(Task task) {
         Iterator it = task.possibleAssignee.iterator();
 
-        choosingNextEmployee:
+        candidateWithTimeOverlappingTasksFiltering:
         while (it.hasNext()) {
             Employee employee = (Employee) it.next();
             try {
                 if (employee.getTasks()==null || employee.getTasks().size()==0)
-                    continue choosingNextEmployee;
+                    continue candidateWithTimeOverlappingTasksFiltering;
                 else {
-                    for (Task employeeTask : employee.getTasks()) {
+                    for (Task employeeTask: employee.getTasks()) {
                         if (task.timeOverlapWith(employeeTask))
                             it.remove();
                     }
@@ -102,7 +126,6 @@ public class BipartiteGraph {
                 e.printStackTrace();
             }
         }
-
     }
 
     private int getIndexOfDefiningSkill(ArrayList<Skill> taskSkills) throws IOException {
@@ -156,4 +179,9 @@ public class BipartiteGraph {
     public Map<Vertex, Map<Vertex, Boolean>> getEmployeeMap() {
         return employeeMap;
     }
+
+    public List<Pair<Integer, ArrayList>> getListOfAdjacencyLists() {
+        return listOfAdjacencyLists;
+    }
+
 }
