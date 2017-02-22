@@ -18,6 +18,7 @@ import logic.FordFulkersonAlgorithm;
 import logic.GreedyAlgorithm;
 import logic.StrategyContext;
 import models.Skill;
+import models.SystemData;
 import models.Task;
 
 import java.io.IOException;
@@ -27,15 +28,15 @@ import java.util.List;
  * Created by nura on 06/12/16.
  */
 public class TasksPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
+    final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
     TableView table;
     private String[] cardValues;
     private HBox pageHBox;
     private List<Task> tasksToAllocate;
     private List<Task> result;
+    private List<Task> selectedTasks = data;
     private Button greedyRecButton;
     private Button ffRecButton;
-    final ObservableList<Task> data = FXCollections.observableArrayList(
-            TaskUtils.getAllTasks());
 
     private static TasksPage ourInstance = new TasksPage();
 
@@ -61,7 +62,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         TaskUtils.updateEntity(task);
                     }
                 });
-                MainUI.refreshTables();
+                table.refresh();
 
             }
         });
@@ -163,7 +164,8 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
     @Override
     public void handle(ActionEvent event) {
-        tasksToAllocate = data;
+
+        tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             result = new StrategyContext(GreedyAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
             System.out.println("GREEDY");
@@ -173,9 +175,11 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         } else {
             return;
         }
-        data.clear();
+        /*data.clear();
         data.addAll(result);
-        table.setItems(data);
+        table.setItems(data)*/;
+        table.refresh();
+        //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
         //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);
     }

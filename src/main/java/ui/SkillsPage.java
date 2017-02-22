@@ -9,16 +9,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import models.Employee;
 import models.Skill;
+import models.SystemData;
 import models.Task;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by nura on 06/12/16.
  */
 public class SkillsPage extends AbstractPage{
-    final ObservableList<Skill> data = FXCollections.observableArrayList(
-            SkillUtils.getAllSkills());
+    final ObservableList<Skill> data = FXCollections.observableArrayList(SystemData.allSkills);
     private String[] cardValues;
     TableView table;
     private static SkillsPage ourInstance = new SkillsPage();

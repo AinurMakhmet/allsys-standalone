@@ -3,6 +3,7 @@ package logic;
 import entity_utils.TaskUtils;
 import javafx.util.Pair;
 import models.Employee;
+import models.SystemData;
 import models.Task;
 import models.bipartite_matching.BipartiteGraph;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class GreedyAlgorithm extends Strategy {
             //Greedy algorithm allocates the task to the first employee in the list.
             //Get the new task
             //TODO: why accessing a task from the database?
-            Task toAllocate = TaskUtils.getTask(listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getKey());
+            Task toAllocate = SystemData.getAllTasksMap().get(listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getKey());
             Employee chosenEmployee = findAvailableEmployee(toAllocate, indexWithMinPossibleEmployees);
 
             if (chosenEmployee!=null) {

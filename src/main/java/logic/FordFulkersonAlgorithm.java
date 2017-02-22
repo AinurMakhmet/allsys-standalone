@@ -3,6 +3,7 @@ package logic;
 import entity_utils.EmployeeUtils;
 import entity_utils.TaskUtils;
 import models.Employee;
+import models.SystemData;
 import models.Task;
 import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
@@ -82,9 +83,9 @@ public class FordFulkersonAlgorithm extends Strategy {
         residualNetwork.printGraph();
         findMatching();
         matching.forEach((a, b)-> {
-            Task task = TaskUtils.getTask(a.getVertexId());
+            Task task = SystemData.getAllTasksMap().get(a.getVertexId());
             remainingTasksToAllocate.remove(task);
-            Employee employee = EmployeeUtils.getEmployee(b.getVertexId());
+            Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
             recommendedAllocation.add(task);
             System.out.println(task.getName() + " is matched to " + employee.getFirstName());
@@ -100,7 +101,10 @@ public class FordFulkersonAlgorithm extends Strategy {
                 });
     }
 
-
+    /**
+     * O(m), where m is the number of edges in the residual graph.
+     * @return
+     */
     private boolean findAugmentingPathBFS() {
         augmentedPathBFS = new HashMap<>();
         Queue<Vertex> traversalQueue = new LinkedList<>();
@@ -155,6 +159,12 @@ public class FordFulkersonAlgorithm extends Strategy {
         return vertexToReturn;
     }
 
+    /**
+     *
+     * n-1 is length of the longest possible augmented path
+     * Therfore O(n) is the running time for constructing residual network, where n is the number of nodes(employees + tasks + source a+ sink) and
+     * @param
+     */
     private void constructResidualNetworkBFS() {
         Vertex childVertex = SINK_VERTEX;
         Vertex parentVertex = childVertex;

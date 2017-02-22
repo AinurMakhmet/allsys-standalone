@@ -90,6 +90,7 @@ public class StrategyContext {
             }
             result.add(task);
         }
+        tasksToAllocate = null;
         numberOfTasksUnvalidForAllocation = result.size();
 
     }

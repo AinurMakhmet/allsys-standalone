@@ -3,6 +3,7 @@ package servers;
 import constants.C;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import models.SystemData;
 import org.apache.commons.configuration.ConfigurationException;
 import ui.MainUI;
 
@@ -20,6 +21,7 @@ public class LocalServer extends Application{
         try {
             C.initConstants();
             SqlServerConnection.acquireConnection();
+            SystemData.getDataFromDatabase();
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }

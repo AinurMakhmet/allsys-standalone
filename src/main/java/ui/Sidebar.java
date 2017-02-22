@@ -103,15 +103,18 @@ public class Sidebar extends VBox implements EventHandler {
         ((Hyperlink) event.getSource()).getStyleClass().remove("menu-item-non-clicked");
         ((Hyperlink) event.getSource()).getStyleClass().add("menu-item-clicked");
 
-        if (event.getSource() == skillsLink) {
-            MainUI.borderPane.setCenter(SkillsPage.getInstance());
-            MainUI.borderPane.setRight(SkillsPage.getInstance().addCard());
+        if (event.getSource()==tasksLink) {
+            MainUI.borderPane.setCenter(TasksPage.getInstance());
+            MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
+            TasksPage.getInstance().table.refresh();
         } else if (event.getSource() == employeesLink) {
             MainUI.borderPane.setCenter(EmployeesPage.getInstance());
             MainUI.borderPane.setRight(EmployeesPage.getInstance().addCard());
-        } else if (event.getSource()==tasksLink) {
-            MainUI.borderPane.setCenter(TasksPage.getInstance());
-            MainUI.borderPane.setRight(TasksPage.getInstance().addCard());
+            EmployeesPage.getInstance().table.refresh();
+        } else if (event.getSource() == skillsLink) {
+            MainUI.borderPane.setCenter(SkillsPage.getInstance());
+            MainUI.borderPane.setRight(SkillsPage.getInstance().addCard());
+            SkillsPage.getInstance().table.refresh();
         }
 
         visitedPageLink = (Hyperlink)event.getSource();

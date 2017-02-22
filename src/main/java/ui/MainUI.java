@@ -38,15 +38,15 @@ public class MainUI {
     }
 
     static void refreshTables() {
-        TasksPage.getInstance().data.clear();
+        /*TasksPage.getInstance().data.clear();
         TasksPage.getInstance().data.addAll(TaskUtils.getAllTasks());
-        TasksPage.getInstance().table.refresh();
-        EmployeesPage.getInstance().data.clear();
+        */TasksPage.getInstance().table.refresh();
+        /*EmployeesPage.getInstance().data.clear();
         EmployeesPage.getInstance().data.addAll(EmployeeUtils.getAllEmployees());
-        EmployeesPage.getInstance().table.refresh();
-        SkillsPage.getInstance().data.clear();
+        */EmployeesPage.getInstance().table.refresh();
+        /*SkillsPage.getInstance().data.clear();
         SkillsPage.getInstance().data.addAll(SkillUtils.getAllSkills());
-        SkillsPage.getInstance().table.refresh();
+        */SkillsPage.getInstance().table.refresh();
     }
 
 }
