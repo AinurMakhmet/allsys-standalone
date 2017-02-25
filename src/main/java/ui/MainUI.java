@@ -26,7 +26,7 @@ public class MainUI {
         //Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main-view.fxml"));
         stage.setTitle("Allsys - Task Allocation system");
 
-        Scene scene = new Scene(borderPane, 1000, 500);
+        Scene scene = new Scene(borderPane);
         scene.setFill(Color.GHOSTWHITE);
         scene.getStylesheets().add(String.valueOf(getClass().getClassLoader().getResource("main.css")));
 
