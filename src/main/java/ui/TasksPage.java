@@ -4,13 +4,11 @@ import entity_utils.TaskUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -22,6 +20,7 @@ import models.SystemData;
 import models.Task;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -34,9 +33,14 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     private HBox pageHBox;
     private List<Task> tasksToAllocate;
     private List<Task> result;
-    private List<Task> selectedTasks = data;
+    private List<Task> selectedTasks = new LinkedList<>();
     private Button greedyRecButton;
     private Button ffRecButton;
+    private Button selectTasksButton;
+    private List<Task> lastSavedAllocation;
+    private ListChangeListener<Task> multipleSelectionListener;
+    ChangeListener changeListener;
+
 
     private static TasksPage ourInstance = new TasksPage();
 
@@ -55,7 +59,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                result.forEach(task -> {
+                selectedTasks.forEach(task -> {
                     if (task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
                         task.setEmployee(task.getRecommendedAssignee());
                         task.setRecommendedAssignee(null);
@@ -66,9 +70,51 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
             }
         });
+
+
+        Button deAllocateButton = new Button("Deallocate");
+        deAllocateButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                selectedTasks.forEach(task -> {
+                    if (task.getEmployee()!=null ) {
+                        task.setEmployee(null);
+                        TaskUtils.updateEntity(task);
+                    }
+                });
+                table.refresh();
+
+            }
+        });
+
+        selectTasksButton = new Button("Select Tasks");
+        selectTasksButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(((Button)event.getSource()).getText().equals("Select Tasks")) {
+                    table.getSelectionModel().setSelectionMode(
+                            SelectionMode.MULTIPLE
+                    );
+                    table.getSelectionModel().getSelectedItems().addListener(multipleSelectionListener);
+                    table.getSelectionModel().selectedItemProperty().removeListener(changeListener);
+
+                    selectTasksButton.setText("Finish Selection");
+                } else {
+                    table.getSelectionModel().setSelectionMode(
+                            SelectionMode.SINGLE
+                    );
+                    table.getSelectionModel().getSelectedItems().removeListener(multipleSelectionListener);
+                    table.getSelectionModel().selectedItemProperty().addListener(changeListener);
+                    selectTasksButton.setText("Select Tasks");
+
+                }
+            }
+        });
         top.getChildren().add(greedyRecButton);
         top.getChildren().add(ffRecButton);
         top.getChildren().add(allocateButton);
+        top.getChildren().add(deAllocateButton);
+        top.getChildren().add(selectTasksButton);
         pageHBox = new HBox();
         pageHBox.setSpacing(8);
         setCenter(pageHBox);
@@ -116,33 +162,48 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         table.getColumns().addAll(id, name, startTime, endTime, priorityLevel, employeeName, recommendedAssignee);
         table.setItems(data);
 
-        table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection!=null) {
-                try {
-                    String skills = "---";
-                    if (((Task) newSelection).getSkills()!=null){
-                        skills="";
-                        for (Skill skill : ((Task) newSelection).getSkills()) {
-                            skills += skill.getName() + ", ";
+        changeListener = new ChangeListener() {
+            @Override
+            public void changed(ObservableValue obs, Object oldSelection, Object newSelection) {
+                if (newSelection!=null) {
+                    try {
+                        String skills = "---";
+                        if (((Task) newSelection).getSkills()!=null){
+                            skills="";
+                            for (Skill skill : ((Task) newSelection).getSkills()) {
+                                skills += skill.getName() + ", ";
+                            }
                         }
+                        cardValues= new String[]{
+                                ((Task)newSelection).getId().toString(),
+                                ((Task)newSelection).getName(),
+                                ((Task) newSelection).getDescription(),
+                                ((Task) newSelection).getStartTime().toString(),
+                                ((Task) newSelection).getEndTime().toString(),
+                                ((Task) newSelection).getPriority().toString(),
+                                skills,
+                                ((Task) newSelection).getRecommendedAssigneeName()==null ? "not recommendation" : ((Task) newSelection).getRecommendedAssigneeName(),
+                                ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
+                        };
+                        setNewCard(cardValues);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    cardValues= new String[]{
-                            ((Task)newSelection).getId().toString(),
-                            ((Task)newSelection).getName(),
-                            ((Task) newSelection).getDescription(),
-                            ((Task) newSelection).getStartTime().toString(),
-                            ((Task) newSelection).getEndTime().toString(),
-                            ((Task) newSelection).getPriority().toString(),
-                            skills,
-                            ((Task) newSelection).getRecommendedAssigneeName()==null ? "not recommendation" : ((Task) newSelection).getRecommendedAssigneeName(),
-                            ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
-                    };
-                    setNewCard(cardValues);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
-        });
+        };
+        table.getSelectionModel().selectedItemProperty().addListener(changeListener);
+
+
+        multipleSelectionListener = new ListChangeListener<Task>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends Task>  c) {
+                if (!selectedTasks.isEmpty()) {
+                    selectedTasks.clear();
+                }
+                selectedTasks.addAll(c.getList());
+            }
+        };
 
         return table;
     }
@@ -164,7 +225,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
     @Override
     public void handle(ActionEvent event) {
-
+        if (selectedTasks==null || selectedTasks.isEmpty()) {
+            System.out.println("Please select the tasks");
+            return;
+        }
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             result = new StrategyContext(GreedyAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
@@ -175,6 +239,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         } else {
             return;
         }
+        assert(result.size()==selectedTasks.size())
         /*data.clear();
         data.addAll(result);
         table.setItems(data)*/;

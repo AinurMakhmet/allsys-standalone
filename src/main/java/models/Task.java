@@ -147,7 +147,11 @@ public class Task implements DatabaseEntity{
             possibleAssignee.clear();
         }
         this.employee = employee;
-        employeeName = employee.getFirstName()+ " " + employee.getLastName();
+        if (employee!=null) {
+            employeeName = employee.getFirstName() + " " + employee.getLastName();
+        } else {
+            employeeName =null;
+        }
     }
 
     public String getEmployeeName() {
