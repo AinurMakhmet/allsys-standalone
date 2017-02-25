@@ -12,12 +12,12 @@ import java.util.*;
  * Created by nura on 16/02/17.
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfEmployees = 5;
+    public static final int numberOfEmployees = 500;
     public static final int numberOfTasks = numberOfEmployees * 2;
-    public static final int numberOfSkillLevels = 20;
+    public static final int numberOfSkillLevels = 10;
     public static final int totalNumberOfSkills = numberOfSkillLevels*12;
-    public static final int maxNumberOfSkillsPerEmployee = 15;
-    public static final int maxNumberOfSkillsPerTask = 7;
+    public static final int maxNumberOfSkillsPerEmployee = 4;
+    public static final int maxNumberOfSkillsPerTask = 3;
     public static int numberOfEmployeeSkillsRows = 0;
     public static int numberOfTaskSkillsRows = 0;
 
@@ -57,17 +57,20 @@ public class LargeDatasetGenerator {
         //+value1+"', '"+value2+"', '"+value3+"', '"+value4+"');";
         Date startDate;
         Date endDate;
+        /*Date startRangeDate;
+        Date endRangeDate;
+        */
         Random rand = new Random();
         String[] priorities = {"HIGH", "MEDIUM", "LOW"};
 
         int i=0;
         while(i<numberOfTasks) {
-            value1 = new StringBuilder().append("Task").append(((Integer)i).toString()).toString();
+            value1 = new StringBuilder().append("Task").append(((Integer)(i+1)).toString()).toString();
             value2 = priorities[rand.nextInt(3)];
-            startDate = getRandomDate();
-            endDate = getRandomDate();
+            startDate = getValidRandomDate();
+            endDate = getValidRandomDate();
             while (endDate.before(startDate)) {
-                endDate = getRandomDate();
+                endDate = getValidRandomDate();
             }
             value3 = getDateValueInString(startDate);
             value4 = getDateValueInString(endDate);
@@ -86,6 +89,25 @@ public class LargeDatasetGenerator {
         }
     }
 
+    public static Date getValidRandomDate() {
+        int month, year, day;
+        Random call = new Random();
+        month = call.nextInt(1);
+        //year = call.nextInt(2017) + 1;
+        year = 2017;
+        day  = call.nextInt(30);
+
+        GregorianCalendar calendar = new GregorianCalendar(year, month, day);
+        Date now = calendar.getTime();
+        //System.out.println(now);
+        return now;
+    }
+
+    /**
+     * https://coderanch.com/t/556144/java/generate-random-date-gregorian-calendar
+     * @param date
+     * @return
+     */
     private static String getDateValueInString(Date date) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int year  = localDate.getYear();
