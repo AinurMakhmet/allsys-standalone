@@ -1,11 +1,12 @@
 package logic;
 
-import entity_utils.TaskUtils;
 import javafx.util.Pair;
 import models.Employee;
 import models.SystemData;
 import models.Task;
 import models.bipartite_matching.BipartiteGraph;
+import servers.LocalServer;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -29,18 +30,11 @@ public class GreedyAlgorithm extends Strategy {
     public List<Task> allocate(List<Task> tasksToAllocate) {
         recommendedAllocation = new LinkedList<>();
 
-        /*begTime = System.currentTimeMillis();
-        listOfAdjacencyLists = new GreedyGraph(tasksToAllocate).getListOfAdjacencyLists();
-        endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Total time for constructing Greedy Graph structure: %d ms\n", (endTime-begTime));
-        */
         begTime = System.currentTimeMillis();
         BipartiteGraph graph = new BipartiteGraph(GreedyAlgorithm.class, tasksToAllocate);
         listOfAdjacencyLists = graph.getListOfAdjacencyLists();
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: %d ms\n", (endTime-begTime));
-
-        //graph.printGraph();
+        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: {} ms", (endTime-begTime));
 
         begTime = System.currentTimeMillis();
         numOfUnnalocatedTasks=0;
@@ -63,7 +57,7 @@ public class GreedyAlgorithm extends Strategy {
             if (chosenEmployee!=null) {
                 toAllocate.setRecommendedAssignee(chosenEmployee);
                 /*if (!updateEdgesOfGreedyGraph(chosenEmployee)) {
-                    System.out.println("Was unable to update appropriately the lists in greedy algorithm");
+                    LocalServer.ffLogger.error("Was unable to update appropriately the lists in greedy algorithm");
                     throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
                 }*/
             } else {
@@ -74,7 +68,7 @@ public class GreedyAlgorithm extends Strategy {
             tasksToAllocate.remove(toAllocate);
         }
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Time for running algorithm: %d ms\n", (endTime-begTime));
+        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
 
         return recommendedAllocation;
     }

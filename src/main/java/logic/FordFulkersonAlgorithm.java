@@ -1,13 +1,12 @@
 package logic;
 
-import entity_utils.EmployeeUtils;
-import entity_utils.TaskUtils;
 import models.Employee;
 import models.SystemData;
 import models.Task;
 import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
 import models.bipartite_matching.Vertex;
+import servers.LocalServer;
 
 import java.util.*;
 
@@ -55,7 +54,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             }
         });
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Time for running algorithm: %d ms\n", (endTime-begTime));
+        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
         return recommendedAllocation;
     }
 
@@ -63,7 +62,7 @@ public class FordFulkersonAlgorithm extends Strategy {
         begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(FordFulkersonAlgorithm.class, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Time for constrcuting data structure: %d ms\n", (endTime-begTime));
+        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
         return residualNetwork.getSource().getValue().size()>0;
     }
 
@@ -73,14 +72,13 @@ public class FordFulkersonAlgorithm extends Strategy {
         pathNumber = 0;
         numOfUnnalocatedTasks=0;
         //Starts constructing a path from the source;
-        //residualNetwork.printGraph();
+        residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
-            //System.out.println("Path Number "+ ++pathNumber);
+            //LocalServer.ffLogger.trace("Path Number "+ ++pathNumber);
             constructResidualNetworkBFS();
-            //residualNetwork.printGraph();
+            residualNetwork.printGraph();
         }
-        //GreeresidualNetwork.printGraph();
         findMatching();
         matching.forEach((a, b)-> {
             Task task = SystemData.getAllTasksMap().get(a.getVertexId());
@@ -88,7 +86,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
             recommendedAllocation.add(task);
-            System.out.println(task.getName() + " is matched to " + employee.getFirstName());
+            LocalServer.ffLogger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
         });
         return remainingTasksToAllocate;
     }
@@ -177,7 +175,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             childVertex = parentVertex;
         }
 
-        //path.forEach(vertex ->System.out.println(vertex));
+        //path.forEach(vertex ->LocalServer.ffLogger.trace(vertex));
 
         augmentedPathQueue.clear();
         augmentedPathQueue.addAll(path);

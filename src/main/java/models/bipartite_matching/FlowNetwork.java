@@ -1,6 +1,7 @@
 package models.bipartite_matching;
 
 import javafx.util.Pair;
+import servers.LocalServer;
 
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class FlowNetwork {
                     Map<Vertex, Boolean> adjacentVertices = new HashMap();
                     adjacentVertices.put(SINK_VERTEX, false);
                     employeeMap.put(employeeVertex, adjacentVertices);
-                    //System.out.println("employee "+ employeeId);
+                    //LocalServer.ffLogger.trace("employee "+ employeeId);
                 });
 
 
@@ -57,49 +58,46 @@ public class FlowNetwork {
     }
 
     public void printGraph() {
-        System.out.println();
-        System.out.println();
-        System.out.println("==============NETWORK START==============");
-        System.out.println("-------Edges from SOURCE to---------: ");
+        LocalServer.ffLogger.trace("==========================NETWORK START==============");
+        LocalServer.ffLogger.trace("------------------------Edges from SOURCE to---------: ");
         Map<Vertex, Boolean> sourceEdges = SOURCE.getValue();
-        sourceEdges.forEach((vertex, isVisited) -> System.out.println("source: t" + vertex.getVertexId()));
-        System.out.println("---------Edges from TASK---------: ");
+        sourceEdges.forEach((vertex, isVisited) -> LocalServer.ffLogger.trace("     source: t{}", vertex.getVertexId()));
+        LocalServer.ffLogger.trace("-------------------------Edges from TASK---------: ");
         taskMap.keySet().forEach(
               taskVertex -> {
-                  System.out.print("t" + taskVertex.getVertexId() + "    : ");
+                  LocalServer.ffLogger.trace("     t{}    : ", taskVertex.getVertexId());
                   Map<Vertex, Boolean> taskEdges = taskMap.get(taskVertex);
                   taskEdges.forEach(
                           (vertex, isVisited)-> {
                               if (vertex.equals(SOURCE_VERTEX)) {
-                                  System.out.print("source, ");
+                                  LocalServer.ffLogger.trace("                 source, ");
                               } else {
-                                System.out.print("e" + vertex.getVertexId() + ", ");
+                                LocalServer.ffLogger.trace("                 e{}, ", vertex.getVertexId());
                               }
                           });
-                  System.out.println();});
+              });
 
-        System.out.println("---------Edges from EMPLOYEE---------: ");
+        LocalServer.ffLogger.trace("------------------------Edges from EMPLOYEE---------: ");
         employeeMap.keySet().forEach(
                 employeeVertex -> {
-                    System.out.print("e" + employeeVertex.getVertexId() + "    : ");
+                    LocalServer.ffLogger.trace("     e{}    :",employeeVertex.getVertexId());
                     Map<Vertex, Boolean> employeeEdges = employeeMap.get(employeeVertex);
                     employeeEdges.forEach(
                             (vertex, isVisited) -> {
                                 if (vertex.equals(SINK_VERTEX)) {
-                                    System.out.print("sink, ");
+                                    LocalServer.ffLogger.trace("                 sink, ");
                                 } else {
-                                    System.out.print("t" + vertex.getVertexId() + ", ");
+                                    LocalServer.ffLogger.trace("                 t{}, ", vertex.getVertexId());
                                 }
                             });
-                    System.out.println();});
+                    });
 
-        System.out.println("---------Edges to SINK---------: ");
+        LocalServer.ffLogger.trace("------------------------Edges to SINK---------: ");
 
         Map<Vertex, Boolean> sinkEdges = SINK.getValue();
         if (sinkEdges !=null){
-            sinkEdges.forEach((vertex, isVisited) -> System.out.println("sink  : e" + vertex.getVertexId() + ",  "));
+            sinkEdges.forEach((vertex, isVisited) -> LocalServer.ffLogger.trace("     sink: e{},  ", vertex.getVertexId()));
         }
-        System.out.println("==============NETWORK END==============");
-        System.out.println();
+        LocalServer.ffLogger.trace("===========================NETWORK END==============\n");
     }
 }

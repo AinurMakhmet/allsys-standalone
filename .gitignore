@@ -1,8 +1,8 @@
 *.class
 
-target/classes/large_dataset/*
+target/classes/*
 src/main/resources/large_dataset/*
-
+src/test/resources/logs/*
 
 
 # Mobile Tools for Java (J2ME)

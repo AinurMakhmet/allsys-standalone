@@ -1,6 +1,7 @@
 package logic;
 
 import models.Task;
+import servers.LocalServer;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,23 +41,20 @@ public class StrategyContext {
         for (int i = 0; i < numTries; ++i) {
             result.addAll(strategy.allocate(highPriorityTasks));
             numberOfUnnalocatedTasksOfHighPriority +=  strategy.numOfUnnalocatedTasks;
-            //result.addAll(mediumPriorityTasks);
-            //result.addAll(lowPriorityTasks);
             result.addAll(strategy.allocate(mediumPriorityTasks));
             numberOfUnnalocatedTasksOfMediumPriority +=  strategy.numOfUnnalocatedTasks;
             result.addAll(strategy.allocate(lowPriorityTasks));
             numberOfUnnalocatedTasksOfLowPriority +=  strategy.numOfUnnalocatedTasks;
         }
         long endTime = System.currentTimeMillis();
-        System.out.printf(strategy.getClass().getSimpleName()+": Total time for %10d tries: %d ms\n", numTries, (endTime-begTime));
+        LocalServer.iLogger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));
         numberOfUnnalocatedTasks+=numberOfTasksUnvalidForAllocation
                 +numberOfUnnalocatedTasksOfHighPriority
                 +numberOfUnnalocatedTasksOfMediumPriority
                 +numberOfUnnalocatedTasksOfLowPriority;
         result.sort(new TaskComparator());
-        result.forEach(task -> System.out.println(task.toString()));
-        System.out.print("Total number of unallocated tasks: "+ numberOfUnnalocatedTasks+". ");
-        System.out.println("Among them number of tasks non-valid for allocation: "+ numberOfTasksUnvalidForAllocation);
+        result.forEach(task -> LocalServer.iLogger.info(task.toString()));
+        LocalServer.iLogger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n",numberOfUnnalocatedTasks, numberOfTasksUnvalidForAllocation);
         return result;
     }
     /**

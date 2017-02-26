@@ -7,6 +7,7 @@ import models.Employee;
 import models.Skill;
 import models.SystemData;
 import models.Task;
+import servers.LocalServer;
 
 import java.io.IOException;
 import java.util.*;
@@ -36,13 +37,14 @@ public class BipartiteGraph {
                 int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
 
                 task.possibleAssignee = (ArrayList<Employee>) taskSkills.get(indexSmallestSize).getEmployees();
-                //System.out.println("task" +task);
+                //LocalServer.ffLogger.traceln("task" +task);
                 taskSkills.remove(indexSmallestSize);
 
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                System.out.println("number of possible assignee for task "+ task.getName()+ " is "+ task.possibleAssignee.size());
+                LocalServer.gLogger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignee.size());
+                LocalServer.ffLogger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignee.size());
 
                 if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
                     listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
@@ -90,8 +92,8 @@ public class BipartiteGraph {
                         break;
                     }
                     else if (j == employeeSkills.size()-1) {
-                        //System.out.println("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
-                        //System.out.println("Employee skill: " + employees.get(i).getSkills());
+                        //LocalServer.ffLogger.trace("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
+                        //LocalServer.ffLogger.trace("Employee skill: " + employees.get(i).getSkills());
 
                         //the employee doesn'task have all the required taskSkills to complete the task,
                         //so it will be removed from the list of candidates
@@ -152,32 +154,30 @@ public class BipartiteGraph {
     }
 
     public void printGraph() {
-        System.out.println("==============BIPARTITE GRAPH START==============");
+        LocalServer.ffLogger.trace("=============================BIPARTITE GRAPH START==============");
 
-        System.out.println("-------Set of tasks---------: ");
-        taskMap.keySet().forEach(taskVertex ->System.out.println("task " + taskVertex.getVertexId()));
+        LocalServer.ffLogger.trace("-----------------------------Set of tasks---------: ");
+        taskMap.keySet().forEach(taskVertex ->LocalServer.ffLogger.trace("         task {}", taskVertex.getVertexId()));
 
-        System.out.println("---------Set of employees---------: ");
-        employeeMap.keySet().forEach(employeeVertex ->System.out.println("employee " + employeeVertex.getVertexId()));
+        LocalServer.ffLogger.trace("-----------------------------Set of employees---------: ");
+        employeeMap.keySet().forEach(employeeVertex ->LocalServer.ffLogger.trace("         employee {}", employeeVertex.getVertexId()));
 
-        System.out.println("---------Set of all task matches---------: ");
+        LocalServer.ffLogger.trace("-----------------------------Set of all task matches---------: ");
         for (Vertex taskVertex: taskMap.keySet()) {
-            System.out.print("task " + taskVertex.getVertexId() + ": ");
+            LocalServer.ffLogger.trace("         task {}: ", taskVertex.getVertexId());
             taskMap.get(taskVertex).forEach((vertex, isVisited) -> {
-                System.out.print("employee " + (Integer)vertex.getVertexId()+ ", ");
+                LocalServer.ffLogger.trace("                 employee {},", (Integer)vertex.getVertexId());
             });
-            System.out.println();
         }
-        System.out.println("---------Set of all employee matches---------: ");
+        LocalServer.ffLogger.trace("------------------------------Set of all employee matches---------: ");
         for (Vertex employeeVertex: employeeMap.keySet()) {
-            System.out.print("employee " + employeeVertex.getVertexId() + ": ");
+            LocalServer.ffLogger.trace("         employee {}:", employeeVertex.getVertexId());
             employeeMap.get(employeeVertex).forEach((vertex, isVisited) ->  {
-                System.out.print("task " + (Integer)vertex.getVertexId()+ ", ");
+                LocalServer.ffLogger.trace("                 task {},", (Integer)vertex.getVertexId());
             });
-            System.out.println();
         }
-        System.out.println(totalEmployeeMatches==totalTaskMatches);
-        System.out.println("==============BIPARTITE GRAPH END==============");
+        assert(totalEmployeeMatches==totalTaskMatches);
+        LocalServer.ffLogger.trace("==============================BIPARTITE GRAPH END==============\n");
     }
 
     public Map<Vertex, Map<Vertex, Boolean>> getTaskMap() {

@@ -18,6 +18,7 @@ import logic.StrategyContext;
 import models.Skill;
 import models.SystemData;
 import models.Task;
+import servers.LocalServer;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -231,18 +232,15 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         }
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
+            LocalServer.gLogger.info("GREEDY");
             result = new StrategyContext(GreedyAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
-            System.out.println("GREEDY");
         } else if (((Button)event.getSource()).equals(ffRecButton)) {
+            LocalServer.ffLogger.info("FF");
             result = new StrategyContext(FordFulkersonAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
-            System.out.println("FF");
         } else {
             return;
         }
-        assert(result.size()==selectedTasks.size())
-        /*data.clear();
-        data.addAll(result);
-        table.setItems(data)*/;
+        assert(result.size()==selectedTasks.size());
         table.refresh();
         //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
