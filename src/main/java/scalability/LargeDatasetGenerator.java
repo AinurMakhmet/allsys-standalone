@@ -14,7 +14,7 @@ import java.util.*;
 public class LargeDatasetGenerator {
     public static final int numberOfEmployees = 500;
     public static final int numberOfTasks = numberOfEmployees * 2;
-    public static final int numberOfSkillLevels = 10;
+    public static final int numberOfSkillLevels = 40;
     public static final int totalNumberOfSkills = numberOfSkillLevels*12;
     public static final int maxNumberOfSkillsPerEmployee = 4;
     public static final int maxNumberOfSkillsPerTask = 3;
