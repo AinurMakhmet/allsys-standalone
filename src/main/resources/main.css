@@ -1,0 +1,40 @@
+.sidebar {
+    -fx-background-color: #a4a7b2;
+}
+.sidebar-item {
+    -fx-padding: 12;
+    -fx-text-fill: #494949;
+    -fx-font-style: normal;
+    -fx-font-weight: bold;
+    -fx-border-style: hidden;
+}
+.menu-item-non-clicked {
+    -fx-background-color: transparent;
+}
+.menu-item-clicked {
+    -fx-background-color: #f4f4f4;
+}
+.menu-title {
+    -fx-text-fill: #2d2d2d;
+    -fx-padding: 15, 15, 12, 15;
+}
+.filter-pane {
+    -fx-background-color: #f4f4f4;
+}
+.filter-item {
+    -fx-font-style: normal;
+    -fx-font-weight: normal;
+    -fx-font-size: 12;
+}
+.filter-title {
+    -fx-font-style: normal;
+    -fx-font-weight: bold;
+    -fx-font-size: 12;
+}
+.page-pane {
+
+}
+
+.card {
+    -fx-background-color: #a4a7b2;
+}
