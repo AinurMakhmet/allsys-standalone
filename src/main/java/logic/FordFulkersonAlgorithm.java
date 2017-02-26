@@ -55,7 +55,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             }
         });
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Total time for running algorithm: %d ms\n", (endTime-begTime));
+        System.out.printf(getClass().getSimpleName()+": Time for running algorithm: %d ms\n", (endTime-begTime));
         return recommendedAllocation;
     }
 
@@ -63,7 +63,7 @@ public class FordFulkersonAlgorithm extends Strategy {
         begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(FordFulkersonAlgorithm.class, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Total time for constrcuting data structure: %d ms\n", (endTime-begTime));
+        System.out.printf(getClass().getSimpleName()+": Time for constrcuting data structure: %d ms\n", (endTime-begTime));
         return residualNetwork.getSource().getValue().size()>0;
     }
 
@@ -73,14 +73,14 @@ public class FordFulkersonAlgorithm extends Strategy {
         pathNumber = 0;
         numOfUnnalocatedTasks=0;
         //Starts constructing a path from the source;
-        residualNetwork.printGraph();
+        //residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
             //System.out.println("Path Number "+ ++pathNumber);
             constructResidualNetworkBFS();
             //residualNetwork.printGraph();
         }
-        residualNetwork.printGraph();
+        //GreeresidualNetwork.printGraph();
         findMatching();
         matching.forEach((a, b)-> {
             Task task = SystemData.getAllTasksMap().get(a.getVertexId());

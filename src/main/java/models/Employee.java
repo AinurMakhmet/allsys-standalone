@@ -11,7 +11,9 @@ import models.bipartite_matching.VertexType;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Model to represent an employee.
@@ -30,6 +32,8 @@ public class Employee implements DatabaseEntity{
     private ForeignCollection<Task> tasks;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<EmployeeSkill> skills;
+    private Set<Task> matchedTasks = new HashSet<>();
+
 
     /**
      * Blank constructor for ORM.
@@ -133,4 +137,17 @@ public class Employee implements DatabaseEntity{
         }
         return output;
     }
+
+    public Set<Task> getMatchedTasks() {
+        return matchedTasks;
+    }
+
+    public void setMatchedTasks(Set<Task> matchedTasks) {
+        this.matchedTasks = matchedTasks;
+    }
+
+    public void addMatchedTasks(Task matchedTask) {
+        matchedTasks.add(matchedTask);
+    }
+
 }

@@ -15,7 +15,6 @@ import java.util.*;
  * It starts with a task that has the least number of possible assignees.
  */
 public class GreedyAlgorithm extends Strategy {
-    //private List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
     private long begTime;
     private long endTime;
@@ -39,7 +38,7 @@ public class GreedyAlgorithm extends Strategy {
         BipartiteGraph graph = new BipartiteGraph(GreedyAlgorithm.class, tasksToAllocate);
         listOfAdjacencyLists = graph.getListOfAdjacencyLists();
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Total time for constructing Bipartite Graph structure: %d ms\n", (endTime-begTime));
+        System.out.printf(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: %d ms\n", (endTime-begTime));
 
         //graph.printGraph();
 
@@ -57,9 +56,7 @@ public class GreedyAlgorithm extends Strategy {
 
             int indexWithMinPossibleEmployees = listOfAdjacencyLists.size() - 1;
 
-            //Greedy algorithm allocates the task to the first employee in the list.
-            //Get the new task
-            //TODO: why accessing a task from the database?
+            //Greedy algorithm allocates the task to the first available employee in the list.
             Task toAllocate = SystemData.getAllTasksMap().get(listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getKey());
             Employee chosenEmployee = findAvailableEmployee(toAllocate, indexWithMinPossibleEmployees);
 
@@ -77,7 +74,7 @@ public class GreedyAlgorithm extends Strategy {
             tasksToAllocate.remove(toAllocate);
         }
         endTime = System.currentTimeMillis();
-        System.out.printf(getClass().getSimpleName()+": Total time for running algorithm: %d ms\n", (endTime-begTime));
+        System.out.printf(getClass().getSimpleName()+": Time for running algorithm: %d ms\n", (endTime-begTime));
 
         return recommendedAllocation;
     }
@@ -101,15 +98,25 @@ public class GreedyAlgorithm extends Strategy {
 
     private Employee findAvailableEmployee(Task toAllocate, int indexWithMinPossibleEmployees) {
         choosingNextEmployee:
-        for (Employee chosenEmployee: (ArrayList<Employee>) listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getValue()) {
+        for (Employee employee: (ArrayList<Employee>) listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getValue()) {
+            Employee chosenEmployee = SystemData.getAllEmployeesMap().get(employee.getId());
             try {
-                if (chosenEmployee.getTasks()==null || chosenEmployee.getTasks().size()==0)
+                if ((chosenEmployee.getTasks()==null || chosenEmployee.getTasks().size()==0) && (chosenEmployee.getMatchedTasks()==null || chosenEmployee.getMatchedTasks().size()==0))
                     return chosenEmployee;
                 else {
-                    for (Task employeeTask : chosenEmployee.getTasks()) {
-                        if (toAllocate.timeOverlapWith(employeeTask))
-                            continue choosingNextEmployee;
+                    if (!(chosenEmployee.getTasks()==null || chosenEmployee.getTasks().size()==0)) {
+                        for (Task employeeTask : chosenEmployee.getTasks()) {
+                            if (toAllocate.timeOverlapWith(employeeTask))
+                                continue choosingNextEmployee;
+                        }
                     }
+                    if (!(chosenEmployee.getMatchedTasks()==null || chosenEmployee.getMatchedTasks().size()==0)) {
+                        for (Task employeeMatchedTask: chosenEmployee.getMatchedTasks()) {
+                            if (toAllocate.timeOverlapWith(employeeMatchedTask))
+                                continue choosingNextEmployee;
+                        }
+                    }
+
                     return chosenEmployee;
                 }
             } catch (IOException e) {

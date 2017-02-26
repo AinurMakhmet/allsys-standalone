@@ -5,6 +5,7 @@ import logic.GreedyAlgorithm;
 import logic.Strategy;
 import models.Employee;
 import models.Skill;
+import models.SystemData;
 import models.Task;
 
 import java.io.IOException;
@@ -41,8 +42,7 @@ public class BipartiteGraph {
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                System.out.println("possible assignee for task "+ task.getName()+ " are ");
-                task.possibleAssignee.forEach(employee-> System.out.println(employee.getId()));
+                System.out.println("number of possible assignee for task "+ task.getName()+ " is "+ task.possibleAssignee.size());
 
                 if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
                     listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
@@ -61,7 +61,7 @@ public class BipartiteGraph {
         Vertex taskVertex = new Vertex(task.getId(), VertexType.TASK);
         Map<Vertex, Boolean> adjacentVerticesOfTask = new HashMap<>();
         //adds new entries to the adjacency map of both tasks and employees
-        for (Employee employee: task.possibleAssignee) {
+        task.possibleAssignee.forEach(employee ->  {
             Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
             //Integer employeeId = employee.getId();
             Map<Vertex, Boolean> adjacentVerticesOfEmployee = new HashMap<>();
@@ -77,7 +77,7 @@ public class BipartiteGraph {
 
             totalTaskMatches++;
             adjacentVerticesOfTask.put(employeeVertex, false);
-        }
+        });
         taskMap.put(taskVertex, adjacentVerticesOfTask);
     }
 
@@ -112,14 +112,22 @@ public class BipartiteGraph {
 
         candidateWithTimeOverlappingTasksFiltering:
         while (it.hasNext()) {
-            Employee employee = (Employee) it.next();
+            Employee employee = SystemData.getAllEmployeesMap().get(((Employee) it.next()).getId());
             try {
-                if (employee.getTasks()==null || employee.getTasks().size()==0)
+                if ((employee.getTasks()==null || employee.getTasks().size()==0)&& (employee.getMatchedTasks().size()==0)) {
                     continue candidateWithTimeOverlappingTasksFiltering;
-                else {
-                    for (Task employeeTask: employee.getTasks()) {
-                        if (task.timeOverlapWith(employeeTask))
-                            it.remove();
+                } else {
+                    if (!(employee.getTasks() == null || employee.getTasks().size() == 0)) {
+                        for (Task employeeTask : employee.getTasks()) {
+                            if (task.timeOverlapWith(employeeTask))
+                                it.remove();
+                        }
+                    }
+                    if (!(employee.getMatchedTasks() == null || employee.getMatchedTasks().size() == 0)) {
+                        for (Task employeeMatchedTask : employee.getMatchedTasks()) {
+                            if (task.timeOverlapWith(employeeMatchedTask))
+                                it.remove();
+                        }
                     }
                 }
             } catch (IOException e) {
