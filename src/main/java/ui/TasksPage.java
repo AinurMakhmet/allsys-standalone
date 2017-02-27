@@ -130,6 +130,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         TableColumn employeeName = new TableColumn("Employee");
         TableColumn startTime = new TableColumn("Start time");
         TableColumn endTime = new TableColumn("End Time");
+        TableColumn projectId = new TableColumn("Project ID");
         TableColumn priorityLevel = new TableColumn("Priority Level");
         TableColumn recommendedAssignee = new TableColumn("Recommended Assignee (Employee)");
 
@@ -153,6 +154,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         endTime.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("endTime"));
 
+        projectId.setMinWidth(50);
+        projectId.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("projectId"));
+
         priorityLevel.setMinWidth(130);
         priorityLevel.setCellValueFactory(new PropertyValueFactory<Task, String>("priority"));
 
@@ -160,7 +165,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         recommendedAssignee.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("recommendedAssigneeName"));
 
-        table.getColumns().addAll(id, name, startTime, endTime, priorityLevel, employeeName, recommendedAssignee);
+        table.getColumns().addAll(id, name, startTime, endTime, priorityLevel, projectId, employeeName, recommendedAssignee);
         table.setItems(data);
 
         changeListener = new ChangeListener() {
@@ -179,6 +184,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                 ((Task)newSelection).getId().toString(),
                                 ((Task)newSelection).getName(),
                                 ((Task) newSelection).getDescription(),
+                                ((Task) newSelection).getProject()==null ? "is not part of a project" : ((Task) newSelection).getProject().getId().toString(),
                                 ((Task) newSelection).getStartTime()==null ? "" : ((Task) newSelection).getStartTime().toString(),
                                 ((Task) newSelection).getEndTime()==null ? "" : ((Task) newSelection).getEndTime().toString(),
                                 ((Task) newSelection).getPriority().toString(),
@@ -210,8 +216,8 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     }
 
     VBox addCard() {
-        String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Priority Level", "Skills required", "Recommended Assignee", "Allocated to employee"};
-        cardValues = new String[]{"1", "Java development", "", "2016-12-01", "2016-12-03", "Priority Level", "Java, git, JUnit, Spring", "Employee name here", "Employee name here"};
+        String[] names = {"ID", "Name", "Description", "Project id", "Start date", "End Date", "Priority Level", "Skills required", "Recommended Assignee", "Allocated to employee"};
+        cardValues = new String[]{"1", "Java development", "", "Project id", "2016-12-01", "2016-12-03", "Priority Level", "Java, git, JUnit, Spring", "Employee name here", "Employee name here"};
         return super.addCard(names, cardValues);
     }
 

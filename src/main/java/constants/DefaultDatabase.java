@@ -5,13 +5,13 @@ public class DefaultDatabase {
 	public static String[] InsertQueriesEmployee = new String[]{
 			//"SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";",
 			//"SET time_zone = \"+00:00\";",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee1', 'Dede');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee2', 'Emin');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee3', 'Ekin');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee4', 'Kartal');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee5', 'Aksoy');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee6', 'Nas');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee7', 'Albayrak');",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee1', 'Dede', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee2', 'Emin', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee3', 'Ekin', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee4', 'Kartal', 1);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee5', 'Aksoy', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee6', 'Nas', 5);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee7', 'Albayrak', 1);",
 			//"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Altan', 'Gunduz');",
 			//"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Asli', 'Kiraz');"
 	};
@@ -25,12 +25,12 @@ public class DefaultDatabase {
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('devops', 'HIGH', '2016-12-1', '2016-12-10', 7);",
 *///			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('integration-test', 'HIGH', '2016-12-1', '2016-12-3', 2);",
 //			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('bipartite_matching-config', 'LOW', '2016-12-2', '2016-12-2', 1);",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task1', 'HIGH', '2017-1-7', null);",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task2', 'HIGH', '2017-1-26', '2017-1-29');",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task3', 'HIGH', '2017-1-13', '2017-1-28');",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task4', 'HIGH', '2017-1-27', '2017-1-28');",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task5', 'HIGH', '2017-1-5', '2017-1-10');",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task6', 'HIGH', '2017-1-2', '2017-1-27');",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task1', 'HIGH', '2017-1-7', null, '1');",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task2', 'HIGH', '2017-1-26', '2017-1-29', 2);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task3', 'HIGH', '2017-1-13', '2017-1-28', 3);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task4', 'HIGH', '2017-1-27', '2017-1-28', 1);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task5', 'HIGH', '2017-1-5', '2017-1-10', 2);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task6', 'HIGH', '2017-1-2', '2017-1-27', 3);",
 			/*"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task7', 'HIGH', '2017-1-9', '2017-1-29');",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task8', 'HIGH', '2017-1-2', '2017-1-23');",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task9', 'HIGH', '2017-1-25', '2017-1-28');",
@@ -120,6 +120,16 @@ public class DefaultDatabase {
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('12', '6');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('13', '1');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('14', '2');"*/
+	};
+
+	public static String[] InsertQueriesProject = new String[]{
+			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project1', '15');",
+			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project2', '10');",
+			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project3', '15');",
+			/*"INSERT INTO `project` (`name`, `cost`) VALUES ('Project4', 'Kartal');",
+			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project5', 'Aksoy');",
+			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project6', 'Nas');",
+			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project7', 'Albayrak');",*/
 	};
 
 }

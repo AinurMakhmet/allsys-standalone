@@ -18,6 +18,7 @@ public class Sidebar extends VBox implements EventHandler {
     private Hyperlink tasksLink =  new Hyperlink("Assignments");
     private Hyperlink employeesLink =  new Hyperlink("Employees");
     private Hyperlink skillsLink =  new Hyperlink("Skills");
+    private Hyperlink projectsLink =  new Hyperlink("Projects");
     private Hyperlink importDataLink =  new Hyperlink("Import Data");
     private Hyperlink visitedPageLink = tasksLink;
 
@@ -40,16 +41,17 @@ public class Sidebar extends VBox implements EventHandler {
         tasksLink.setOnAction(this);
         employeesLink.setOnAction(this);
         skillsLink.setOnAction(this);
+        projectsLink.setOnAction(this);
 
         Hyperlink pageHyperlinks[] = new Hyperlink[] {
                 tasksLink,
                 employeesLink,
                 skillsLink,
-                //allocationRoomLink,
+                projectsLink,
                 importDataLink
         };
 
-        for (int i=0; i<4; i++) {
+        for (int i=0; i<5; i++) {
             this.getChildren().add(pageHyperlinks[i]);
             pageHyperlinks[i].getStyleClass().add("sidebar-item");
             pageHyperlinks[i].setPadding(new Insets(0, 0, 0, 8));
@@ -111,6 +113,10 @@ public class Sidebar extends VBox implements EventHandler {
             MainUI.borderPane.setCenter(EmployeesPage.getInstance());
             MainUI.borderPane.setRight(EmployeesPage.getInstance().addCard());
             EmployeesPage.getInstance().table.refresh();
+        } else if (event.getSource() == projectsLink) {
+            MainUI.borderPane.setCenter(ProjectsPage.getInstance());
+            MainUI.borderPane.setRight(ProjectsPage.getInstance().addCard());
+            SkillsPage.getInstance().table.refresh();
         } else if (event.getSource() == skillsLink) {
             MainUI.borderPane.setCenter(SkillsPage.getInstance());
             MainUI.borderPane.setRight(SkillsPage.getInstance().addCard());

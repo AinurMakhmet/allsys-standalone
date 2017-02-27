@@ -7,6 +7,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,10 @@ public class Project implements DatabaseEntity{
     private String cost;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<Task> tasks;
+    @DatabaseField(columnName = "end_time")
+    private Date endTime;
+    @DatabaseField(columnName = "start_time")
+    private Date startTime;
 
 
     /**
@@ -61,6 +66,24 @@ public class Project implements DatabaseEntity{
     public void setCost(String cost) {
         this.cost = cost;
     }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+
 
     /**
      * Gets a list of tasks that the project includes.

@@ -1,6 +1,7 @@
 package models;
 
 import entity_utils.EmployeeUtils;
+import entity_utils.ProjectUtils;
 import entity_utils.SkillUtils;
 import entity_utils.TaskUtils;
 
@@ -30,12 +31,21 @@ public class SystemData {
         return allEmployeesMap;
     }
 
+    private static final Map<Integer, Project> allProjectsMap = new HashMap<>();
+    public static Map<Integer, Project> getAllProjectsMap() {
+        if (allProjectsMap.size()==0) {
+            ProjectUtils.getAllProjects().forEach(project -> allProjectsMap.put(project.getId(), project));
+        }
+        return allProjectsMap;
+    }
+
     /**
      * Gets the data from the database before UI launches.
      */
     public static void getDataFromDatabase() {
         getAllTasksMap();
         getAllEmployeesMap();
+        getAllProjectsMap();
         //skills is already initialised as it is final;
     }
 

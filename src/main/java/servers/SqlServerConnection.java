@@ -112,6 +112,7 @@ public class SqlServerConnection {
 			Dao<Skill, Integer> skillDao = DaoManager.createDao(connection, Skill.class);
 			Dao<EmployeeSkill, Integer> employeeSkillDao = DaoManager.createDao(connection, EmployeeSkill.class);
 			Dao<TaskSkill, Integer> taskSkillDao = DaoManager.createDao(connection, TaskSkill.class);
+			Dao<Project, Integer> projectDao = DaoManager.createDao(connection, Project.class);
 
 			/*LargeDatasetGenerator.generateTestFiles();
 
@@ -142,6 +143,11 @@ public class SqlServerConnection {
 			for (String q : DefaultDatabase.InsertQueriesTaskSkill) {
 				taskSkillDao.executeRaw(q);
 			}
+
+			for (String q : DefaultDatabase.InsertQueriesProject) {
+				projectDao.executeRaw(q);
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			LocalServer.fatalError("database tables could not be fully initialised");

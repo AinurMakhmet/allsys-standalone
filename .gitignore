@@ -1,6 +1,6 @@
 *.class
 
-target/classes/*
+target/*
 src/main/resources/large_dataset/*
 src/test/resources/logs/*
 
