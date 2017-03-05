@@ -239,10 +239,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             LocalServer.gLogger.info("GREEDY");
-            result = new StrategyContext(GreedyAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
+            result = new StrategyContext(GreedyAlgorithm.getInstance()).executeTaskStrategy(tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ffRecButton)) {
             LocalServer.ffLogger.info("FF");
-            result = new StrategyContext(FordFulkersonAlgorithm.getInstance()).executeStrategy(tasksToAllocate);
+            result = new StrategyContext(FordFulkersonAlgorithm.getInstance()).executeTaskStrategy(tasksToAllocate);
         } else {
             return;
         }

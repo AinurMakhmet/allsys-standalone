@@ -1,24 +1,21 @@
 package logic;
 
+import javafx.util.Pair;
 import models.Employee;
+import models.Project;
 import models.SystemData;
 import models.Task;
-import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
-import models.bipartite_matching.Vertex;
 import servers.LocalServer;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
- * Ford-Fulkerson algorithm finds largest matching possible for a given set of tasks.
- * The algorithm uses BFS to find the augmented path.
+ * Created by nura on 27/02/17.
  */
-public class FordFulkersonAlgorithm extends Strategy {
-    private Map<Vertex, Map<Vertex, Boolean>> taskMap = new HashMap<>();
-    private Map<Vertex, Map<Vertex, Boolean>> employeeMap = new HashMap<>();
-
-    private FlowNetwork residualNetwork;
+public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
+    private FlowNetworkProfit residualNetwork;
     private Queue<Vertex> augmentedPathQueue;
     private Map<Vertex, Vertex> augmentedPathBFS;
     private Map<Vertex, Boolean> adjacentVertices;
@@ -27,19 +24,22 @@ public class FordFulkersonAlgorithm extends Strategy {
     private int pathNumber;
     public Map<Vertex, Vertex> matching;
     private long begTime, endTime;
+    private int profit;
+    private int projectPrimeCost;
+    private Project projectToAllocate;
 
-    private static FordFulkersonAlgorithm ourInstance = new FordFulkersonAlgorithm();
+    private static MaximumProfitAlgorithm ourInstance = new MaximumProfitAlgorithm();
 
-    public static FordFulkersonAlgorithm getInstance() {
+    public static MaximumProfitAlgorithm getInstance() {
         return ourInstance;
     }
 
+    public boolean allocateByProject(Project projectToAllocate) throws IOException {
+        boolean isFullyAllocated = false;
+        this.projectToAllocate = projectToAllocate;
+        List<Task> remainingTasksToAllocate = null;
+        remainingTasksToAllocate = projectToAllocate.getTasks();
 
-    @Override
-    public List<Task> allocate(List<Task> tasksToAllocate) {
-        recommendedAllocation = new LinkedList<>();
-
-        List<Task> remainingTasksToAllocate = tasksToAllocate;
         begTime = System.currentTimeMillis();
         while(remainingTasksToAllocate.size()>0) {
             if (canAllocateMoreTasks(remainingTasksToAllocate)) {
@@ -49,26 +49,33 @@ public class FordFulkersonAlgorithm extends Strategy {
             }
         }
 
-
-        remainingTasksToAllocate.forEach(task -> {
-            if (!recommendedAllocation.contains(task)) {
-                numOfUnnalocatedTasks++;
-                recommendedAllocation.add(task);
-            }
-        });
         endTime = System.currentTimeMillis();
         LocalServer.iLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
-        return recommendedAllocation;
+        if (remainingTasksToAllocate.size()>0) {
+            numOfUnnalocatedTasks++;
+            isFullyAllocated=false;
+            for(Task task: projectToAllocate.getTasks()) {
+                task.setRecommendedAssignee(null);
+            }
+        } else {
+            isFullyAllocated=true;
+            for(Task t: projectToAllocate.getTasks()) {
+                Task task = SystemData.getAllTasksMap().get(t.getId());
+                assert(task.getRecommendedAssignee()!=null);
+                projectPrimeCost += task.getRecommendedAssignee().getMonthlySalary();
+            }
+            profit = projectToAllocate.getPrice() - projectPrimeCost;
+            LocalServer.mpLogger.trace("Max profit for the project = {}", profit);
+
+        }
+        return isFullyAllocated;
     }
 
     private boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
         begTime = System.currentTimeMillis();
-        residualNetwork = new FlowNetwork(new BipartiteGraph(FordFulkersonAlgorithm.class, remainingTasksToAllocate));
+        residualNetwork = new FlowNetworkProfit(new BipartiteGraph(MaximumProfitAlgorithm.class, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
         LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
-
-        taskMap = residualNetwork.getMapFromSource();
-        employeeMap = residualNetwork.getMapToSink();
         return residualNetwork.getSource().getValue().size()>0;
     }
 
@@ -81,27 +88,28 @@ public class FordFulkersonAlgorithm extends Strategy {
         residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
-            //LocalServer.ffLogger.trace("Path Number "+ ++pathNumber);
+            //LocalServer.mpLogger.trace("Path Number "+ ++pathNumber);
             constructResidualNetworkBFS();
             residualNetwork.printGraph();
         }
+        residualNetwork.printGraph();
+
         findMatching();
         matching.forEach((a, b)-> {
             Task task = SystemData.getAllTasksMap().get(a.getVertexId());
             remainingTasksToAllocate.remove(task);
             Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
-            recommendedAllocation.add(task);
-            LocalServer.ffLogger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
+            LocalServer.mpLogger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
         });
         return remainingTasksToAllocate;
     }
 
     private void findMatching() {
         residualNetwork.getSink().getValue().keySet().forEach(
-                employeeVertex-> {
-                    residualNetwork.getMapToSink().get(employeeVertex).keySet().forEach(
-                            taskVertex -> matching.put(taskVertex, employeeVertex));
+                taskVertex-> {
+                    residualNetwork.getMapToSink().get(taskVertex).keySet().forEach(
+                            employeeVertex -> matching.put(taskVertex, employeeVertex));
                 });
     }
 
@@ -139,18 +147,18 @@ public class FordFulkersonAlgorithm extends Strategy {
                 break;
             case TASK:
                 adjacentVertices = residualNetwork
-                        .getMapFromSource()
+                        .getMapToSink()
                         .get(parentVertex);
                 break;
             case EMPLOYEE:
-                adjacentVertices = residualNetwork.getMapToSink().get(parentVertex);
+                adjacentVertices = residualNetwork.getMapFromSource().get(parentVertex);
                 break;
         }
 
         Vertex vertexToReturn = null;
         if (adjacentVertices!=null) {
             a: for (Vertex childVertex : adjacentVertices.keySet()) {
-                if (childVertex.getVertexType()==VertexType.SOURCE || adjacentVertices.get(childVertex)) {
+                if (childVertex.getVertexType()== VertexType.SOURCE || adjacentVertices.get(childVertex)) {
                     continue a;
                 } else if (childVertex.equals(SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
                     vertexToReturn = childVertex;
@@ -181,7 +189,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             childVertex = parentVertex;
         }
 
-        //path.forEach(vertex ->LocalServer.ffLogger.trace(vertex));
+        //path.forEach(vertex ->LocalServer.mpLogger.trace(vertex));
 
         augmentedPathQueue.clear();
         augmentedPathQueue.addAll(path);
@@ -206,22 +214,26 @@ public class FordFulkersonAlgorithm extends Strategy {
     }
 
     private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
-        if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
+        if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.EMPLOYEE) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
         } else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.EMPLOYEE) {
-            residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
-            residualNetwork.getMapToSink().get(childVertex).put(parentVertex, false);
-        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getMapToSink().get(parentVertex).remove(childVertex);
             residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
-        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SINK) {
+        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.TASK) {
+            residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
+            residualNetwork.getMapToSink().get(childVertex).put(parentVertex, false);
+        } else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.SINK) {
             residualNetwork.getMapToSink().get(parentVertex).remove(childVertex);
             residualNetwork.getSink().getValue().put(parentVertex, false);
         }//the last case will never be executed;
-        else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.SOURCE) {
+        else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SOURCE) {
             residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
             residualNetwork.getSource().getValue().put(parentVertex, false);
         }
+    }
+
+    public int getProfit() {
+        return profit;
     }
 }

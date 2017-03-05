@@ -26,6 +26,16 @@
             </Policies>
         </RollingFile>
 
+        <RollingFile name="rollingfileTraceMP" fileName="src/test/resources/logs/mp-trace.log"
+                     filePattern="src/test/resources/logs/trace/max-profit/mp-trace-%d{yyyy-MM-dd-HH:mm:ss}.log">
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%t] %M- %msg%n
+                </pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+            </Policies>
+        </RollingFile>
 
         <RollingFile name="rollingfileInfo" fileName="src/test/resources/logs/info.log"
                      filePattern="src/test/resources/logs/info/info-%d{yyyy-MM-dd-HH:mm:ss}.log">
@@ -43,12 +53,18 @@
             <AppenderRef ref="rollingfileInfo"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
-        <logger name="ffLogger" level="trace" additivity="false" >
+        <logger name="ffLogger" level="all" additivity="false" >
             <AppenderRef ref="rollingfileTraceFF"/>
+            <AppenderRef ref="rollingfileInfo"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
-        <logger name="gLogger" level="trace" additivity="false" >
+        <logger name="mpLogger" level="all" additivity="false" >
+            <AppenderRef ref="rollingfileTraceMP"/>
+            <AppenderRef ref="console" level="all"/>
+        </logger>
+        <logger name="gLogger" level="all" additivity="false" >
             <AppenderRef ref="rollingfileTraceGreedy"/>
+            <AppenderRef ref="rollingfileInfo"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
         <Root level="all">

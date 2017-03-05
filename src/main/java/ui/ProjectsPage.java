@@ -12,9 +12,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import logic.MaximumProfitAlgorithm;
+import logic.StrategyContext;
 import models.Project;
 import models.SystemData;
 import models.Task;
+import servers.LocalServer;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -55,7 +58,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
             public void handle(ActionEvent event) {
                 selectedProjects.forEach(project -> {
                     try {
-                        project.getTasks().forEach(task-> {
+                        project.getTasks().forEach(t-> {
+                            Task task = SystemData.getAllTasksMap().get(t.getId());
                             if (task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
                                 task.setEmployee(task.getRecommendedAssignee());
                                 task.setRecommendedAssignee(null);
@@ -78,7 +82,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
             public void handle(ActionEvent event) {
                 selectedProjects.forEach(project -> {
                     try {
-                        project.getTasks().forEach(task -> {
+                        project.getTasks().forEach(t -> {
+                            Task task = SystemData.getAllTasksMap().get(t.getId());
                             if (task.getEmployee() != null) {
                                 task.setEmployee(null);
                                 TaskUtils.updateEntity(task);
@@ -166,8 +171,11 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                         String tasks = "---";
                         if (((Project) newSelection).getTasks()!=null){
                             tasks="";
-                            for (Task task : ((Project) newSelection).getTasks()) {
-                                tasks += task.getName() + "(ID=)"+task.getId()+": recommended assignee - "+ task.getRecommendedAssigneeName();
+                            for (Task t : ((Project) newSelection).getTasks()) {
+                                Task task = SystemData.getAllTasksMap().get(t.getId());
+                                tasks += task.getName() + "(ID=)"+task.getId()
+                                        +"\n\t recommended assignee - "+ task.getRecommendedAssigneeName()
+                                        +"\n\t assigned employee - "+ task.getEmployeeName()+"\n";
                             }
                         }
                         cardValues= new String[]{
@@ -223,6 +231,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
             return;
         }
         projectsToAllocate = selectedProjects;
+        LocalServer.iLogger.info("MAX_PROFIT");
+        result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).executeProjectStrategy(selectedProjects);
         assert(result.size()== selectedProjects.size());
         table.refresh();
         //MainUI.refreshTables();

@@ -24,7 +24,7 @@ public class Project implements DatabaseEntity{
     @DatabaseField
     private String description;
     @DatabaseField
-    private String cost;
+    private Integer price;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<Task> tasks;
     @DatabaseField(columnName = "end_time")
@@ -59,12 +59,12 @@ public class Project implements DatabaseEntity{
         this.description = description;
     }
 
-    public String getCost() {
-        return cost;
+    public Integer getPrice() {
+        return price;
     }
 
-    public void setCost(String cost) {
-        this.cost = cost;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public Date getEndTime() {

@@ -167,10 +167,17 @@ public class Task implements DatabaseEntity{
 
     public void setRecommendedAssignee(Employee recommendedAssignee) {
         if (recommendedAssignee!=null) {
+            if (this.recommendedAssignee!=null) {
+                this.recommendedAssignee.getMatchedTasks().remove(this);
+            }
             this.recommendedAssignee = SystemData.getAllEmployeesMap().get(recommendedAssignee.getId());
             recommendedAssigneeName = this.recommendedAssignee.getFirstName()+ " " + this.recommendedAssignee.getLastName();
             this.recommendedAssignee.addMatchedTasks(this);
         } else {
+            if (this.recommendedAssignee!=null) {
+                this.recommendedAssignee.getMatchedTasks().remove(this);
+            }
+            this.recommendedAssignee=null;
             this.recommendedAssigneeName=null;
         }
     }

@@ -5,8 +5,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import models.bipartite_matching.Vertex;
-import models.bipartite_matching.VertexType;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -27,12 +25,13 @@ public class Employee implements DatabaseEntity{
     @DatabaseField(canBeNull = false, columnName = "last_name")
     private String lastName;
     @DatabaseField(columnName = "monthly_salary")
-    private String monthlySalary;
+    private Integer monthlySalary;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<Task> tasks;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<EmployeeSkill> skills;
     private Set<Task> matchedTasks = new HashSet<>();
+    private Set<Task> possibleAssignments = new HashSet<>();
 
 
     /**
@@ -66,11 +65,11 @@ public class Employee implements DatabaseEntity{
         this.lastName = lastName;
     }
 
-    public String getMonthlySalary() {
+    public Integer getMonthlySalary() {
         return monthlySalary;
     }
 
-    public void setMonthlySalary(String monthlySalary) {
+    public void setMonthlySalary(int monthlySalary) {
         this.monthlySalary = monthlySalary;
     }
 

@@ -1,12 +1,15 @@
 package models.bipartite_matching;
 
 import javafx.util.Pair;
+import logic.FordFulkersonAlgorithm;
 import logic.GreedyAlgorithm;
+import logic.MaximumProfitAlgorithm;
 import logic.Strategy;
 import models.Employee;
 import models.Skill;
 import models.SystemData;
 import models.Task;
+import org.apache.logging.log4j.Logger;
 import servers.LocalServer;
 
 import java.io.IOException;
@@ -21,11 +24,18 @@ public class BipartiteGraph {
     private int totalTaskMatches = 0;
     private int totalEmployeeMatches = 0;
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists = new ArrayList<>();
-    Strategy strategy;
     Class strategyClass;
+    private Logger logger;
 
     public BipartiteGraph(Class strategyClass, List<Task> tasksToAllocate) {
         this.strategyClass = strategyClass;
+        if (strategyClass.equals(GreedyAlgorithm.class)) {
+            logger = LocalServer.gLogger;
+        } else if (strategyClass.equals(FordFulkersonAlgorithm.class)) {
+            logger = LocalServer.ffLogger;
+        } else if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+            logger = LocalServer.gLogger;
+        }
         for (Task task: tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             ArrayList<Skill> taskSkills = null;
@@ -37,14 +47,13 @@ public class BipartiteGraph {
                 int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
 
                 task.possibleAssignee = (ArrayList<Employee>) taskSkills.get(indexSmallestSize).getEmployees();
-                //LocalServer.ffLogger.traceln("task" +task);
+                //logger.trace("task" +task);
                 taskSkills.remove(indexSmallestSize);
 
                 ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
                 filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
 
-                LocalServer.gLogger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignee.size());
-                LocalServer.ffLogger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignee.size());
+                logger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignee.size());
 
                 if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
                     listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
@@ -92,8 +101,8 @@ public class BipartiteGraph {
                         break;
                     }
                     else if (j == employeeSkills.size()-1) {
-                        //LocalServer.ffLogger.trace("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
-                        //LocalServer.ffLogger.trace("Employee skill: " + employees.get(i).getSkills());
+                        //logger.trace("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
+                        //logger.trace("Employee skill: " + employees.get(i).getSkills());
 
                         //the employee doesn'task have all the required taskSkills to complete the task,
                         //so it will be removed from the list of candidates
@@ -154,30 +163,30 @@ public class BipartiteGraph {
     }
 
     public void printGraph() {
-        LocalServer.ffLogger.trace("=============================BIPARTITE GRAPH START==============");
+        logger.trace("\n\n=============================BIPARTITE GRAPH START==============");
 
-        LocalServer.ffLogger.trace("-----------------------------Set of tasks---------: ");
-        taskMap.keySet().forEach(taskVertex ->LocalServer.ffLogger.trace("         task {}", taskVertex.getVertexId()));
+        logger.trace("-----------------------------Set of tasks---------: ");
+        taskMap.keySet().forEach(taskVertex ->logger.trace("\t\ttask {}", taskVertex.getVertexId()));
 
-        LocalServer.ffLogger.trace("-----------------------------Set of employees---------: ");
-        employeeMap.keySet().forEach(employeeVertex ->LocalServer.ffLogger.trace("         employee {}", employeeVertex.getVertexId()));
+        logger.trace("-----------------------------Set of employees---------: ");
+        employeeMap.keySet().forEach(employeeVertex ->logger.trace("\t\temployee {}", employeeVertex.getVertexId()));
 
-        LocalServer.ffLogger.trace("-----------------------------Set of all task matches---------: ");
+        logger.trace("-----------------------------Set of all task matches---------: ");
         for (Vertex taskVertex: taskMap.keySet()) {
-            LocalServer.ffLogger.trace("         task {}: ", taskVertex.getVertexId());
+            logger.trace("\t\ttask {}: ", taskVertex.getVertexId());
             taskMap.get(taskVertex).forEach((vertex, isVisited) -> {
-                LocalServer.ffLogger.trace("                 employee {},", (Integer)vertex.getVertexId());
+                logger.trace("\t\t\temployee {},", (Integer)vertex.getVertexId());
             });
         }
-        LocalServer.ffLogger.trace("------------------------------Set of all employee matches---------: ");
+        logger.trace("------------------------------Set of all employee matches---------: ");
         for (Vertex employeeVertex: employeeMap.keySet()) {
-            LocalServer.ffLogger.trace("         employee {}:", employeeVertex.getVertexId());
+            logger.trace("\t\temployee {}:", employeeVertex.getVertexId());
             employeeMap.get(employeeVertex).forEach((vertex, isVisited) ->  {
-                LocalServer.ffLogger.trace("                 task {},", (Integer)vertex.getVertexId());
+                logger.trace("\t\t\ttask {},", (Integer)vertex.getVertexId());
             });
         }
         assert(totalEmployeeMatches==totalTaskMatches);
-        LocalServer.ffLogger.trace("==============================BIPARTITE GRAPH END==============\n");
+        logger.trace("==============================BIPARTITE GRAPH END==============\n");
     }
 
     public Map<Vertex, Map<Vertex, Boolean>> getTaskMap() {

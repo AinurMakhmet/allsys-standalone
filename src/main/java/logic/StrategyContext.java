@@ -1,5 +1,7 @@
 package logic;
 
+import models.DatabaseEntity;
+import models.Project;
 import models.Task;
 import servers.LocalServer;
 
@@ -20,8 +22,11 @@ public class StrategyContext {
             highPriorityTasks,
             mediumPriorityTasks,
             lowPriorityTasks;
+    private List<Project> projectsToAllocate,
+            projectResultList;
     private int numberOfTasksUnvalidForAllocation,
             numberOfUnnalocatedTasks,
+            numberOfUnnalocatedProjects,
             numberOfUnnalocatedTasksOfHighPriority,
             numberOfUnnalocatedTasksOfMediumPriority,
             numberOfUnnalocatedTasksOfLowPriority;
@@ -31,11 +36,11 @@ public class StrategyContext {
         strategy = allocationAlgorithm;
     }
 
-    public List<Task> executeStrategy(List<Task> tasksToAllocate){
+    public List<Task> executeTaskStrategy(List<Task> tasksToAllocate){
         this.tasksToAllocate = tasksToAllocate;
         distributeValidTasksForAllocationByPriority();
         int numTries = 1;
-        //int numTries = 1;
+
         long begTime = System.currentTimeMillis();
         //TODO: fix Greedy returns only allocated tasks. Need to return all tasks.
         for (int i = 0; i < numTries; ++i) {
@@ -52,7 +57,7 @@ public class StrategyContext {
                 +numberOfUnnalocatedTasksOfHighPriority
                 +numberOfUnnalocatedTasksOfMediumPriority
                 +numberOfUnnalocatedTasksOfLowPriority;
-        result.sort(new TaskComparator());
+        result.sort(new EntityComparator());
         result.forEach(task -> LocalServer.iLogger.info(task.toString()));
         LocalServer.iLogger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n",numberOfUnnalocatedTasks, numberOfTasksUnvalidForAllocation);
         return result;
@@ -93,12 +98,56 @@ public class StrategyContext {
 
     }
 
-    static class TaskComparator implements Comparator<Task> {
+    static class EntityComparator implements Comparator<DatabaseEntity> {
         @Override
-        public int compare(Task t1, Task t2) {
-            if (t1.getId() > t2.getId()) return 1;
-            else if (t1.getId() == t2.getId()) return 0;
+        public int compare(DatabaseEntity e1, DatabaseEntity e2) {
+            if (e1.getId() > e2.getId()) return 1;
+            else if (e1.getId() == e2.getId()) return 0;
             else return -1;
         }
+    }
+
+    public List<Project> executeProjectStrategy(List<Project> projectsToAllocate){
+        numberOfUnnalocatedProjects=0;
+        int totalProfitFromSelectedProjects = 0;
+        projectResultList = new ArrayList<>();
+        Iterator<Project> iter = projectsToAllocate.iterator();
+        while (iter.hasNext()) {
+            Project project = iter.next();
+            try {
+                project.getTasks().forEach(t -> {
+                    if (t.getStartTime() == null || t.getEndTime() == null) {
+                        projectResultList.add(project);
+                        iter.remove();
+                        LocalServer.mpLogger.info("project contains with unspecified start tate or end date, therefore will not be considered for allocation");
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        int numTries = 1;
+        long begTime = System.currentTimeMillis();
+        for (int i = 0; i < numTries; ++i) {
+            for (Project project : projectsToAllocate) {
+                try {
+                    if (!MaximumProfitAlgorithm.getInstance().allocateByProject(project)) {
+                        numberOfUnnalocatedProjects++;
+                    } else {
+                         totalProfitFromSelectedProjects += MaximumProfitAlgorithm.getInstance().getProfit();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        LocalServer.iLogger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));
+
+        projectsToAllocate.sort(new EntityComparator());
+
+        LocalServer.iLogger.info("Total number of unallocated projects: {}.\n",numberOfUnnalocatedProjects);
+        LocalServer.iLogger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
+        return projectsToAllocate;
     }
 }

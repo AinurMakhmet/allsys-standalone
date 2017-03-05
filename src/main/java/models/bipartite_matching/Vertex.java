@@ -6,7 +6,6 @@ package models.bipartite_matching;
 public class Vertex {
     private Integer vertexId;
     private VertexType vertexType;
-
     public Vertex() {
 
     }
@@ -36,8 +35,8 @@ public class Vertex {
     @Override
     public String toString() {
         return "Vertex{" +
-                "vertexId=" + vertexId +
-                ", vertexType=" + vertexType+
+                "vertexType=" + vertexType+
+                ", vertexId=" + vertexId +
                 '}';
     }
 

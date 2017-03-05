@@ -19,7 +19,7 @@ public class LocalServer extends Application{
     public static Logger gLogger = LogManager.getLogger("gLogger");
     public static Logger ffLogger = LogManager.getLogger("ffLogger");
     public static Logger iLogger = LogManager.getLogger("iLogger");
-
+    public static Logger mpLogger = LogManager.getLogger("mpLogger");
     /**
      * Create the server and perform initial configuration.
      * @param args Any command line arguments; ignored in this application.

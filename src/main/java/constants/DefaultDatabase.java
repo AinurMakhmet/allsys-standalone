@@ -25,7 +25,7 @@ public class DefaultDatabase {
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('devops', 'HIGH', '2016-12-1', '2016-12-10', 7);",
 *///			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('integration-test', 'HIGH', '2016-12-1', '2016-12-3', 2);",
 //			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `duration`) VALUES ('bipartite_matching-config', 'LOW', '2016-12-2', '2016-12-2', 1);",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task1', 'HIGH', '2017-1-7', null, '1');",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task1', 'HIGH', '2017-1-7', null, 1);",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task2', 'HIGH', '2017-1-26', '2017-1-29', 2);",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task3', 'HIGH', '2017-1-13', '2017-1-28', 3);",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task4', 'HIGH', '2017-1-27', '2017-1-28', 1);",
@@ -89,7 +89,7 @@ public class DefaultDatabase {
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '2');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '3');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '4');",
-			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '5');",
+			//"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '5');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '6');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '3');",
 			"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '4');",
@@ -123,9 +123,9 @@ public class DefaultDatabase {
 	};
 
 	public static String[] InsertQueriesProject = new String[]{
-			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project1', '15');",
-			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project2', '10');",
-			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project3', '15');",
+			"INSERT INTO `project` (`name`, `price`) VALUES ('Project1', 15);",
+			"INSERT INTO `project` (`name`, `price`) VALUES ('Project2', 10);",
+			"INSERT INTO `project` (`name`, `price`) VALUES ('Project3', 15);",
 			/*"INSERT INTO `project` (`name`, `cost`) VALUES ('Project4', 'Kartal');",
 			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project5', 'Aksoy');",
 			"INSERT INTO `project` (`name`, `cost`) VALUES ('Project6', 'Nas');",
