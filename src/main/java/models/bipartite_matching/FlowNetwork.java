@@ -1,6 +1,9 @@
 package models.bipartite_matching;
 
 import javafx.util.Pair;
+import logic.FordFulkersonAlgorithm;
+import logic.MaximumProfitAlgorithm;
+import org.apache.logging.log4j.Logger;
 import servers.LocalServer;
 
 import java.util.*;
@@ -15,6 +18,8 @@ public class FlowNetwork {
     private int totalTaskMatches = 0;
     private int totalEmployeeMatches = 0;
     private BipartiteGraph bipartiteGraph;
+    private Class strategyClass;
+    private Logger logger;
     private static final Integer SOURCE_ID = -1;
     private static final Integer SINK_ID = -2;
     public static final Vertex SOURCE_VERTEX = new Vertex(SOURCE_ID, VertexType.SOURCE);
@@ -23,19 +28,29 @@ public class FlowNetwork {
     private final Pair<Vertex, Map<Vertex, Boolean>> SOURCE = new Pair(SOURCE_VERTEX, new HashMap<>());
     private final Pair<Vertex, Map<Vertex, Boolean>> SINK = new Pair(SINK_VERTEX, new HashMap<>());
 
-    public FlowNetwork() {}
+    public FlowNetwork() {
+
+    }
     public FlowNetwork(BipartiteGraph bipartiteGraph) {
+        strategyClass = bipartiteGraph.strategyClass;
+        if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+            logger = LocalServer.mpLogger;
+        } else if (strategyClass.equals(FordFulkersonAlgorithm.class)) {
+            logger = LocalServer.ffLogger;
+        }
+        mapToSink = new HashMap<>();
+
         this.bipartiteGraph = bipartiteGraph;
         //initialises mapFromSource for Network flow
         mapFromSource = bipartiteGraph.getTaskMap();
         //initialises mapToSink for Network flow
         mapToSink = new HashMap<>();
         bipartiteGraph.getEmployeeMap().keySet().forEach(employeeVertex -> {
-                    Map<Vertex, Boolean> adjacentVertices = new HashMap();
-                    adjacentVertices.put(SINK_VERTEX, false);
-                    mapToSink.put(employeeVertex, adjacentVertices);
-                    //LocalServer.ffLogger.trace("employee "+ employeeId);
-                });
+            Map<Vertex, Boolean> adjacentVertices = new HashMap();
+            adjacentVertices.put(SINK_VERTEX, false);
+            mapToSink.put(employeeVertex, adjacentVertices);
+            //LocalServer.ffLogger.trace("employee "+ employeeId);
+        });
 
 
         //initialises source
@@ -59,46 +74,46 @@ public class FlowNetwork {
     }
 
     public void printGraph() {
-        LocalServer.ffLogger.trace("\n==========================NETWORK START==============");
-        LocalServer.ffLogger.trace("------------------------Edges from SOURCE to---------: ");
+        logger.trace("\n==========================NETWORK START==============");
+        logger.trace("------------------------Edges from SOURCE to---------: ");
         Map<Vertex, Boolean> sourceEdges = SOURCE.getValue();
-        sourceEdges.forEach((vertex, isVisited) -> LocalServer.ffLogger.trace("\tsource: t{}", vertex.getVertexId()));
-        LocalServer.ffLogger.trace("-------------------------Edges from TASK---------: ");
+        sourceEdges.forEach((vertex, isVisited) -> logger.trace("\tsource: {}", vertex.toString()));
+        logger.trace("-------------------------Edges from SET 1---------: ");
         mapFromSource.keySet().forEach(
-              taskVertex -> {
-                  LocalServer.ffLogger.trace("\tt{}    : ", taskVertex.getVertexId());
-                  Map<Vertex, Boolean> taskEdges = mapFromSource.get(taskVertex);
-                  taskEdges.forEach(
-                          (vertex, isVisited)-> {
-                              if (vertex.equals(SOURCE_VERTEX)) {
-                                  LocalServer.ffLogger.trace("\t\tsource, ");
-                              } else {
-                                LocalServer.ffLogger.trace("\t\te{}, ", vertex.getVertexId());
-                              }
-                          });
-              });
-
-        LocalServer.ffLogger.trace("------------------------Edges from EMPLOYEE---------: ");
-        mapToSink.keySet().forEach(
-                employeeVertex -> {
-                    LocalServer.ffLogger.trace("\te{}    :",employeeVertex.getVertexId());
-                    Map<Vertex, Boolean> employeeEdges = mapToSink.get(employeeVertex);
-                    employeeEdges.forEach(
-                            (vertex, isVisited) -> {
-                                if (vertex.equals(SINK_VERTEX)) {
-                                    LocalServer.ffLogger.trace("\t\tsink, ");
+                vertex -> {
+                    logger.trace("\t{}    : ", vertex.toString());
+                    Map<Vertex, Boolean> edges = mapFromSource.get(vertex);
+                    edges.forEach(
+                            (adjacentVertex, isVisited)-> {
+                                if (adjacentVertex.equals(SOURCE_VERTEX)) {
+                                    logger.trace("\t\t\tsource, ");
                                 } else {
-                                    LocalServer.ffLogger.trace("\t\tt{}, ", vertex.getVertexId());
+                                    logger.trace("\t\t\t{}, ", adjacentVertex.toString());
                                 }
                             });
-                    });
+                });
 
-        LocalServer.ffLogger.trace("------------------------Edges to SINK---------: ");
+        logger.trace("------------------------Edges from SET 2---------: ");
+        mapToSink.keySet().forEach(
+                vertex -> {
+                    logger.trace("\t{}    :",vertex.toString());
+                    Map<Vertex, Boolean> edges = mapToSink.get(vertex);
+                    edges.forEach(
+                            (adjacentVertex, isVisited) -> {
+                                if (adjacentVertex.equals(SINK_VERTEX)) {
+                                    LocalServer.mpLogger.trace("\t\t\tsink, ");
+                                } else {
+                                    logger.trace("\t\t\t{}, ", adjacentVertex.toString());
+                                }
+                            });
+                });
+
+        logger.trace("------------------------Edges to SINK---------: ");
 
         Map<Vertex, Boolean> sinkEdges = SINK.getValue();
         if (sinkEdges !=null){
-            sinkEdges.forEach((vertex, isVisited) -> LocalServer.ffLogger.trace("\tsink: e{},  ", vertex.getVertexId()));
+            sinkEdges.forEach((vertex, isVisited) -> logger.trace("\tsink: {},  ", vertex.toString()));
         }
-        LocalServer.ffLogger.trace("===========================NETWORK END==============\n");
+        logger.trace("===========================NETWORK END==============\n");
     }
 }
