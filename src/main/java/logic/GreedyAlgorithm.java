@@ -37,7 +37,7 @@ public class GreedyAlgorithm extends Strategy {
         LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: {} ms", (endTime-begTime));
 
         begTime = System.currentTimeMillis();
-        numOfUnnalocatedTasks=0;
+        numOfUnnalocatedTasks=tasksToAllocate.size();
         Collections.sort(listOfAdjacencyLists, new Comparator<Pair<Integer, ArrayList>>() {
             @Override
             public int compare(Pair<Integer, ArrayList> o1, Pair<Integer, ArrayList> o2) {
@@ -56,12 +56,11 @@ public class GreedyAlgorithm extends Strategy {
 
             if (chosenEmployee!=null) {
                 toAllocate.setRecommendedAssignee(chosenEmployee);
+                numOfUnnalocatedTasks--;
                 /*if (!updateEdgesOfGreedyGraph(chosenEmployee)) {
                     LocalServer.ffLogger.error("Was unable to update appropriately the lists in greedy algorithm");
                     throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
                 }*/
-            } else {
-                numOfUnnalocatedTasks++;
             }
             recommendedAllocation.add(toAllocate);
             listOfAdjacencyLists.remove(indexWithMinPossibleEmployees);

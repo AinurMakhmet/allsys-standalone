@@ -44,12 +44,19 @@ public class StrategyContext {
         long begTime = System.currentTimeMillis();
         //TODO: fix Greedy returns only allocated tasks. Need to return all tasks.
         for (int i = 0; i < numTries; ++i) {
-            result.addAll(strategy.allocate(highPriorityTasks));
-            numberOfUnnalocatedTasksOfHighPriority +=  strategy.numOfUnnalocatedTasks;
-            result.addAll(strategy.allocate(mediumPriorityTasks));
-            numberOfUnnalocatedTasksOfMediumPriority +=  strategy.numOfUnnalocatedTasks;
-            result.addAll(strategy.allocate(lowPriorityTasks));
-            numberOfUnnalocatedTasksOfLowPriority +=  strategy.numOfUnnalocatedTasks;
+            if (!highPriorityTasks.isEmpty()) {
+                result.addAll(strategy.allocate(highPriorityTasks));
+                numberOfUnnalocatedTasksOfHighPriority +=  strategy.numOfUnnalocatedTasks;
+            }
+            if (!mediumPriorityTasks.isEmpty()) {
+                result.addAll(strategy.allocate(mediumPriorityTasks));
+                numberOfUnnalocatedTasksOfMediumPriority +=  strategy.numOfUnnalocatedTasks;
+            }
+            if (!lowPriorityTasks.isEmpty()) {
+                result.addAll(strategy.allocate(lowPriorityTasks));
+                numberOfUnnalocatedTasksOfLowPriority +=  strategy.numOfUnnalocatedTasks;
+            }
+
         }
         long endTime = System.currentTimeMillis();
         LocalServer.iLogger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));

@@ -38,7 +38,7 @@ public class FordFulkersonAlgorithm extends Strategy {
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
         recommendedAllocation = new LinkedList<>();
-
+        numOfUnnalocatedTasks=tasksToAllocate.size();
         List<Task> remainingTasksToAllocate = tasksToAllocate;
         begTime = System.currentTimeMillis();
         while(remainingTasksToAllocate.size()>0) {
@@ -52,7 +52,6 @@ public class FordFulkersonAlgorithm extends Strategy {
 
         remainingTasksToAllocate.forEach(task -> {
             if (!recommendedAllocation.contains(task)) {
-                numOfUnnalocatedTasks++;
                 recommendedAllocation.add(task);
             }
         });
@@ -76,7 +75,6 @@ public class FordFulkersonAlgorithm extends Strategy {
         matching = new HashMap<>();
         augmentedPathQueue = new LinkedList<>();
         pathNumber = 0;
-        numOfUnnalocatedTasks=0;
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
@@ -91,6 +89,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             remainingTasksToAllocate.remove(task);
             Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
+            numOfUnnalocatedTasks--;
             recommendedAllocation.add(task);
             LocalServer.ffLogger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
         });
