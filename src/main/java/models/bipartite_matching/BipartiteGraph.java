@@ -74,6 +74,9 @@ public class BipartiteGraph {
         //adds new entries to the adjacency map of both tasks and employees
         task.possibleAssignee.forEach(employee ->  {
             Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
+            if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+                employeeVertex.setCost(employee.getMonthlySalary());
+            }
             //Integer employeeId = employee.getId();
             Map<Vertex, Boolean> adjacentVerticesOfEmployee = new HashMap<>();
 
@@ -147,7 +150,7 @@ public class BipartiteGraph {
         }
     }
 
-    private int getIndexOfDefiningSkill(ArrayList<Skill> taskSkills) throws IOException {
+    int getIndexOfDefiningSkill(ArrayList<Skill> taskSkills) throws IOException {
         //index of the skill in the taskSkills that have a minimum number of Employees that posses this skill
         int indexSmallestSize = 0;
 

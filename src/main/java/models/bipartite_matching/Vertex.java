@@ -6,6 +6,9 @@ package models.bipartite_matching;
 public class Vertex {
     private Integer vertexId;
     private VertexType vertexType;
+    private int shortestPathWeightFromSource;
+    private int cost;
+
     public Vertex() {
 
     }
@@ -30,6 +33,22 @@ public class Vertex {
     public Vertex setVertexType(VertexType type) {
         vertexType = type;
         return this;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public int getShortestPathWeightFromSource() {
+        return shortestPathWeightFromSource;
+    }
+
+    public void setShortestPathWeightFromSource(int shortestPathWeightFromSource) {
+        this.shortestPathWeightFromSource = shortestPathWeightFromSource;
     }
 
     @Override

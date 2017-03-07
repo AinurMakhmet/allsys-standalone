@@ -86,9 +86,9 @@ public class FlowNetwork {
                     edges.forEach(
                             (adjacentVertex, isVisited)-> {
                                 if (adjacentVertex.equals(SOURCE_VERTEX)) {
-                                    logger.trace("\t\t\tsource, ");
+                                    logger.trace("\t\t\t\tsource, ");
                                 } else {
-                                    logger.trace("\t\t\t{}, ", adjacentVertex.toString());
+                                    logger.trace("\t\t\t\t{}, ", adjacentVertex.toString());
                                 }
                             });
                 });
@@ -101,9 +101,9 @@ public class FlowNetwork {
                     edges.forEach(
                             (adjacentVertex, isVisited) -> {
                                 if (adjacentVertex.equals(SINK_VERTEX)) {
-                                    LocalServer.mpLogger.trace("\t\t\tsink, ");
+                                    LocalServer.mpLogger.trace("\t\t\t\tsink, ");
                                 } else {
-                                    logger.trace("\t\t\t{}, ", adjacentVertex.toString());
+                                    logger.trace("\t\t\t\t{}, ", adjacentVertex.toString());
                                 }
                             });
                 });

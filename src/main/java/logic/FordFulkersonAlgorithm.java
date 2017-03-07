@@ -6,6 +6,7 @@ import models.Task;
 import models.bipartite_matching.VertexType;
 import models.bipartite_matching.*;
 import models.bipartite_matching.Vertex;
+import org.apache.logging.log4j.Logger;
 import servers.LocalServer;
 
 import java.util.*;
@@ -18,15 +19,16 @@ public class FordFulkersonAlgorithm extends Strategy {
     private Map<Vertex, Map<Vertex, Boolean>> taskMap = new HashMap<>();
     private Map<Vertex, Map<Vertex, Boolean>> employeeMap = new HashMap<>();
 
-    private FlowNetwork residualNetwork;
-    private Queue<Vertex> augmentedPathQueue;
-    private Map<Vertex, Vertex> augmentedPathBFS;
+    protected FlowNetwork residualNetwork;
+    protected Queue<Vertex> augmentedPathQueue;
+    protected Map<Vertex, Vertex> augmentedPathBFS;
     private Map<Vertex, Boolean> adjacentVertices;
-    private static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
-    private static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
+    protected static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
+    protected static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
     private int pathNumber;
     public Map<Vertex, Vertex> matching;
-    private long begTime, endTime;
+    protected Class strategyClass;
+    Logger logger;
 
     private static FordFulkersonAlgorithm ourInstance = new FordFulkersonAlgorithm();
 
@@ -37,6 +39,12 @@ public class FordFulkersonAlgorithm extends Strategy {
 
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
+        strategyClass = this.getClass();
+        if (strategyClass.equals(FordFulkersonAlgorithm.class)) {
+            logger = LocalServer.ffLogger;
+        } else if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+            logger = LocalServer.mpLogger;
+        }
         recommendedAllocation = new LinkedList<>();
         numOfUnnalocatedTasks=tasksToAllocate.size();
         List<Task> remainingTasksToAllocate = tasksToAllocate;
@@ -60,9 +68,9 @@ public class FordFulkersonAlgorithm extends Strategy {
         return recommendedAllocation;
     }
 
-    private boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
+    protected boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
         begTime = System.currentTimeMillis();
-        residualNetwork = new FlowNetwork(new BipartiteGraph(FordFulkersonAlgorithm.class, remainingTasksToAllocate));
+        residualNetwork = new FlowNetwork(new BipartiteGraph(strategyClass, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
         LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
 
@@ -79,8 +87,8 @@ public class FordFulkersonAlgorithm extends Strategy {
         residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
-            //LocalServer.ffLogger.trace("Path Number "+ ++pathNumber);
-            constructResidualNetworkBFS();
+            //logger.trace("Path Number "+ ++pathNumber);
+            constructResidualNetwork();
             residualNetwork.printGraph();
         }
         findMatching();
@@ -91,12 +99,12 @@ public class FordFulkersonAlgorithm extends Strategy {
             task.setRecommendedAssignee(employee);
             numOfUnnalocatedTasks--;
             recommendedAllocation.add(task);
-            LocalServer.ffLogger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
+            logger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
         });
         return remainingTasksToAllocate;
     }
 
-    private void findMatching() {
+    protected void findMatching() {
         residualNetwork.getSink().getValue().keySet().forEach(
                 employeeVertex-> {
                     residualNetwork.getMapToSink().get(employeeVertex).keySet().forEach(
@@ -168,7 +176,7 @@ public class FordFulkersonAlgorithm extends Strategy {
      * Therfore O(n) is the running time for constructing residual network, where n is the number of nodes(employees + tasks + source a+ sink) and
      * @param
      */
-    private void constructResidualNetworkBFS() {
+    private void constructResidualNetwork() {
         Vertex childVertex = SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
@@ -180,7 +188,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             childVertex = parentVertex;
         }
 
-        //path.forEach(vertex ->LocalServer.ffLogger.trace(vertex));
+        //path.forEach(vertex ->logger.trace(vertex));
 
         augmentedPathQueue.clear();
         augmentedPathQueue.addAll(path);
@@ -204,7 +212,7 @@ public class FordFulkersonAlgorithm extends Strategy {
                 });
     }
 
-    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+    protected void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);

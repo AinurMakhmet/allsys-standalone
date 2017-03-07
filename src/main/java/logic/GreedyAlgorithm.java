@@ -17,8 +17,6 @@ import java.util.*;
  */
 public class GreedyAlgorithm extends Strategy {
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
-    private long begTime;
-    private long endTime;
 
     private static GreedyAlgorithm ourInstance = new GreedyAlgorithm();
 
