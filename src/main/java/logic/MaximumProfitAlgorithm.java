@@ -51,7 +51,7 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
         }
 
         endTime = System.currentTimeMillis();
-        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+        LocalServer.mpLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
         if (remainingTasksToAllocate.size()>0) {
             isFullyAllocated=false;
             for(Task task: projectToAllocate.getTasks()) {
@@ -75,7 +75,7 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
         begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(this.getClass(), remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
-        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
+        LocalServer.mpLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
         return residualNetwork.getSource().getValue().size()>0;
     }*/
 
@@ -90,10 +90,10 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
             //LocalServer.mpLogger.trace("Path Number "+ ++pathNumber);
             constructResidualNetwork();
             residualNetwork.printGraph();
+            findMatching();
         }
         residualNetwork.printGraph();
 
-        findMatching();
         matching.forEach((a, b)-> {
             Task task = SystemData.getAllTasksMap().get(a.getVertexId());
             remainingTasksToAllocate.remove(task);
@@ -185,7 +185,24 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
             a: for (Vertex childVertex : adjacentVertices.keySet()) {
                 if (childVertex.getVertexType()==VertexType.SOURCE || adjacentVertices.get(childVertex)) {
                     continue a;
-                } else if (childVertex.equals(SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
+                } else if (parentVertex.getVertexType().equals(VertexType.TASK)
+                        && childVertex.getVertexType().equals(VertexType.EMPLOYEE)) {
+                    Task taskToMatch = SystemData.getAllTasksMap().get(parentVertex.getVertexId());
+                    /*for (Task matchedTask: SystemData.getAllEmployeesMap().get(childVertex.getVertexId()).getMatchedTasks()) {
+                        if (taskToMatch.timeOverlapWith(matchedTask)) {
+                            adjacentVertices.put(childVertex, true);
+                            continue;
+                        }
+                    }*/
+                    for (Vertex vertex : matching.keySet()) {
+                        Task matchedTask = SystemData.getAllTasksMap().get(vertex.getVertexId());
+                        if (taskToMatch.timeOverlapWith(matchedTask)) {
+                            adjacentVertices.put(childVertex, true);
+                            continue;
+                        }
+                    }
+                }
+                if (childVertex.equals(SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
                     vertexToReturn = childVertex;
                     //set the isVisited for the vertex to be true
                     adjacentVertices.put(childVertex, true);
@@ -238,7 +255,27 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
                 });
     }
 
+    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+        if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
+            residualNetwork.getSource().getValue().remove(childVertex);
+            residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
+        } else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.EMPLOYEE) {
+            residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
+            residualNetwork.getMapToSink().get(childVertex).put(parentVertex, false);
+        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.TASK) {
+            residualNetwork.getMapToSink().get(parentVertex).remove(childVertex);
+            residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
+        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SINK) {
+            residualNetwork.getMapToSink().get(parentVertex).put(childVertex, false);
+            residualNetwork.getSink().getValue().put(parentVertex, false);
+        } else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.SOURCE) {
+            residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
+            residualNetwork.getSource().getValue().put(parentVertex, false);
+        }
+    }
+
     public int getProfit() {
         return profit;
     }
+
 }

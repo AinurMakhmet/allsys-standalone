@@ -55,7 +55,7 @@
         </logger>
         <logger name="ffLogger" level="all" additivity="false" >
             <AppenderRef ref="rollingfileTraceFF"/>
-            <AppenderRef ref="rollingfileInfo"/>
+            <AppenderRef ref="rollingfileInfo" level="info"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
         <logger name="mpLogger" level="all" additivity="false" >
@@ -64,7 +64,7 @@
         </logger>
         <logger name="gLogger" level="all" additivity="false" >
             <AppenderRef ref="rollingfileTraceGreedy"/>
-            <AppenderRef ref="rollingfileInfo"/>
+            <AppenderRef ref="rollingfileInfo" level="info"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
         <Root level="all">

@@ -64,7 +64,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             }
         });
         endTime = System.currentTimeMillis();
-        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+        logger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
         return recommendedAllocation;
     }
 
@@ -72,7 +72,7 @@ public class FordFulkersonAlgorithm extends Strategy {
         begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(strategyClass, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
-        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
+        logger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
 
         taskMap = residualNetwork.getMapFromSource();
         employeeMap = residualNetwork.getMapToSink();
@@ -108,7 +108,11 @@ public class FordFulkersonAlgorithm extends Strategy {
         residualNetwork.getSink().getValue().keySet().forEach(
                 employeeVertex-> {
                     residualNetwork.getMapToSink().get(employeeVertex).keySet().forEach(
-                            taskVertex -> matching.put(taskVertex, employeeVertex));
+                            vertex -> {
+                                if (vertex.getVertexType().equals(VertexType.TASK)) {
+                                    matching.put(vertex, employeeVertex);
+                                }
+                            });
                 });
     }
 
@@ -212,7 +216,7 @@ public class FordFulkersonAlgorithm extends Strategy {
                 });
     }
 
-    protected void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);

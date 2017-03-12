@@ -245,11 +245,15 @@ public class Task implements DatabaseEntity{
         if (getStartTime().equals(anotherTask.getStartTime())
                 || getStartTime().compareTo(anotherTask.getEndTime())<=0
                 || getEndTime().compareTo(anotherTask.getStartTime())>=0) return true;
-*/
+*//*
         if (getStartTime().equals(anotherTask.getStartTime())
-                || getStartTime().before(anotherTask.getEndTime())
-                || getEndTime().after(anotherTask.getStartTime())) return true;
-        return false;
+                || (getStartTime().before(anotherTask.getEndTime())&& getEndTime().after(anotherTask.getStartTime()))
+                || getEndTime().after(anotherTask.getStartTime())
+                || getStartTime().before(anotherTask.getStartTime())) return true;
+        */
+        if (getEndTime().before(anotherTask.getStartTime())
+                || anotherTask.getEndTime().before(getStartTime())) return false;
+        return true;
     }
 
     public String toString() {

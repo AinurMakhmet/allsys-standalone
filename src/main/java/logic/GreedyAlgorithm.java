@@ -32,7 +32,7 @@ public class GreedyAlgorithm extends Strategy {
         BipartiteGraph graph = new BipartiteGraph(GreedyAlgorithm.class, tasksToAllocate);
         listOfAdjacencyLists = graph.getListOfAdjacencyLists();
         endTime = System.currentTimeMillis();
-        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: {} ms", (endTime-begTime));
+        LocalServer.gLogger.info(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: {} ms", (endTime-begTime));
 
         begTime = System.currentTimeMillis();
         numOfUnnalocatedTasks=tasksToAllocate.size();
@@ -65,7 +65,7 @@ public class GreedyAlgorithm extends Strategy {
             tasksToAllocate.remove(toAllocate);
         }
         endTime = System.currentTimeMillis();
-        LocalServer.iLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+        LocalServer.gLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
 
         return recommendedAllocation;
     }
