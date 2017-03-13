@@ -40,11 +40,7 @@ public class FordFulkersonAlgorithm extends Strategy {
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
         strategyClass = this.getClass();
-        if (strategyClass.equals(FordFulkersonAlgorithm.class)) {
-            logger = LocalServer.ffLogger;
-        } else if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
-            logger = LocalServer.mpLogger;
-        }
+        logger = LocalServer.ffLogger;
         recommendedAllocation = new LinkedList<>();
         numOfUnnalocatedTasks=tasksToAllocate.size();
         List<Task> remainingTasksToAllocate = tasksToAllocate;
@@ -64,7 +60,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             }
         });
         endTime = System.currentTimeMillis();
-        logger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+        logger.info("Time for running algorithm: {} ms", (endTime-begTime));
         return recommendedAllocation;
     }
 
@@ -72,7 +68,7 @@ public class FordFulkersonAlgorithm extends Strategy {
         begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(strategyClass, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
-        logger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
+        logger.info("Time for constrcuting data structure: {} ms", (endTime-begTime));
 
         taskMap = residualNetwork.getMapFromSource();
         employeeMap = residualNetwork.getMapToSink();

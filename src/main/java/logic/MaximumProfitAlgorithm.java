@@ -35,6 +35,7 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
 
     public boolean allocateByProject(Project projectToAllocate) throws IOException {
         strategyClass = this.getClass();
+        logger = LocalServer.mpLogger;
         boolean isFullyAllocated = false;
         this.projectToAllocate = projectToAllocate;
         List<Task> remainingTasksToAllocate = null;
