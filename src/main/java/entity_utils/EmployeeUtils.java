@@ -43,4 +43,14 @@ public class EmployeeUtils extends AbstractEntityUtils {
 	public static List<Employee> getAllEmployees() {
 		return getAllEntities(Employee.class);
 	}
+
+	/**
+	 * Updates the specified record in the database.
+	 *
+	 * @param employee the employee to be updated
+	 */
+	public static void updateEntity(Employee employee) {
+		// set up server connection
+		updateEntity(Employee.class, employee);
+	}
 }
