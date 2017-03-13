@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import entity_utils.SkillUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ public class Skill implements DatabaseEntity{
 
     public void setName(String name) {
         this.name = name;
+        SkillUtils.updateEntity(this);
     }
 
     public String getDescription() {
@@ -63,6 +65,7 @@ public class Skill implements DatabaseEntity{
 
     public void setLevel(String level) {
         this.level = level;
+        SkillUtils.updateEntity(this);
     }
 
 

@@ -43,4 +43,14 @@ public class SkillUtils extends AbstractEntityUtils {
 	public static List<Skill> getAllSkills() {
 		return getAllEntities(Skill.class);
 	}
+
+	/**
+	 * Updates the specified record in the database.
+	 *
+	 * @param skill the task to be updated
+	 */
+	public static void updateEntity(Skill skill) {
+		// set up server connection
+		updateEntity(Skill.class, skill);
+	}
 }
