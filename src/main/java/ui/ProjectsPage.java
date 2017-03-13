@@ -17,6 +17,7 @@ import logic.StrategyContext;
 import models.Project;
 import models.SystemData;
 import models.Task;
+import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
@@ -233,7 +234,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         projectsToAllocate = selectedProjects;
         LocalServer.iLogger.info("MAX_PROFIT");
         result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).executeProjectStrategy(selectedProjects);
-        assert(result.size()== selectedProjects.size());
+        Assert.assertEquals(result.size(), selectedProjects.size());
         table.refresh();
         //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
