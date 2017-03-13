@@ -18,6 +18,7 @@ public abstract class AbstractPage extends BorderPane{
     private VBox cardVBox;
     private String[] cardPropertyNames;
     HBox top;
+    HBox bottom;
     TextField search;
 
 
@@ -30,8 +31,13 @@ public abstract class AbstractPage extends BorderPane{
         search = new TextField();
 
         top.getChildren().add(search);
-        top.setAlignment(Pos.CENTER);
+        //top.setAlignment(Pos.CENTER);
         setTop(top);
+
+        bottom = new HBox();
+        bottom.setPadding(new Insets(10));
+        bottom.setSpacing(8);
+        setBottom(bottom);
     }
 
     TableView addTable(String pageName) {

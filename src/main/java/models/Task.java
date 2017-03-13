@@ -6,17 +6,12 @@ import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import javafx.util.Pair;
-import models.bipartite_matching.Vertex;
-import models.bipartite_matching.VertexType;
-
+import entity_utils.TaskUtils;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Model to represent task.
@@ -80,6 +75,20 @@ public class Task implements DatabaseEntity{
 
     private String employeeName;
 
+    public String getEmployeeId() {
+        if (employee!=null){
+            return employee.getId().toString();
+        }
+        return null;
+    }
+
+    public String getProjectId() {
+        if (project!=null) {
+            return project.getId().toString();
+        }
+        return null;
+    }
+
     private String recommendedAssigneeName;
 
     // ORMLite needs a no-arg constructor
@@ -96,6 +105,7 @@ public class Task implements DatabaseEntity{
 
     public void setName(String name) {
         this.name = name;
+        TaskUtils.updateEntity(this);
     }
 
     public String getDescription() {
@@ -104,6 +114,7 @@ public class Task implements DatabaseEntity{
 
     public void setDescription(String description) {
         this.description = description;
+        TaskUtils.updateEntity(this);
     }
 
     public Priority getPriority() {
@@ -112,6 +123,7 @@ public class Task implements DatabaseEntity{
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+        TaskUtils.updateEntity(this);
     }
 
     public int getDuration() {
@@ -128,6 +140,7 @@ public class Task implements DatabaseEntity{
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+        TaskUtils.updateEntity(this);
     }
 
     public Date getStartTime() {
@@ -136,6 +149,7 @@ public class Task implements DatabaseEntity{
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+        TaskUtils.updateEntity(this);
     }
 
     public Employee getEmployee() {
@@ -152,6 +166,7 @@ public class Task implements DatabaseEntity{
         } else {
             employeeName =null;
         }
+        TaskUtils.updateEntity(this);
     }
 
     public String getEmployeeName() {
@@ -196,6 +211,7 @@ public class Task implements DatabaseEntity{
 
     public void setProject(Project project) {
         this.project = project;
+        TaskUtils.updateEntity(this);
     }
 
     /**

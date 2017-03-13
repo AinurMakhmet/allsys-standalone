@@ -26,9 +26,9 @@ public class Sidebar extends VBox implements EventHandler {
         this.setPadding(new Insets(0));
         this.setSpacing(0);
         this.getStyleClass().add("sidebar");
-        this.setMinWidth(150);
-        this.setWidth(150);
-        this.setMaxWidth(150);
+        this.setMinWidth(120);
+        this.setWidth(120);
+        this.setMaxWidth(120);
 
         Label title = new Label("Menu");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 14));

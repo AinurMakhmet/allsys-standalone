@@ -10,17 +10,22 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import logic.FordFulkersonAlgorithm;
 import logic.GreedyAlgorithm;
 import logic.StrategyContext;
-import models.Skill;
-import models.SystemData;
-import models.Task;
+import models.*;
 import servers.LocalServer;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,17 +36,13 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
     TableView table;
     private String[] cardValues;
-    private HBox pageHBox;
-    private List<Task> tasksToAllocate;
-    private List<Task> result;
+    private List<Task> tasksToAllocate, result;
     private List<Task> selectedTasks = new LinkedList<>();
-    private Button greedyRecButton;
-    private Button ffRecButton;
-    private Button selectTasksButton;
-    private List<Task> lastSavedAllocation;
+    private Button greedyRecButton, ffRecButton;
     private ListChangeListener<Task> multipleSelectionListener;
-    ChangeListener changeListener;
-
+    private ChangeListener changeListener;
+    private TableColumn name, employeeId, startTime, endTime, projectId, priorityLevel;
+    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static TasksPage ourInstance = new TasksPage();
 
@@ -64,7 +65,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                     if (task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
                         task.setEmployee(task.getRecommendedAssignee());
                         task.setRecommendedAssignee(null);
-                        TaskUtils.updateEntity(task);
                     }
                 });
                 table.refresh();
@@ -80,7 +80,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 selectedTasks.forEach(task -> {
                     if (task.getEmployee()!=null ) {
                         task.setEmployee(null);
-                        TaskUtils.updateEntity(task);
                     }
                 });
                 table.refresh();
@@ -88,63 +87,125 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             }
         });
 
-        selectTasksButton = new Button("Select Tasks");
-        selectTasksButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(((Button)event.getSource()).getText().equals("Select Tasks")) {
-                    table.getSelectionModel().setSelectionMode(
-                            SelectionMode.MULTIPLE
-                    );
-                    table.getSelectionModel().getSelectedItems().addListener(multipleSelectionListener);
-                    table.getSelectionModel().selectedItemProperty().removeListener(changeListener);
 
-                    selectTasksButton.setText("Finish Selection");
-                } else {
-                    table.getSelectionModel().setSelectionMode(
-                            SelectionMode.SINGLE
-                    );
-                    table.getSelectionModel().getSelectedItems().removeListener(multipleSelectionListener);
-                    table.getSelectionModel().selectedItemProperty().addListener(changeListener);
-                    selectTasksButton.setText("Select Tasks");
+        final ToggleGroup group = new ToggleGroup();
+        RadioButton viewModeButton = new RadioButton("View Mode");
+        viewModeButton.setToggleGroup(group);
+        viewModeButton.setSelected(true);
+        viewModeButton.setUserData(Mode.View);
 
+        RadioButton allocateModeButton = new RadioButton("Allocation Mode");
+        allocateModeButton.setToggleGroup(group);
+        allocateModeButton.setUserData(Mode.Allocate);
+
+        group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+            public void changed(ObservableValue<? extends Toggle> ov,
+                                Toggle old_toggle, Toggle new_toggle) {
+                Toggle toggle = group.getSelectedToggle();
+                if (toggle!=null) {
+                    if (toggle.getUserData().equals(Mode.Allocate)) {
+                        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                        table.getSelectionModel().getSelectedItems().addListener(multipleSelectionListener);
+                        table.getSelectionModel().selectedItemProperty().removeListener(changeListener);
+                        allocateButton.setVisible(true);
+                        deAllocateButton.setVisible(true);
+                        ffRecButton.setVisible(true);
+                        greedyRecButton.setVisible(true);
+                    } else if (toggle.getUserData().equals(Mode.View)) {
+                        table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                        table.getSelectionModel().getSelectedItems().removeListener(multipleSelectionListener);
+                        table.getSelectionModel().selectedItemProperty().addListener(changeListener);
+                        allocateButton.setVisible(false);
+                        deAllocateButton.setVisible(false);
+                        ffRecButton.setVisible(false);
+                        greedyRecButton.setVisible(false);
+                    }
                 }
             }
         });
+
+        allocateButton.setVisible(false);
+        deAllocateButton.setVisible(false);
+        ffRecButton.setVisible(false);
+        greedyRecButton.setVisible(false);
         top.getChildren().add(greedyRecButton);
         top.getChildren().add(ffRecButton);
         top.getChildren().add(allocateButton);
         top.getChildren().add(deAllocateButton);
-        top.getChildren().add(selectTasksButton);
-        pageHBox = new HBox();
-        pageHBox.setSpacing(8);
-        setCenter(pageHBox);
-        pageHBox.getChildren().add(addTable("Tasks"));
+        top.getChildren().add(viewModeButton);
+        top.getChildren().add(allocateModeButton);
+
+        final TextField addName = new TextField();
+        addName.setPromptText("Name");
+        addName.setMaxWidth(80);
+        final TextField addStartTime = new TextField();
+        addStartTime.setMaxWidth(190);
+        addStartTime.setPromptText("Start Date (yyyy-MM-dd)");
+        final TextField addEndTime = new TextField();
+        addEndTime.setMaxWidth(190);
+        addEndTime.setPromptText("End Date (yyyy-MM-dd)");
+
+        final Button addButton = new Button("Add Task");
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+
+                Task newTask = new Task();;
+                //TODO: handle null values
+                try {
+                    LocalDate startDateL = LocalDate.parse(addStartTime.getText(), dateFormat);
+                    LocalDate endDateL = LocalDate.parse(addEndTime.getText(), dateFormat);
+                    newTask.setStartTime(java.sql.Date.valueOf(startDateL));
+                    newTask.setEndTime(java.sql.Date.valueOf(endDateL));
+                    System.out.println(startDateL); // 2010-01-02
+                    Integer id = SystemData.getAllTasksMap().size();
+                    newTask.setName(addName.getText());
+                    //TODO: handle the priority;
+                    newTask.setPriority(Task.Priority.LOW);
+                    TaskUtils.createEntity(Task.class, newTask);
+                    if (TaskUtils.getTask(id)!=null) {
+                        SystemData.getAllTasksMap().put(id, newTask);
+                        data.add(newTask);
+                        addName.clear();
+                        addStartTime.clear();
+                        addEndTime.clear();
+                        table.refresh();
+                    }
+                } catch (DateTimeParseException exception) {
+                     System.out.println("Please enter the dates in the format of yyyy-MM-dd");
+                }
+
+
+            }
+        });
+
+        bottom.getChildren().addAll(addName, addStartTime, addEndTime, addButton);
+        setCenter(addTable("Tasks"));
     }
 
     @Override
     TableView addTable(String pageName) {
         table = super.addTable(pageName);
         TableColumn id = new TableColumn("ID");
-        TableColumn name = new TableColumn("Name");
-        TableColumn employeeName = new TableColumn("Employee");
-        TableColumn startTime = new TableColumn("Start time");
-        TableColumn endTime = new TableColumn("End Time");
-        TableColumn projectId = new TableColumn("Project ID");
-        TableColumn priorityLevel = new TableColumn("Priority Level");
+        name = new TableColumn("Name");
+        employeeId = new TableColumn("Employee ID");
+        startTime = new TableColumn("Start time");
+        endTime = new TableColumn("End Time");
+        projectId = new TableColumn("Project ID");
+        priorityLevel = new TableColumn("Priority");
         TableColumn recommendedAssignee = new TableColumn("Recommended Assignee (Employee)");
 
-        id.setMinWidth(50);
+        id.setMinWidth(40);
         id.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("id"));
 
-        name.setMinWidth(100);
+        name.setMinWidth(60);
         name.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("name"));
 
-        employeeName.setMinWidth(150);
-        employeeName.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("employeeName"));
+        employeeId.setMinWidth(80);
+        employeeId.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("employeeId"));
 
         startTime.setMinWidth(100);
         startTime.setCellValueFactory(
@@ -154,19 +215,21 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         endTime.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("endTime"));
 
-        projectId.setMinWidth(50);
+        projectId.setMinWidth(80);
         projectId.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("projectId"));
 
-        priorityLevel.setMinWidth(130);
+        priorityLevel.setMinWidth(70);
         priorityLevel.setCellValueFactory(new PropertyValueFactory<Task, String>("priority"));
 
         recommendedAssignee.setMinWidth(150);
         recommendedAssignee.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("recommendedAssigneeName"));
 
-        table.getColumns().addAll(id, name, startTime, endTime, priorityLevel, projectId, employeeName, recommendedAssignee);
+        table.getColumns().addAll(id, name, startTime, endTime, priorityLevel, projectId, employeeId, recommendedAssignee);
         table.setItems(data);
+
+        setEditableCells();
 
         changeListener = new ChangeListener() {
             @Override
@@ -215,9 +278,97 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         return table;
     }
 
+
+
+    private void setEditableCells() {
+        employeeId.setCellFactory(TextFieldTableCell.forTableColumn());
+        employeeId.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Task, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Task, String> t) {
+                        int employeeId = Integer.parseInt(t.getNewValue());
+                        Employee employee = SystemData.getAllEmployeesMap().get(employeeId);
+                        ((Task) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())
+                        ).setEmployee(employee);
+                    }
+                }
+        );
+
+        projectId.setCellFactory(TextFieldTableCell.forTableColumn());
+        projectId.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Task, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Task, String> t) {
+                        int projectId = Integer.parseInt(t.getNewValue());
+                        Project project = SystemData.getAllProjectsMap().get(projectId);
+                        ((Task) t.getTableView().getItems().get(
+                                t.getTablePosition().getRow())
+                        ).setProject(project);
+                    }
+                }
+        );
+
+
+        startTime.setCellFactory(TextFieldTableCell.forTableColumn(stringToDateConverter));
+        startTime.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Task, Date>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Task, Date> t) {
+                        try {
+                            Task task = (Task) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow());
+                            task.setStartTime(t.getNewValue());
+                        } catch (DateTimeParseException exception) {
+                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                        }
+                    }
+                }
+        );
+        endTime.setCellFactory(TextFieldTableCell.forTableColumn(stringToDateConverter));
+        endTime.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Task, Date>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Task, Date> t) {
+                        //TODO: handle null values
+                        try {
+                            Task task = (Task) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow());
+                            task.setEndTime(t.getNewValue());
+                        } catch (DateTimeParseException exception) {
+                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                        }
+                    }
+                }
+        );
+    }
+
+    private StringConverter stringToDateConverter = new StringConverter<Date>() {
+
+        @Override
+        public String toString(Date t) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            if (t==null) {
+                return "" ;
+            } else {
+                return df.format(t);
+            }
+        }
+
+        @Override
+        public Date fromString(String string) {
+            try {
+                return Date.valueOf(LocalDate.parse(string, dateFormat));
+            } catch (DateTimeParseException exc) {
+                return null ;
+            }
+        }
+
+    };
+
     VBox addCard() {
-        String[] names = {"ID", "Name", "Description", "Project id", "Start date", "End Date", "Priority Level", "Skills required", "Recommended Assignee", "Allocated to employee"};
-        cardValues = new String[]{"1", "Java development", "", "Project id", "2016-12-01", "2016-12-03", "Priority Level", "Java, git, JUnit, Spring", "Employee name here", "Employee name here"};
+        String[] names = {"ID", "Name", "Description", "Project id", "Start date", "End date", "Priority level", "Skills required", "Recommended assignee", "Allocated to employee"};
+        cardValues = new String[]{"", "", "", "", "", "", "", "Java, git, JUnit, Spring", "", ""};
         return super.addCard(names, cardValues);
     }
 
@@ -251,5 +402,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
         //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);
+    }
+
+    enum Mode {
+        View,
+        Allocate;
     }
 }
