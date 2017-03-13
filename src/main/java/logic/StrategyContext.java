@@ -78,6 +78,7 @@ public class StrategyContext {
      */
     private void allocateTasks(List<Task> listOfTasks, String priority) {
         if (!listOfTasks.isEmpty()) {
+            listOfTasks.forEach(task -> logger.trace(task.toString()));
             logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
             result.addAll(strategy.allocate(listOfTasks));
             numberOfUnnalocatedTasks +=  strategy.numOfUnnalocatedTasks;
@@ -125,7 +126,7 @@ public class StrategyContext {
         numberOfUnnalocatedProjects=0;
         int totalProfitFromSelectedProjects = 0;
         projectResultList = new ArrayList<>();
-        getTasksInfo();
+        getTasksInfo(projectsToAllocate);
 
         Iterator<Project> iter = projectsToAllocate.iterator();
         while (iter.hasNext()) {
@@ -172,7 +173,7 @@ public class StrategyContext {
     /**
      * the method is used only for debugging purposes by executeProjectStrategy method.
      */
-    private void getTasksInfo() {
+    private void getTasksInfo(List<Project> projectsToAllocate) {
         Set<Pair<Task, Task>> taskPairs = new HashSet<>();
         for (Project project : projectsToAllocate) {
             logger.info(project.getName().toString());
