@@ -40,9 +40,20 @@ public class Task implements DatabaseEntity{
     private Project project;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
-
     public ArrayList<Employee> possibleAssignee;
     private Employee recommendedAssignee;
+    private String recommendedAssigneeName;
+
+    // ORMLite needs a no-arg constructor
+    public Task() {
+    }
+
+    public Task(String name, Date startTime, Date endTime, Priority priority) {
+        this.name = name;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.priority = priority;
+    }
 
 
     @Override
@@ -87,16 +98,6 @@ public class Task implements DatabaseEntity{
             return project.getId().toString();
         }
         return null;
-    }
-
-    private String recommendedAssigneeName;
-
-    // ORMLite needs a no-arg constructor
-    public Task() {
-    }
-
-    public Task(String name) {
-        this.name = name;
     }
 
     public String getName() {

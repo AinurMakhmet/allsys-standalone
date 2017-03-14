@@ -38,7 +38,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     private String[] cardValues;
     private List<Task> tasksToAllocate, result;
     private List<Task> selectedTasks = new LinkedList<>();
-    private Button greedyRecButton, ffRecButton;
+    private Button greedyRecButton, ffRecButton, allocateButton, deAllocateButton;
     private ListChangeListener<Task> multipleSelectionListener;
     private ChangeListener changeListener;
     private TableColumn name, employeeId, startTime, endTime, projectId, priorityLevel;
@@ -53,40 +53,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     private TasksPage() {
         super();
         search.setPromptText("Search tasks");
-        greedyRecButton = new Button("G REC");
-        greedyRecButton.setOnAction(this);
-        ffRecButton = new Button("FF REC");
-        ffRecButton.setOnAction(this);
-        Button allocateButton = new Button("Allocate");
-        allocateButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                selectedTasks.forEach(task -> {
-                    if (task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
-                        task.setEmployee(task.getRecommendedAssignee());
-                        task.setRecommendedAssignee(null);
-                    }
-                });
-                table.refresh();
-
-            }
-        });
-
-
-        Button deAllocateButton = new Button("Deallocate");
-        deAllocateButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                selectedTasks.forEach(task -> {
-                    if (task.getEmployee()!=null ) {
-                        task.setEmployee(null);
-                    }
-                });
-                table.refresh();
-
-            }
-        });
-
 
         final ToggleGroup group = new ToggleGroup();
         RadioButton viewModeButton = new RadioButton("View Mode");
@@ -124,22 +90,15 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             }
         });
 
-        allocateButton.setVisible(false);
-        deAllocateButton.setVisible(false);
-        ffRecButton.setVisible(false);
-        greedyRecButton.setVisible(false);
-        top.getChildren().add(greedyRecButton);
-        top.getChildren().add(ffRecButton);
-        top.getChildren().add(allocateButton);
-        top.getChildren().add(deAllocateButton);
+        constructAllocationMode();
         top.getChildren().add(viewModeButton);
         top.getChildren().add(allocateModeButton);
 
         final TextField addName = new TextField();
         addName.setPromptText("Name");
-        addName.setMaxWidth(80);
+        addName.setMaxWidth(100);
         final TextField addStartTime = new TextField();
-        addStartTime.setMaxWidth(190);
+        addStartTime.setPrefWidth(180);
         addStartTime.setPromptText("Start Date (yyyy-MM-dd)");
         final TextField addEndTime = new TextField();
         addEndTime.setMaxWidth(190);
@@ -149,19 +108,15 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-
-                Task newTask = new Task();;
                 //TODO: handle null values
                 try {
                     LocalDate startDateL = LocalDate.parse(addStartTime.getText(), dateFormat);
                     LocalDate endDateL = LocalDate.parse(addEndTime.getText(), dateFormat);
-                    newTask.setStartTime(java.sql.Date.valueOf(startDateL));
-                    newTask.setEndTime(java.sql.Date.valueOf(endDateL));
-                    System.out.println(startDateL); // 2010-01-02
-                    Integer id = SystemData.getAllTasksMap().size();
-                    newTask.setName(addName.getText());
+                    Date startTime = Date.valueOf(startDateL);
+                    Date endTime = Date.valueOf(endDateL);
                     //TODO: handle the priority;
-                    newTask.setPriority(Task.Priority.LOW);
+                    Task newTask = new Task(addName.getText(), startTime, endTime, Task.Priority.LOW);;
+                    Integer id = SystemData.getAllTasksMap().size();
                     TaskUtils.createEntity(Task.class, newTask);
                     if (TaskUtils.getTask(id)!=null) {
                         SystemData.getAllTasksMap().put(id, newTask);
@@ -278,7 +233,48 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         return table;
     }
 
+    private void constructAllocationMode() {
+        greedyRecButton = new Button("G REC");
+        greedyRecButton.setOnAction(this);
+        ffRecButton = new Button("FF REC");
+        ffRecButton.setOnAction(this);
+        allocateButton = new Button("Allocate");
+        allocateButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                selectedTasks.forEach(task -> {
+                    if (task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
+                        task.setEmployee(task.getRecommendedAssignee());
+                        task.setRecommendedAssignee(null);
+                    }
+                });
+                table.refresh();
 
+            }
+        });
+
+        deAllocateButton = new Button("Deallocate");
+        deAllocateButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                selectedTasks.forEach(task -> {
+                    if (task.getEmployee()!=null ) {
+                        task.setEmployee(null);
+                    }
+                });
+                table.refresh();
+
+            }
+        });
+        allocateButton.setVisible(false);
+        deAllocateButton.setVisible(false);
+        ffRecButton.setVisible(false);
+        greedyRecButton.setVisible(false);
+        top.getChildren().add(greedyRecButton);
+        top.getChildren().add(ffRecButton);
+        top.getChildren().add(allocateButton);
+        top.getChildren().add(deAllocateButton);
+    }
 
     private void setEditableCells() {
         employeeId.setCellFactory(TextFieldTableCell.forTableColumn());
