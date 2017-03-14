@@ -50,17 +50,31 @@ public class SkillsPage extends AbstractPage{
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-
-                Skill newSkill = new Skill(addName.getText(), addLevel.getText());;
-                //TODO: handle null values
-                Integer id = SystemData.allSkills.size();
-                SkillUtils.createEntity(Skill.class, newSkill);
-                if (SkillUtils.getSkill(id)!=null) {
-                    SystemData.allSkills.add(newSkill);
-                    data.add(newSkill);
-                    addName.clear();
-                    addLevel.clear();
-                    table.refresh();
+                try {
+                    Integer level = null;
+                    if (addName.getText().equals("") || addLevel.getText().equals("")) {
+                        MainUI.alertError("Invalid input", "A skill must have a name and a level.");
+                        return;
+                    }
+                    if (!addLevel.getText().equals("")) {
+                        level = Integer.parseInt(addLevel.getText());
+                    }
+                    if (level != null && level < 1) {
+                        MainUI.alertError("Invalid input", "Level cannot be of a negative value ");
+                        return;
+                    }
+                    Skill newSkill = new Skill(addName.getText(), addLevel.getText());
+                    Integer id = SystemData.allSkills.size() + 1;
+                    SkillUtils.createEntity(Skill.class, newSkill);
+                    if (SkillUtils.getSkill(id) != null) {
+                        SystemData.allSkills.add(newSkill);
+                        data.add(newSkill);
+                        addName.clear();
+                        addLevel.clear();
+                        table.refresh();
+                    }
+                } catch (NumberFormatException | ClassCastException exc) {
+                    MainUI.alertError("Invalid input", "Please enter only numbers to the Level field or leave it blank.");
                 }
             }
         });

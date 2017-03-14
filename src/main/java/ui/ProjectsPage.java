@@ -1,5 +1,6 @@
 package ui;
 
+import entity_utils.EmployeeUtils;
 import entity_utils.ProjectUtils;
 import entity_utils.TaskUtils;
 import javafx.beans.value.ChangeListener;
@@ -16,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.converter.IntegerStringConverter;
 import logic.MaximumProfitAlgorithm;
 import logic.StrategyContext;
+import models.Employee;
 import models.Project;
 import models.SystemData;
 import models.Task;
@@ -101,10 +103,21 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                //TODO: handle null values
                 try {
+                    Integer price = null;
+                    if (!addPrice.getText().equals("")) {
+                        price = Integer.parseInt(addPrice.getText());
+                    }
+                    if (price!=null && price<0) {
+                        MainUI.alertError("Invalid input", "Employee salary cannot be of a negative value ");
+                        return;
+                    }
+                    if (addName.getText().equals("")) {
+                        MainUI.alertError("Invalid input", "A project must have a name.");
+                        return;
+                    }
                     Project newProject = new Project(addName.getText(), Integer.parseInt(addPrice.getText()));;
-                    Integer id = SystemData.getAllProjectsMap().size();
+                    Integer id = SystemData.getAllProjectsMap().size()+1;
                     ProjectUtils.createEntity(Project.class, newProject);
                     if (ProjectUtils.getProject(id)!=null) {
                         SystemData.getAllProjectsMap().put(id, newProject);
@@ -113,11 +126,9 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                         addPrice.clear();
                         table.refresh();
                     }
-                } catch (ClassCastException exception) {
-                    System.out.println("Please enter only number in the Price field");
+                } catch (NumberFormatException | ClassCastException exc) {
+                    MainUI.alertError("Invalid input", "Please enter only numbers to the Price field or leave it blank.");
                 }
-
-
             }
         });
 
@@ -293,14 +304,30 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                 }
         );
 
-        price.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        price.setCellFactory(col -> new TextFieldTableCell<Project, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
+            @Override
+            public void updateItem(Integer item, boolean empty) {
+                if (empty) {
+                    super.updateItem(item, empty) ;
+                } else {
+                    // if out of range, revert to previous value:
+                    if (item!=null && item.intValue() < 0) {
+                        item = getItem();
+                        MainUI.alertError("Invalid input", "Please enter a positive number.");
+                    }
+                    super.updateItem(item, empty);
+                }
+            }
+        });
         price.setOnEditCommit(
                 new EventHandler<TableColumn.CellEditEvent<Project, Integer>>() {
                     @Override
                     public void handle(TableColumn.CellEditEvent<Project, Integer> t) {
-                        Project project = (Project) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                        //TODO: handle numberFormatException
-                        project.setPrice(t.getNewValue());
+                        Integer price = t.getNewValue();
+                        if (price!=null && price>=0) {
+                            Project project = (Project) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                            project.setPrice(t.getNewValue());
+                        }
                     }
                 }
         );
@@ -315,7 +342,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                                     t.getTablePosition().getRow());
                             project.setStartTime(t.getNewValue());
                         } catch (DateTimeParseException exception) {
-                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                            MainUI.alertError(null, "Please enter the date in the format of yyyy-MM-dd");
                         }
                     }
                 }
@@ -331,7 +358,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                                     t.getTablePosition().getRow());
                             project.setEndTime(t.getNewValue());
                         } catch (DateTimeParseException exception) {
-                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                            MainUI.alertError(null, "Please enter a date in the format of yyyy-MM-dd");
                         }
                     }
                 }
@@ -357,7 +384,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     @Override
     public void handle(ActionEvent event) {
         if (selectedProjects ==null || selectedProjects.isEmpty()) {
-            System.out.println("Please select the tasks");
+            MainUI.alertError("Invalid selection.", "Please select projects to allocate.");
             return;
         }
         projectsToAllocate = selectedProjects;

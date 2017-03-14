@@ -106,15 +106,17 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                //TODO: handle null values
                 try {
+                    if (addName.getText().equals("")) {
+                        MainUI.alertError("Invalid input", "A task must have a name.");
+                        return;
+                    }
                     LocalDate startDateL = LocalDate.parse(addStartTime.getText(), dateFormat);
                     LocalDate endDateL = LocalDate.parse(addEndTime.getText(), dateFormat);
                     Date startTime = Date.valueOf(startDateL);
                     Date endTime = Date.valueOf(endDateL);
-                    //TODO: handle the priority;
-                    Task newTask = new Task(addName.getText(), startTime, endTime, Task.Priority.LOW);;
-                    Integer id = SystemData.getAllTasksMap().size();
+                    Task newTask = new Task(addName.getText(), startTime, endTime, Task.Priority.LOW);
+                    Integer id = SystemData.getAllTasksMap().size()+1;
                     TaskUtils.createEntity(Task.class, newTask);
                     if (TaskUtils.getTask(id)!=null) {
                         SystemData.getAllTasksMap().put(id, newTask);
@@ -125,7 +127,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         table.refresh();
                     }
                 } catch (DateTimeParseException exception) {
-                     System.out.println("Please enter the dates in the format of yyyy-MM-dd");
+                    MainUI.alertError(null, "Please enter a date in the format of yyyy-MM-dd");
                 }
 
 
@@ -158,7 +160,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
         employeeId.setMinWidth(80);
         employeeId.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("employeeId"));
+                new PropertyValueFactory<Task, Integer>("employeeId"));
 
         startTime.setMinWidth(100);
         startTime.setCellValueFactory(
@@ -170,7 +172,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
         projectId.setMinWidth(80);
         projectId.setCellValueFactory(
-                new PropertyValueFactory<Task, String>("projectId"));
+                new PropertyValueFactory<Task, Integer>("projectId"));
 
         priorityLevel.setMinWidth(70);
         priorityLevel.setCellValueFactory(new PropertyValueFactory<Task, String>("priority"));
@@ -275,30 +277,83 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     }
 
     private void setEditableCells() {
-        employeeId.setCellFactory(TextFieldTableCell.forTableColumn());
-        employeeId.setOnEditCommit(
-                new EventHandler<TableColumn.CellEditEvent<Task, String>>() {
-                    @Override
-                    public void handle(TableColumn.CellEditEvent<Task, String> t) {
-                        int employeeId = Integer.parseInt(t.getNewValue());
+
+        employeeId.setCellFactory(col -> new TextFieldTableCell<Task, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
+            @Override
+            public void updateItem(Integer item, boolean empty) {
+                if (empty) {
+                    super.updateItem(item, empty) ;
+                } else {
+                    // if out of range, revert to previous value:
+                    if (item!=null && item.intValue() < 0) {
+                        item = getItem();
+                        MainUI.alertError("Invalid input", "Please enter a positive number.");
+                    } else if (item!=null) {
+                        Integer employeeId = item.intValue();
                         Employee employee = SystemData.getAllEmployeesMap().get(employeeId);
-                        ((Task) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setEmployee(employee);
+                        if (employee == null) {
+                            MainUI.alertError("Invalid employee id", "Employee with such id does not exist.");
+                            item = getItem();
+                        }
+
+                    }
+                    super.updateItem(item, empty);
+                }
+            }
+        });
+        employeeId.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Task, Integer>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Task, Integer> t) {
+                        Integer employeeId = t.getNewValue();
+                        if (employeeId!=null) {
+                            Employee employee = SystemData.getAllEmployeesMap().get(employeeId);
+                            if (employee != null) {
+                                ((Task) t.getTableView().getItems().get(
+                                        t.getTablePosition().getRow())
+                                ).setEmployee(employee);
+                            }
+                        }
                     }
                 }
         );
 
-        projectId.setCellFactory(TextFieldTableCell.forTableColumn());
-        projectId.setOnEditCommit(
-                new EventHandler<TableColumn.CellEditEvent<Task, String>>() {
-                    @Override
-                    public void handle(TableColumn.CellEditEvent<Task, String> t) {
-                        int projectId = Integer.parseInt(t.getNewValue());
+        //http://stackoverflow.com/a/34701925
+        projectId.setCellFactory(col -> new TextFieldTableCell<Task, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
+            @Override
+            public void updateItem(Integer item, boolean empty) {
+                if (empty) {
+                    super.updateItem(item, empty) ;
+                } else {
+                    // if out of range, revert to previous value:
+                    if (item!=null && item.intValue() < 0) {
+                        item = getItem();
+                        MainUI.alertError("Invalid input", "Please enter a positive number.");
+                    } else if (item!=null) {
+                        Integer projectId = item.intValue();
                         Project project = SystemData.getAllProjectsMap().get(projectId);
-                        ((Task) t.getTableView().getItems().get(
-                                t.getTablePosition().getRow())
-                        ).setProject(project);
+                        if (project==null) {
+                            item = getItem();
+                            MainUI.alertError("Invalid project id", "Project with such id does not exist.");
+                        }
+                    }
+                    super.updateItem(item, empty);
+                }
+            }
+        });
+        projectId.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Task, Integer>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Task, Integer> t) {
+                        Integer projectId = t.getNewValue();
+                        if (projectId!=null) {
+                            Project project = SystemData.getAllProjectsMap().get(projectId);
+                            if (project != null) {
+                                ((Task) t.getTableView().getItems().get(
+                                        t.getTablePosition().getRow())
+                                ).setProject(project);
+                            }
+                        }
                     }
                 }
         );
@@ -314,7 +369,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                     t.getTablePosition().getRow());
                             task.setStartTime(t.getNewValue());
                         } catch (DateTimeParseException exception) {
-                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                            MainUI.alertError(null, "Please enter the date in the format of yyyy-MM-dd");
                         }
                     }
                 }
@@ -330,14 +385,14 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                     t.getTablePosition().getRow());
                             task.setEndTime(t.getNewValue());
                         } catch (DateTimeParseException exception) {
-                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                            MainUI.alertError(null ,"Please enter a date in the format of yyyy-MM-dd");
                         }
                     }
                 }
         );
     }
 
-    static StringConverter stringToDateConverter = new StringConverter<Date>() {
+    static final StringConverter stringToDateConverter = new StringConverter<Date>() {
 
         @Override
         public String toString(Date t) {
@@ -353,9 +408,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         public Date fromString(String string) {
             try {
                 return Date.valueOf(LocalDate.parse(string, dateFormat));
-            } catch (DateTimeParseException exc) {
-                return null ;
+            } catch (DateTimeParseException | IllegalStateException e) {
+                MainUI.alertError(null, "Please enter a date in the format of yyyy-MM-dd");
             }
+            return null;
         }
 
     };
@@ -378,7 +434,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     @Override
     public void handle(ActionEvent event) {
         if (selectedTasks==null || selectedTasks.isEmpty()) {
-            System.out.println("Please select the tasks");
+            MainUI.alertError("Invalid selection", "Please select tasks to allocate.");
             return;
         }
         tasksToAllocate = selectedTasks;
@@ -393,9 +449,9 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         }
         assert(result.size()==selectedTasks.size());
         table.refresh();
+        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumberOfUnnalocatedTasks()
+                + ". \nAmong them number of tasks non-valid for allocation: "+ StrategyContext.getNumberOfTasksUnvalidForAllocation());
         //MainUI.refreshTables();
-        //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
-        //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);
     }
 
     enum Mode {

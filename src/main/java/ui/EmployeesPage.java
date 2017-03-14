@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import models.Employee;
 import models.Skill;
@@ -26,7 +27,7 @@ import java.io.IOException;
 public class EmployeesPage extends AbstractPage {
     final ObservableList<Employee> data = FXCollections.observableArrayList(SystemData.getAllEmployeesMap().values());
     private TableColumn firstName, lastName, monthlySalary;
-    
+
     private static EmployeesPage ourInstance = new EmployeesPage();
 
     public static EmployeesPage getInstance() {
@@ -52,18 +53,32 @@ public class EmployeesPage extends AbstractPage {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-
-                Employee newEmployee = new Employee(addFirstName.getText(), addLastName.getText(), Integer.parseInt(addMonthlySalary.getText()));
-                //TODO: handle null values
-                Integer id = SystemData.getAllEmployeesMap().size();
-                EmployeeUtils.createEntity(Employee.class, newEmployee);
-                if (EmployeeUtils.getEmployee(id)!=null) {
-                    SystemData.getAllEmployeesMap().put(id, newEmployee);
-                    data.add(newEmployee);
-                    addFirstName.clear();
-                    addLastName.clear();
-                    addMonthlySalary.clear();
-                    table.refresh();
+                try {
+                    Integer salary = null;
+                    if (!addMonthlySalary.getText().equals("")) {
+                        salary = Integer.parseInt(addMonthlySalary.getText());
+                    }
+                    if (salary!=null && salary<0) {
+                        MainUI.alertError("Invalid input", "Employee salary cannot be of a negative value ");
+                        return;
+                    }
+                    if (addFirstName.getText().equals("") || addLastName.getText().equals("")) {
+                        MainUI.alertError("Invalid input", "An employee must have a first and a last names.");
+                        return;
+                    }
+                    Employee newEmployee = new Employee(addFirstName.getText(), addLastName.getText(), salary);
+                    Integer id = SystemData.getAllEmployeesMap().size()+1;
+                    EmployeeUtils.createEntity(Employee.class, newEmployee);
+                    if (EmployeeUtils.getEmployee(id) != null) {
+                        SystemData.getAllEmployeesMap().put(id, newEmployee);
+                        data.add(newEmployee);
+                        addFirstName.clear();
+                        addLastName.clear();
+                        addMonthlySalary.clear();
+                        table.refresh();
+                    }
+                } catch (NumberFormatException | ClassCastException exc) {
+                    MainUI.alertError("Invalid input", "Please enter only numbers to the Salary field or leave it blank.");
                 }
             }
         });
@@ -158,21 +173,53 @@ public class EmployeesPage extends AbstractPage {
                 ).setLastName(name);
             }
         });
-        monthlySalary.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
+        //http://stackoverflow.com/a/34701925
+        monthlySalary.setCellFactory(col -> new TextFieldTableCell<Employee, Integer>(new EditIntegerStringConverter()) {
+            @Override
+            public void updateItem(Integer item, boolean empty) {
+                if (empty) {
+                    super.updateItem(item, empty) ;
+                } else {
+                    // if out of range, revert to previous value:
+                    if (item!=null && item.intValue() < 0) {
+                        item = getItem();
+                        MainUI.alertError("Invalid input", "Please enter a positive number.");
+                    }
+                    super.updateItem(item, empty);
+                }
+            }
+        });
         monthlySalary.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Employee, Integer>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<Employee, Integer> event) {
-                //TODO: handle numberFormatException
-                ((Employee) event.getTableView().getItems().get(
-                        event.getTablePosition().getRow())
-                ).setMonthlySalary(event.getNewValue());
+                Integer salary = event.getNewValue();
+                if (salary!=null && salary>=0) {
+                    ((Employee) event.getTableView().getItems().get(
+                            event.getTablePosition().getRow())
+                    ).setMonthlySalary(salary);
+                }
             }
         });
+
     }
 
     VBox addCard() {
         String[] names = {"ID", "First Name", "Last Name", "Monthly Salary", "Skills", "Allocated to tasks"};
         cardValues = new String[]{"--", "---", "---", "----", "---", "not allocated to tasks"};
         return super.addCard(names, cardValues);
+    }
+
+    public static class EditIntegerStringConverter extends IntegerStringConverter {
+        @Override
+        public Integer fromString(String value) {
+            // If the invlid format show the dialog
+            try {
+                Integer.valueOf(value);
+                return  super.fromString(value);
+            } catch (NumberFormatException  | ClassCastException e) {
+                return -1;
+            }
+        }
     }
 }

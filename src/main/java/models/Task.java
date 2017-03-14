@@ -86,16 +86,16 @@ public class Task implements DatabaseEntity{
 
     private String employeeName;
 
-    public String getEmployeeId() {
+    public Integer getEmployeeId() {
         if (employee!=null){
-            return employee.getId().toString();
+            return employee.getId();
         }
         return null;
     }
 
-    public String getProjectId() {
+    public Integer getProjectId() {
         if (project!=null) {
-            return project.getId().toString();
+            return project.getId();
         }
         return null;
     }

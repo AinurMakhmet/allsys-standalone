@@ -116,7 +116,7 @@ public class Sidebar extends VBox implements EventHandler {
         } else if (event.getSource() == projectsLink) {
             MainUI.borderPane.setCenter(ProjectsPage.getInstance());
             MainUI.borderPane.setRight(ProjectsPage.getInstance().addCard());
-            SkillsPage.getInstance().table.refresh();
+            ProjectsPage.getInstance().table.refresh();
         } else if (event.getSource() == skillsLink) {
             MainUI.borderPane.setCenter(SkillsPage.getInstance());
             MainUI.borderPane.setRight(SkillsPage.getInstance().addCard());
