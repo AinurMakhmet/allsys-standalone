@@ -42,7 +42,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     private ListChangeListener<Task> multipleSelectionListener;
     private ChangeListener changeListener;
     private TableColumn name, employeeId, startTime, endTime, projectId, priorityLevel;
-    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static TasksPage ourInstance = new TasksPage();
 
@@ -339,7 +339,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         );
     }
 
-    private StringConverter stringToDateConverter = new StringConverter<Date>() {
+    static StringConverter stringToDateConverter = new StringConverter<Date>() {
 
         @Override
         public String toString(Date t) {

@@ -1,5 +1,6 @@
 package ui;
 
+import entity_utils.ProjectUtils;
 import entity_utils.TaskUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,8 +11,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.IntegerStringConverter;
 import logic.MaximumProfitAlgorithm;
 import logic.StrategyContext;
 import models.Project;
@@ -21,6 +23,8 @@ import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +40,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     private List<Project> selectedProjects = new LinkedList<>();
     private Button maxProfitRecButton, allocateButton, deAllocateButton;
     private List<Project> lastSavedAllocation;
-    private TableColumn name, cost;
+    private TableColumn name, price, startTime, endTime;
     private ListChangeListener<Project> multipleSelectionListener;
     ChangeListener changeListener;
 
@@ -87,6 +91,39 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         constructAllocationMode();
         top.getChildren().add(viewModeButton);
         top.getChildren().add(allocateModeButton);
+
+        final TextField addName = new TextField();
+        addName.setPromptText("Name");
+        addName.setMaxWidth(100);
+        final TextField addPrice = new TextField();
+        addPrice.setPrefWidth(100);
+        addPrice.setPromptText("Price");
+
+        final Button addButton = new Button("Add Task");
+        addButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                //TODO: handle null values
+                try {
+                    Project newProject = new Project(addName.getText(), Integer.parseInt(addPrice.getText()));;
+                    Integer id = SystemData.getAllProjectsMap().size();
+                    ProjectUtils.createEntity(Project.class, newProject);
+                    if (ProjectUtils.getProject(id)!=null) {
+                        SystemData.getAllProjectsMap().put(id, newProject);
+                        data.add(newProject);
+                        addName.clear();
+                        addPrice.clear();
+                        table.refresh();
+                    }
+                } catch (ClassCastException exception) {
+                    System.out.println("Please enter only number in the Price field");
+                }
+
+
+            }
+        });
+
+        bottom.getChildren().addAll(addName, addPrice, addButton);
         setCenter(addTable("Projects"));
     }
 
@@ -151,15 +188,19 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         table = super.addTable(pageName);
         TableColumn id = new TableColumn("ID");
         name = new TableColumn("Name");
-        cost = new TableColumn("Cost");
-        TableColumn startTime = new TableColumn("Start time");
-        TableColumn endTime = new TableColumn("End Time");
+        price = new TableColumn("Price");
+        startTime = new TableColumn("Start time");
+        endTime = new TableColumn("End Time");
+        TableColumn cost = new TableColumn("Cost");
+        TableColumn profit = new TableColumn("Profit");
+        TableColumn estimatedCost = new TableColumn("Estimated Cost");
+        TableColumn estimatedProfit = new TableColumn("Estimated Profit");
 
-        id.setMinWidth(50);
+        id.setMinWidth(40);
         id.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("id"));
 
-        name.setMinWidth(100);
+        name.setMinWidth(60);
         name.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("name"));
 
@@ -171,12 +212,30 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         endTime.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("endTime"));
 
-        cost.setMinWidth(150);
+        price.setMinWidth(60);
+        price.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("price"));
+
+        cost.setMinWidth(60);
         cost.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("cost"));
 
-        table.getColumns().addAll(id, name, startTime, endTime, cost);
+        profit.setMinWidth(60);
+        profit.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("profit"));
+
+        estimatedCost.setMinWidth(60);
+        estimatedCost.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("estimatedCost"));
+
+        estimatedProfit.setMinWidth(60);
+        estimatedProfit.setCellValueFactory(
+                new PropertyValueFactory<Task, String>("estimatedProfit"));
+
+        table.getColumns().addAll(id, name, startTime, endTime, price, cost, estimatedCost, estimatedProfit);
         table.setItems(data);
+
+        setEditableCells();
 
         changeListener = new ChangeListener() {
             @Override
@@ -222,6 +281,64 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         };
 
         return table;
+    }
+
+    private void setEditableCells() {
+        name.setCellFactory(TextFieldTableCell.forTableColumn());
+        name.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Project, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Project, String> t) {
+                        Project project = (Project) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                        project.setName(t.getNewValue());
+                    }
+                }
+        );
+
+        price.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        price.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Project, Integer>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Project, Integer> t) {
+                        Project project = (Project) t.getTableView().getItems().get(t.getTablePosition().getRow());
+                        //TODO: handle numberFormatException
+                        project.setPrice(t.getNewValue());
+                    }
+                }
+        );
+
+        startTime.setCellFactory(TextFieldTableCell.forTableColumn(TasksPage.stringToDateConverter));
+        startTime.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Project, Date>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Project, Date> t) {
+                        try {
+                            Project project = (Project) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow());
+                            project.setStartTime(t.getNewValue());
+                        } catch (DateTimeParseException exception) {
+                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                        }
+                    }
+                }
+        );
+        endTime.setCellFactory(TextFieldTableCell.forTableColumn(TasksPage.stringToDateConverter));
+        endTime.setOnEditCommit(
+                new EventHandler<TableColumn.CellEditEvent<Project, Date>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<Project, Date> t) {
+                        //TODO: handle null values
+                        try {
+                            Project project = (Project) t.getTableView().getItems().get(
+                                    t.getTablePosition().getRow());
+                            project.setEndTime(t.getNewValue());
+                        } catch (DateTimeParseException exception) {
+                            System.out.println("Please enter the date in the format of yyyy-MM-dd");
+                        }
+                    }
+                }
+        );
+
     }
 
     VBox addCard() {

@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import entity_utils.ProjectUtils;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -25,6 +26,10 @@ public class Project implements DatabaseEntity{
     private String description;
     @DatabaseField
     private Integer price;
+    @DatabaseField
+    private Integer cost;
+    @DatabaseField
+    private Integer profit;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<Task> tasks;
     @DatabaseField(columnName = "end_time")
@@ -32,6 +37,7 @@ public class Project implements DatabaseEntity{
     @DatabaseField(columnName = "start_time")
     private Date startTime;
 
+    private Integer estimatedCost, estimatedProfit;
 
     /**
      * Blank constructor for ORM.
@@ -39,8 +45,9 @@ public class Project implements DatabaseEntity{
     public Project() {
     }
 
-    public Project(String name) {
+    public Project(String name, int price) {
         this.name = name;
+        this.price = price;
     }
 
     public String getName() {
@@ -49,6 +56,7 @@ public class Project implements DatabaseEntity{
 
     public void setName(String name) {
         this.name = name;
+        ProjectUtils.updateEntity(this);
     }
 
     public String getDescription() {
@@ -57,6 +65,7 @@ public class Project implements DatabaseEntity{
 
     public void setDescription(String description) {
         this.description = description;
+        ProjectUtils.updateEntity(this);
     }
 
     public Integer getPrice() {
@@ -65,6 +74,7 @@ public class Project implements DatabaseEntity{
 
     public void setPrice(int price) {
         this.price = price;
+        ProjectUtils.updateEntity(this);
     }
 
     public Date getEndTime() {
@@ -73,6 +83,7 @@ public class Project implements DatabaseEntity{
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+        ProjectUtils.updateEntity(this);
     }
 
     public Date getStartTime() {
@@ -81,9 +92,42 @@ public class Project implements DatabaseEntity{
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+        ProjectUtils.updateEntity(this);
     }
 
+    public Integer getCost() {
+        return cost;
+    }
 
+    public void setCost(Integer cost) {
+        this.cost = cost;
+        ProjectUtils.updateEntity(this);
+    }
+
+    public Integer getProfit() {
+        return profit;
+    }
+
+    public void setProfit(Integer profit) {
+        this.profit = profit;
+        ProjectUtils.updateEntity(this);
+    }
+
+    public Integer getEstimatedCost() {
+        return estimatedCost;
+    }
+
+    public void setEstimatedCost(Integer estimatedCost) {
+        this.estimatedCost = estimatedCost;
+    }
+
+    public Integer getEstimatedProfit() {
+        return estimatedProfit;
+    }
+
+    public void setEstimatedProfit(Integer estimatedProfit) {
+        this.estimatedProfit = estimatedProfit;
+    }
 
     /**
      * Gets a list of tasks that the project includes.

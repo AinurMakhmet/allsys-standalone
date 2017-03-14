@@ -1,6 +1,7 @@
 package entity_utils;
 
 import models.Project;
+import models.Task;
 
 import java.util.List;
 
@@ -42,5 +43,15 @@ public class ProjectUtils extends AbstractEntityUtils {
 	 */
 	public static List<Project> getAllProjects() {
 		return getAllEntities(Project.class);
+	}
+
+	/**
+	 * Updates the specified record in the database.
+	 *
+	 * @param project the project to be updated
+	 */
+	public static void updateEntity(Project project) {
+		// set up server connection
+		updateEntity(Project.class, project);
 	}
 }
