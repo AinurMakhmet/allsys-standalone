@@ -1,7 +1,6 @@
 package ui;
 
 import entity_utils.EmployeeUtils;
-import entity_utils.SkillUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,7 +19,6 @@ import models.SystemData;
 import models.Task;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by nura on 06/12/16.
@@ -60,8 +58,8 @@ public class EmployeesPage extends AbstractPage {
                 Employee newEmployee = new Employee(addFirstName.getText(), addLastName.getText(), Integer.parseInt(addMonthlySalary.getText()));
                 //TODO: handle null values
                 Integer id = SystemData.getAllEmployeesMap().size();
-                SkillUtils.createEntity(Skill.class, newEmployee);
-                if (SkillUtils.getSkill(id)!=null) {
+                EmployeeUtils.createEntity(Employee.class, newEmployee);
+                if (EmployeeUtils.getEmployee(id)!=null) {
                     SystemData.getAllEmployeesMap().put(id, newEmployee);
                     data.add(newEmployee);
                     addFirstName.clear();
