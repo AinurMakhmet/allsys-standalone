@@ -31,13 +31,12 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     final ObservableList<Project> data = FXCollections.observableArrayList(SystemData.getAllProjectsMap().values());
     TableView table;
     private String[] cardValues;
-    private HBox pageHBox;
     private List<Project> projectsToAllocate;
     private List<Project> result;
     private List<Project> selectedProjects = new LinkedList<>();
-    private Button maxProfitRecButton;
-    private Button selectProjectsButton;
+    private Button maxProfitRecButton, allocateButton, deAllocateButton;
     private List<Project> lastSavedAllocation;
+    private TableColumn name, cost;
     private ListChangeListener<Project> multipleSelectionListener;
     ChangeListener changeListener;
 
@@ -51,9 +50,50 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     private ProjectsPage() {
         super();
         search.setPromptText("Search projects");
+
+        final ToggleGroup group = new ToggleGroup();
+        RadioButton viewModeButton = new RadioButton("View Mode");
+        viewModeButton.setToggleGroup(group);
+        viewModeButton.setSelected(true);
+        viewModeButton.setUserData(ProjectsPage.Mode.View);
+
+        RadioButton allocateModeButton = new RadioButton("Allocation Mode");
+        allocateModeButton.setToggleGroup(group);
+        allocateModeButton.setUserData(ProjectsPage.Mode.Allocate);
+
+        group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+            public void changed(ObservableValue<? extends Toggle> ov,
+                                Toggle old_toggle, Toggle new_toggle) {
+                Toggle toggle = group.getSelectedToggle();
+                if (toggle!=null) {
+                    if (toggle.getUserData().equals(ProjectsPage.Mode.Allocate)) {
+                        table.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+                        table.getSelectionModel().getSelectedItems().addListener(multipleSelectionListener);
+                        table.getSelectionModel().selectedItemProperty().removeListener(changeListener);
+                        allocateButton.setVisible(true);
+                        deAllocateButton.setVisible(true);
+                        maxProfitRecButton.setVisible(true);
+                    } else if (toggle.getUserData().equals(ProjectsPage.Mode.View)) {
+                        table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                        table.getSelectionModel().getSelectedItems().removeListener(multipleSelectionListener);
+                        table.getSelectionModel().selectedItemProperty().addListener(changeListener);
+                        allocateButton.setVisible(false);
+                        deAllocateButton.setVisible(false);
+                        maxProfitRecButton.setVisible(false);
+                    }
+                }
+            }
+        });
+        constructAllocationMode();
+        top.getChildren().add(viewModeButton);
+        top.getChildren().add(allocateModeButton);
+        setCenter(addTable("Projects"));
+    }
+
+    private void constructAllocationMode() {
         maxProfitRecButton = new Button("MaxProfit REC");
         maxProfitRecButton.setOnAction(this);
-        Button allocateButton = new Button("Allocate");
+        allocateButton = new Button("Allocate");
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -77,7 +117,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         });
 
 
-        Button deAllocateButton = new Button("Deallocate");
+        deAllocateButton = new Button("Deallocate");
         deAllocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -98,46 +138,20 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
 
             }
         });
-
-        selectProjectsButton = new Button("Select Tasks");
-        selectProjectsButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(((Button)event.getSource()).getText().equals("Select Tasks")) {
-                    table.getSelectionModel().setSelectionMode(
-                            SelectionMode.MULTIPLE
-                    );
-                    table.getSelectionModel().getSelectedItems().addListener(multipleSelectionListener);
-                    table.getSelectionModel().selectedItemProperty().removeListener(changeListener);
-
-                    selectProjectsButton.setText("Finish Selection");
-                } else {
-                    table.getSelectionModel().setSelectionMode(
-                            SelectionMode.SINGLE
-                    );
-                    table.getSelectionModel().getSelectedItems().removeListener(multipleSelectionListener);
-                    table.getSelectionModel().selectedItemProperty().addListener(changeListener);
-                    selectProjectsButton.setText("Select Tasks");
-
-                }
-            }
-        });
+        allocateButton.setVisible(false);
+        deAllocateButton.setVisible(false);
+        maxProfitRecButton.setVisible(false);
         top.getChildren().add(maxProfitRecButton);
         top.getChildren().add(allocateButton);
         top.getChildren().add(deAllocateButton);
-        top.getChildren().add(selectProjectsButton);
-        pageHBox = new HBox();
-        pageHBox.setSpacing(8);
-        setCenter(pageHBox);
-        pageHBox.getChildren().add(addTable("Projects"));
     }
 
     @Override
     TableView addTable(String pageName) {
         table = super.addTable(pageName);
         TableColumn id = new TableColumn("ID");
-        TableColumn name = new TableColumn("Name");
-        TableColumn cost = new TableColumn("Cost");
+        name = new TableColumn("Name");
+        cost = new TableColumn("Cost");
         TableColumn startTime = new TableColumn("Start time");
         TableColumn endTime = new TableColumn("End Time");
 
@@ -239,5 +253,10 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
         //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);
+    }
+
+    enum Mode {
+        View,
+        Allocate;
     }
 }
