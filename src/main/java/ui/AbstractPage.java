@@ -28,7 +28,7 @@ public abstract class AbstractPage extends BorderPane{
         super();
         setPadding(new Insets(10));
         top = new HBox();
-        top.setPadding(new Insets(10));
+        top.setPadding(new Insets(10, 0, 10, 0));
         top.setSpacing(8);
         search = new TextField();
 
@@ -37,7 +37,7 @@ public abstract class AbstractPage extends BorderPane{
         setTop(top);
 
         bottom = new HBox();
-        bottom.setPadding(new Insets(10));
+        bottom.setPadding(new Insets(10, 0, 10, 0));
         bottom.setSpacing(8);
         setBottom(bottom);
     }
