@@ -27,7 +27,7 @@ public class StrategyContext {
             lowPriorityTasks;
     private List<Project> projectsToAllocate,
             projectResultList;
-    private int numberOfTasksUnvalidForAllocation,
+    private static int numberOfTasksUnvalidForAllocation,
             numberOfUnnalocatedTasks,
             numberOfUnnalocatedProjects;
     private Strategy strategy;
@@ -209,5 +209,17 @@ public class StrategyContext {
             else if (e1.getId() == e2.getId()) return 0;
             else return -1;
         }
+    }
+
+    public static int getNumberOfTasksUnvalidForAllocation() {
+        return numberOfTasksUnvalidForAllocation;
+    }
+
+    public static int getNumberOfUnnalocatedTasks() {
+        return numberOfUnnalocatedTasks;
+    }
+
+    public static int getNumberOfUnnalocatedProjects() {
+        return numberOfUnnalocatedProjects;
     }
 }
