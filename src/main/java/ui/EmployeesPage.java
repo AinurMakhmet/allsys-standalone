@@ -25,10 +25,8 @@ import java.io.IOException;
  */
 public class EmployeesPage extends AbstractPage {
     final ObservableList<Employee> data = FXCollections.observableArrayList(SystemData.getAllEmployeesMap().values());
-    TableView table;
     private TableColumn firstName, lastName, monthlySalary;
-    private String[] cardValues;
-
+    
     private static EmployeesPage ourInstance = new EmployeesPage();
 
     public static EmployeesPage getInstance() {

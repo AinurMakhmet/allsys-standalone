@@ -28,8 +28,6 @@ import java.util.List;
  */
 public class SkillsPage extends AbstractPage{
     final ObservableList<Skill> data = FXCollections.observableArrayList(SystemData.allSkills);
-    private String[] cardValues;
-    TableView table;
     private TableColumn name, level;
     private static SkillsPage ourInstance = new SkillsPage();
 

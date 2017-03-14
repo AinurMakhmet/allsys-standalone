@@ -33,8 +33,6 @@ import java.util.List;
  */
 public class ProjectsPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Project> data = FXCollections.observableArrayList(SystemData.getAllProjectsMap().values());
-    TableView table;
-    private String[] cardValues;
     private List<Project> projectsToAllocate;
     private List<Project> result;
     private List<Project> selectedProjects = new LinkedList<>();

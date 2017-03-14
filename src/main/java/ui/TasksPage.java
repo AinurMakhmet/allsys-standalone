@@ -34,8 +34,6 @@ import java.util.List;
  */
 public class TasksPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
-    TableView table;
-    private String[] cardValues;
     private List<Task> tasksToAllocate, result;
     private List<Task> selectedTasks = new LinkedList<>();
     private Button greedyRecButton, ffRecButton, allocateButton, deAllocateButton;

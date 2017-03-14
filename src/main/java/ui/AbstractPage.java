@@ -17,6 +17,8 @@ import javafx.scene.text.Text;
 public abstract class AbstractPage extends BorderPane{
     private VBox cardVBox;
     private String[] cardPropertyNames;
+    TableView table;
+    String[] cardValues;
     HBox top;
     HBox bottom;
     TextField search;
