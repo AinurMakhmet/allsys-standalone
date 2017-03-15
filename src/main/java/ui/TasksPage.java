@@ -210,7 +210,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                 ((Task) newSelection).getRecommendedAssigneeName()==null ? "not recommendation" : ((Task) newSelection).getRecommendedAssigneeName(),
                                 ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
                         };
-                        setNewCard(cardValues);
+                        setNewCard(cardValues, (Task)newSelection);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

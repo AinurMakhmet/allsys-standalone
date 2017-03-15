@@ -266,7 +266,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                                 ((Project) newSelection).getEndTime()==null ? "" : ((Project) newSelection).getEndTime().toString(),
                                 tasks,
                         };
-                        setNewCard(cardValues);
+                        setNewCard(cardValues, (Project) newSelection);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

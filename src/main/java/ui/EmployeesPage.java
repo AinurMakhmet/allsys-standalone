@@ -138,7 +138,7 @@ public class EmployeesPage extends AbstractPage {
                             skills,
                             tasks
                     };
-                    setNewCard(cardValues);
+                    setNewCard(cardValues, (Employee)newSelection);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

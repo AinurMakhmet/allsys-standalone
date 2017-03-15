@@ -101,7 +101,7 @@ public class SkillsPage extends AbstractPage{
                         ((Skill) newSelection).getDescription()==null ? "---" : ((Skill) newSelection).getDescription().toString(),
                         ((Skill) newSelection).getLevel()==null ? "---" : ((Skill) newSelection).getLevel().toString(),
                 };
-                setNewCard(cardValues);
+                setNewCard(cardValues, (Skill)newSelection);
             }
         });
 
