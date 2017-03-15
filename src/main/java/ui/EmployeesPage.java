@@ -5,14 +5,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import models.Employee;
 import models.Skill;
@@ -67,9 +63,9 @@ public class EmployeesPage extends AbstractPage {
                         return;
                     }
                     Employee newEmployee = new Employee(addFirstName.getText(), addLastName.getText(), salary);
-                    Integer id = SystemData.getAllEmployeesMap().size()+1;
                     EmployeeUtils.createEntity(Employee.class, newEmployee);
-                    if (EmployeeUtils.getEmployee(id) != null) {
+                    Integer id = newEmployee.getId();
+                    if (id!=null) {
                         SystemData.getAllEmployeesMap().put(id, newEmployee);
                         data.add(newEmployee);
                         addFirstName.clear();
@@ -147,6 +143,27 @@ public class EmployeesPage extends AbstractPage {
                     e.printStackTrace();
                 }
                 //setNewCard(newSelection.toString());
+            }
+        });
+
+        deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //int selectdIndex = table.getSelectionModel().getSelectedCells();
+                ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
+                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                Employee toRemove = ((Employee) table.getItems().get(tablePosition.getRow()));
+
+                EmployeeUtils.deleteEntity(Employee.class, toRemove);
+                if (EmployeeUtils.getEmployee(toRemove.getId())==null) {
+                    SystemData.getAllEmployeesMap().remove(toRemove.getId());
+                    data.remove(toRemove);
+                    table.refresh();
+                } else {
+                    MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
+                }
+                //delete the selected item in data
+                //data.remove(selectdIndex);
             }
         });
         return table;

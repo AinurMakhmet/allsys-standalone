@@ -1,27 +1,16 @@
 package ui;
 
 import entity_utils.SkillUtils;
-import entity_utils.TaskUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
-import models.Employee;
 import models.Skill;
 import models.SystemData;
-import models.Task;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.List;
 
 /**
  * Created by nura on 06/12/16.
@@ -64,9 +53,8 @@ public class SkillsPage extends AbstractPage{
                         return;
                     }
                     Skill newSkill = new Skill(addName.getText(), addLevel.getText());
-                    Integer id = SystemData.allSkills.size() + 1;
                     SkillUtils.createEntity(Skill.class, newSkill);
-                    if (SkillUtils.getSkill(id) != null) {
+                    if (newSkill.getId() != null) {
                         SystemData.allSkills.add(newSkill);
                         data.add(newSkill);
                         addName.clear();
@@ -114,6 +102,27 @@ public class SkillsPage extends AbstractPage{
                         ((Skill) newSelection).getLevel()==null ? "---" : ((Skill) newSelection).getLevel().toString(),
                 };
                 setNewCard(cardValues);
+            }
+        });
+
+        deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //int selectdIndex = table.getSelectionModel().getSelectedCells();
+                ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
+                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                Skill toRemove = ((Skill) table.getItems().get(tablePosition.getRow()));
+
+                SkillUtils.deleteEntity(Skill.class, toRemove);
+                if (SkillUtils.getSkill(toRemove.getId())==null) {
+                    SystemData.allSkills.remove(toRemove.getId());
+                    data.remove(toRemove);
+                    table.refresh();
+                } else {
+                    MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
+                }
+                //delete the selected item in data
+                //data.remove(selectdIndex);
             }
         });
         return table;

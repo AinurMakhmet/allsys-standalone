@@ -116,9 +116,9 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                     Date startTime = Date.valueOf(startDateL);
                     Date endTime = Date.valueOf(endDateL);
                     Task newTask = new Task(addName.getText(), startTime, endTime, Task.Priority.LOW);
-                    Integer id = SystemData.getAllTasksMap().size()+1;
                     TaskUtils.createEntity(Task.class, newTask);
-                    if (TaskUtils.getTask(id)!=null) {
+                    Integer id = newTask.getId();
+                    if (id!=null) {
                         SystemData.getAllTasksMap().put(id, newTask);
                         data.add(newTask);
                         addName.clear();
@@ -229,6 +229,27 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 selectedTasks.addAll(c.getList());
             }
         };
+
+        deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //int selectdIndex = table.getSelectionModel().getSelectedCells();
+                ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
+                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                Task toRemove = ((Task) table.getItems().get(tablePosition.getRow()));
+
+                TaskUtils.deleteEntity(Task.class, toRemove);
+                if (TaskUtils.getTask(toRemove.getId())==null) {
+                    SystemData.getAllTasksMap().remove(toRemove.getId());
+                    data.remove(toRemove);
+                    table.refresh();
+                } else {
+                    MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
+                }
+                //delete the selected item in data
+                //data.remove(selectdIndex);
+            }
+        });
 
         return table;
     }

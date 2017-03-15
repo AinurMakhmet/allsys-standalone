@@ -1,7 +1,9 @@
 package ui;
 
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -22,6 +24,7 @@ public abstract class AbstractPage extends BorderPane{
     HBox top;
     HBox bottom;
     TextField search;
+    Button deleteEntryButton = new Button("Delete");
 
 
     public AbstractPage() {
@@ -49,22 +52,29 @@ public abstract class AbstractPage extends BorderPane{
 
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         return table;
     }
 
     VBox addCard(String[] propertyNames, String[] propertyValues) {
         cardVBox = new VBox();
-        cardVBox.setPadding(new Insets(30, 20, 10, 10));
+        cardVBox.setPadding(new Insets(20, 20, 10, 10));
         cardVBox.setSpacing(8);
         cardVBox.getStyleClass().add("card");
         cardPropertyNames = propertyNames;
-        setNewCard(propertyValues);
+        HBox hbox = new HBox();
+        hbox.setAlignment(Pos.TOP_RIGHT);
+        hbox.getChildren().add(deleteEntryButton);
+        cardVBox.getChildren().add(hbox);
+        hbox.setPadding(new Insets(0, 0, 10, 0));
 
+        setNewCard(propertyValues);
         return cardVBox;
     }
 
     void setNewCard(String[] propertyValues) {
-        cardVBox.getChildren().clear();
+        ObservableList<Node> children = cardVBox.getChildren();
+        children.remove(1, children.size());
         for (int i=0; i<propertyValues.length; i++) {
 
             Text propertyName = new Text(cardPropertyNames[i]+": ");

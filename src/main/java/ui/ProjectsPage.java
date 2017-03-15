@@ -1,6 +1,5 @@
 package ui;
 
-import entity_utils.EmployeeUtils;
 import entity_utils.ProjectUtils;
 import entity_utils.TaskUtils;
 import javafx.beans.value.ChangeListener;
@@ -14,10 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.VBox;
-import javafx.util.converter.IntegerStringConverter;
 import logic.MaximumProfitAlgorithm;
 import logic.StrategyContext;
-import models.Employee;
 import models.Project;
 import models.SystemData;
 import models.Task;
@@ -117,9 +114,9 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                         return;
                     }
                     Project newProject = new Project(addName.getText(), Integer.parseInt(addPrice.getText()));;
-                    Integer id = SystemData.getAllProjectsMap().size()+1;
                     ProjectUtils.createEntity(Project.class, newProject);
-                    if (ProjectUtils.getProject(id)!=null) {
+                    Integer id = newProject.getId();
+                    if (id!=null) {
                         SystemData.getAllProjectsMap().put(id, newProject);
                         data.add(newProject);
                         addName.clear();
@@ -289,6 +286,26 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
             }
         };
 
+        deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //int selectdIndex = table.getSelectionModel().getSelectedCells();
+                ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
+                TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                Project toRemove = ((Project) table.getItems().get(tablePosition.getRow()));
+
+                ProjectUtils.deleteEntity(Project.class, toRemove);
+                if (ProjectUtils.getProject(toRemove.getId())==null) {
+                    SystemData.getAllProjectsMap().remove(toRemove.getId());
+                    data.remove(toRemove);
+                    table.refresh();
+                } else {
+                    MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
+                }
+                //delete the selected item in data
+                //data.remove(selectdIndex);
+            }
+        });
         return table;
     }
 
