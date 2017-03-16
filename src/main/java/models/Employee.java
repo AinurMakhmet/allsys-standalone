@@ -9,10 +9,7 @@ import entity_utils.EmployeeUtils;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Model to represent an employee.
@@ -111,6 +108,15 @@ public class Employee implements DatabaseEntity{
     }
 
     /**
+     *
+     * @return collection of employeSkill objects that associated with this employee.
+     * @see models.EmployeeSkill
+     */
+    public ForeignCollection<EmployeeSkill> getEmployeeSkillObjects() throws IOException {
+        return skills;
+    }
+
+    /**
      * Gets a list of tasks that the employee is assigned to.
      *
      * @return a list of tasks the employee is assigned to.
@@ -154,4 +160,20 @@ public class Employee implements DatabaseEntity{
         matchedTasks.add(matchedTask);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Employee employee = (Employee) o;
+
+        if (!getId().equals(employee.getId())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

@@ -41,4 +41,23 @@ public class EmployeeSkill implements DatabaseEntity{
     public Integer getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EmployeeSkill that = (EmployeeSkill) o;
+
+        if (!getEmployee().equals(that.getEmployee())) return false;
+        return getSkill().equals(that.getSkill());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getEmployee().hashCode();
+        result = 31 * result + getSkill().hashCode();
+        return result;
+    }
 }

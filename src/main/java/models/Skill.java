@@ -139,4 +139,22 @@ public class Skill implements DatabaseEntity{
     public Integer getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Skill skill = (Skill) o;
+
+        if (!getId().equals(skill.getId())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
 }

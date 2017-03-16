@@ -1,6 +1,11 @@
 package ui;
 
-import com.sun.javafx.tk.Toolkit;
+import entity_utils.EmployeeSkillUtils;
+import entity_utils.EmployeeUtils;
+import entity_utils.TaskSkillUtils;
+import entity_utils.TaskUtils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,10 +20,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
+import javafx.util.Callback;
 import models.*;
+import org.junit.Assert;
 
-import java.awt.*;
+import java.io.IOException;
+import java.util.*;
 
 
 /**
@@ -33,9 +40,10 @@ public abstract class AbstractPage extends BorderPane{
     HBox bottom;
     TextField search;
     Button deleteEntryButton = new Button("Delete");
-    Text description;
-    Text skills;
     TextArea descriptionTextArea;
+    Button editDescriptionValueButton = new Button("Edit");
+    Button editSkillsValueButton = new Button("Edit");
+    Dialog<Set<Skill>> dialog;
 
 
     public AbstractPage() {
@@ -47,7 +55,6 @@ public abstract class AbstractPage extends BorderPane{
         search = new TextField();
 
         top.getChildren().add(search);
-        //top.setAlignment(Pos.CENTER);
         setTop(top);
 
         bottom = new HBox();
@@ -117,52 +124,17 @@ public abstract class AbstractPage extends BorderPane{
                 descriptionTextArea.setText(propertyValues[i]);
                 descriptionTextArea.setFont(Font.font("Arial", 12));
                 descriptionTextArea.setWrapText(true);
-                Button editFieldValueButton = new Button("Edit");
-                borderPane.setRight(editFieldValueButton);
+                setEditDescriptionValueButton(dEntity);
+                borderPane.setRight(editDescriptionValueButton);
                 descriptionTextArea.setEditable(false);
                 descriptionTextArea.setWrapText(true);
                 descriptionTextArea.setPrefHeight(40);
                 hbox.getChildren().add(descriptionTextArea);
-
-                editFieldValueButton.setOnAction(e-> {
-                    if (editFieldValueButton.getText().equals("Edit")) {
-                        descriptionTextArea.setEditable(true);
-                        descriptionTextArea.getStyleClass().add("editable");
-                        editFieldValueButton.setText("Save");
-                        descriptionTextArea.setPrefHeight(120);
-                        descriptionTextArea.setStyle("-fx-background-color: white");
-                    } else {
-                        descriptionTextArea.setEditable(false);
-                        if (dEntity!=null) {
-                            if (dEntity.getClass().equals(Task.class)) {
-                                ((Task)dEntity).setDescription(descriptionTextArea.getText());
-                            } else if (dEntity.getClass().equals(Skill.class)) {
-                                ((Skill)dEntity).setDescription(descriptionTextArea.getText());
-                            } else if (dEntity.getClass().equals(Project.class)) {
-                                ((Project)dEntity).setDescription(descriptionTextArea.getText());
-                            }
-                        }
-                        descriptionTextArea.getStyleClass().remove("editable");
-                        editFieldValueButton.setText("Edit");
-                        descriptionTextArea.setPrefHeight(40);
-                    }
-
-                });
             } else if (propertyNameValue.contains(skillsNameProperty)) {
                 hbox.getChildren().add(propertyName);
                 hbox.getChildren().add(propertyValue);
-                Button editFieldValueButton = new Button("Edit");
-                borderPane.setRight(editFieldValueButton);
-                editFieldValueButton.setOnAction(e-> {
-/*
-                    Stage dialog = new Stage();
-                    dialog.initStyle(StageStyle.UTILITY);
-                    Scene scene = new Scene(new Group(new Text(25, 25, "Hello World!")));
-                    dialog.setScene(scene);
-                    dialog.show();
-*/
-
-                });
+                setEditSkillsValueButton(dEntity, propertyValue);
+                borderPane.setRight(editSkillsValueButton);
             } else {
                 hbox.getChildren().add(propertyName);
                 hbox.getChildren().add(propertyValue);
@@ -171,4 +143,229 @@ public abstract class AbstractPage extends BorderPane{
             cardVBox.getChildren().add(borderPane);
         }
     }
+
+
+    public void setEditDescriptionValueButton(DatabaseEntity dEntity) {
+        editDescriptionValueButton.setOnAction(e-> {
+            if (editDescriptionValueButton.getText().equals("Edit")) {
+                descriptionTextArea.setEditable(true);
+                descriptionTextArea.getStyleClass().add("editable");
+                editDescriptionValueButton.setText("Save");
+                descriptionTextArea.setPrefHeight(120);
+                descriptionTextArea.setStyle("-fx-background-color: white");
+            } else {
+                descriptionTextArea.setEditable(false);
+                if (dEntity!=null) {
+                    if (dEntity.getClass().equals(Task.class)) {
+                        ((Task)dEntity).setDescription(descriptionTextArea.getText());
+                    } else if (dEntity.getClass().equals(Skill.class)) {
+                        ((Skill)dEntity).setDescription(descriptionTextArea.getText());
+                    } else if (dEntity.getClass().equals(Project.class)) {
+                        ((Project)dEntity).setDescription(descriptionTextArea.getText());
+                    }
+                }
+                descriptionTextArea.getStyleClass().remove("editable");
+                editDescriptionValueButton.setText("Edit");
+                descriptionTextArea.setPrefHeight(40);
+            }
+
+        });
+    }
+
+    public void setEditSkillsValueButton(DatabaseEntity dEntity, Text propertyValue) {
+        editSkillsValueButton.setOnAction(e-> {
+            if (dEntity!=null && dEntity.getClass().equals(Task.class)) {
+                final Task task = (Task)dEntity;
+                createDialog(dEntity);
+                Optional<Set<Skill>> result = dialog.showAndWait();
+                try {
+                    if (result.isPresent()) {
+                        task.getSkills().forEach(skill-> {
+                            if (!result.get().contains(skill)) {
+                                TaskSkill taskSkill = new TaskSkill();
+                                taskSkill.setSkill(skill);
+                                taskSkill.setTask((Task) dEntity);
+                                try {
+                                    for (TaskSkill tSkill: task.getTaskSkillObjects()) {
+                                        if (tSkill.equals(taskSkill)) {
+                                            taskSkill = tSkill;
+                                            Assert.assertNotNull(taskSkill.getId());
+                                            TaskSkillUtils.deleteEntity(TaskSkill.class, taskSkill);
+                                            Assert.assertNull(TaskSkillUtils.getTaskSkill(taskSkill.getId()));
+                                        }
+                                    }
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            } else {
+                                result.get().remove(skill);
+                            }
+                        });
+                        result.get().forEach(skill -> {
+                            boolean contains = false;
+                            try {
+                                contains = task.getTaskSkillObjects().contains(skill);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            } if (!contains){
+                                TaskSkill taskSkill = new TaskSkill();
+                                taskSkill.setSkill(skill);
+                                taskSkill.setTask((Task) dEntity);
+                                TaskSkillUtils.createEntity(TaskSkill.class, taskSkill);
+                                Assert.assertNotNull(taskSkill.getId());
+                            }
+
+                        });
+                        TaskUtils.updateEntity(task);
+
+                        String skills = "---";
+                        if (task.getSkills()!=null){
+                            skills="";
+                            for (Skill skill : task.getSkills()) {
+                                skills += skill.getName()+ " (Level " +skill.getLevel()+")\n";
+                            }
+                        }
+                        propertyValue.setText(skills);
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+            } else if (dEntity!=null && dEntity.getClass().equals(Employee.class)){
+                final Employee employee = (Employee)dEntity;
+                createDialog(dEntity);
+                Optional<Set<Skill>> result = dialog.showAndWait();
+                try {
+                    if (result.isPresent()) {
+                        employee.getSkills().forEach(skill-> {
+                            if (result.isPresent()&& !result.get().contains(skill)) {
+                                EmployeeSkill employeeSkill = new EmployeeSkill();
+                                employeeSkill.setSkill(skill);
+                                employeeSkill.setEmployee((Employee) dEntity);
+                                try {
+                                    for (EmployeeSkill eSkill: employee.getEmployeeSkillObjects()) {
+                                        if (eSkill.equals(employeeSkill)) {
+                                            employeeSkill = eSkill;
+                                            Assert.assertNotNull(employeeSkill.getId());
+                                            EmployeeSkillUtils.deleteEntity(EmployeeSkill.class, employeeSkill);
+                                            Assert.assertNull(EmployeeSkillUtils.getEntityById(EmployeeSkill.class, employeeSkill.getId()));
+                                        }
+                                    }
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
+                            } else {
+                                result.get().remove(skill);
+                            }
+                        });
+                        result.get().forEach(skill -> {
+                            boolean contains = false;
+                            try {
+                                contains = employee.getEmployeeSkillObjects().contains(skill);
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            } if (!contains) {
+                                EmployeeSkill employeeSkill = new EmployeeSkill();
+                                employeeSkill.setSkill(skill);
+                                employeeSkill.setEmployee((Employee) dEntity);
+                                EmployeeSkillUtils.createEntity(EmployeeSkill.class, employeeSkill);
+                                Assert.assertNotNull(employeeSkill.getId());
+                            }
+                        });
+                        EmployeeUtils.updateEntity(employee);
+                        String skills = "---";
+                        if (employee.getSkills()!=null){
+                            skills="";
+                            for (Skill skill : employee.getSkills()) {
+                                skills += skill.getName()+ " (Level " +skill.getLevel()+")\n ";
+                            }
+                        }
+                        propertyValue.setText(skills);
+                    }
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void createDialog(DatabaseEntity entity) {
+
+        //Scene dialog = new Scene();
+
+
+        Set<Skill> entitySkills = new HashSet<>();
+        VBox vBoxForChecks = new VBox();
+
+        final CheckBox[] cbs = new CheckBox[SystemData.allSkills.size()];
+        dialog = new Dialog();
+        dialog.setHeaderText("Select skills");
+
+        Task task = null;
+        Employee employee = null;
+        if (entity.getClass().equals(Task.class)) {
+            task = (Task)entity;
+        } else {
+            employee = (Employee)entity;
+        }
+
+        for (int j = 0; j < SystemData.allSkills.size(); j++) {
+            final Skill skill= SystemData.allSkills.get(j);
+            final CheckBox checkBox = new CheckBox(skill.getName()+ " (Level " +skill.getLevel()+")");
+            //cbs[j] = checkBox;
+            vBoxForChecks.getChildren().add(checkBox);
+            if (task!=null) {
+                try {
+                    if (task.getSkills().contains(skill)) {
+                        checkBox.setSelected(true);
+                        entitySkills.add(skill);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (employee!=null) {
+                try {
+                    if (employee.getSkills().contains(skill)) {
+                        checkBox.setSelected(true);
+                        entitySkills.add(skill);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+                public void changed(ObservableValue<? extends Boolean> ov,
+                                    Boolean old_val, Boolean new_val) {
+                    if (new_val) {
+                        entitySkills.add(skill);
+                    } else {
+                        entitySkills.remove(skill);
+                    }
+                }
+            });
+        }
+
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.setResultConverter(new Callback<ButtonType, Set<Skill>>() {
+            @Override
+            public Set<Skill> call(ButtonType b) {
+                if (b == saveButtonType) {
+                    return entitySkills;
+                }
+                return null;
+            }
+        });
+        vBoxForChecks.setSpacing(5);
+        dialog.setWidth(200);
+        vBoxForChecks.setPrefWidth(200);
+        dialog.setHeight(500);
+        dialog.getDialogPane().setContent(vBoxForChecks);
+        dialog.getDialogPane().getButtonTypes().add(saveButtonType);
+        dialog.getDialogPane().getButtonTypes().add(cancelButtonType);
+    }
+
+
 }

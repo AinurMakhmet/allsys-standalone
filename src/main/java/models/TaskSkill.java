@@ -41,4 +41,23 @@ public class TaskSkill implements DatabaseEntity{
     public Integer getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TaskSkill taskSkill = (TaskSkill) o;
+
+        if (!getTask().equals(taskSkill.getTask())) return false;
+        return getSkill().equals(taskSkill.getSkill());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getTask().hashCode();
+        result = 31 * result + getSkill().hashCode();
+        return result;
+    }
 }

@@ -118,7 +118,7 @@ public class EmployeesPage extends AbstractPage {
                     if (((Employee) newSelection).getTasks()!=null) {
                         skills = "";
                         for (Skill skill : ((Employee) newSelection).getSkills()) {
-                            skills += skill.getName() + ", ";
+                            skills += skill.getName()+ " (Level " +skill.getLevel()+")\n ";
                         }
                     }
 

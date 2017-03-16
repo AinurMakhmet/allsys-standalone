@@ -165,4 +165,21 @@ public class Project implements DatabaseEntity{
     public Integer getId() {
         return id;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Project project = (Project) o;
+
+        if (!getId().equals(project.getId())) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

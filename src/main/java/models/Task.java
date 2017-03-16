@@ -248,6 +248,16 @@ public class Task implements DatabaseEntity{
     }
 
     /**
+     *
+     * @return collection of taskSkill objects that associated with this task.
+     * @see models.TaskSkill
+     */
+    public ForeignCollection<TaskSkill> getTaskSkillObjects() throws IOException {
+        return skills;
+    }
+
+
+    /**
      * Compares two Tasks for time overlapping.
      *
      * @param   anotherTask   the Task to be compared.
@@ -285,4 +295,5 @@ public class Task implements DatabaseEntity{
         }
             return toReturn;
     }
+
 }

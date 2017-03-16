@@ -51,7 +51,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     private TasksPage() {
         super();
         search.setPromptText("Search tasks");
-
         final ToggleGroup group = new ToggleGroup();
         RadioButton viewModeButton = new RadioButton("View Mode");
         viewModeButton.setToggleGroup(group);
@@ -195,7 +194,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         if (((Task) newSelection).getSkills()!=null){
                             skills="";
                             for (Skill skill : ((Task) newSelection).getSkills()) {
-                                skills += skill.getName() + ", ";
+                                skills += skill.getName()+ " (Level " +skill.getLevel()+")\n ";
                             }
                         }
                         cardValues= new String[]{
