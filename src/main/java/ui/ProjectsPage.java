@@ -409,6 +409,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).executeProjectStrategy(selectedProjects);
         Assert.assertEquals(result.size(), selectedProjects.size());
         table.refresh();
+        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumberOfUnnalocatedProjects()
+                + ". \nTotal profit from the selected projects is equal to: "+ StrategyContext.getTotalProfitFromSelectedProjects());
         //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
         //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);

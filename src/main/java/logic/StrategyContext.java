@@ -29,7 +29,8 @@ public class StrategyContext {
             projectResultList;
     private static int numberOfTasksUnvalidForAllocation,
             numberOfUnnalocatedTasks,
-            numberOfUnnalocatedProjects;
+            numberOfUnnalocatedProjects,
+            totalProfitFromSelectedProjects;
     private Strategy strategy;
     private Logger logger;
 
@@ -124,7 +125,7 @@ public class StrategyContext {
 
     public List<Project> executeProjectStrategy(List<Project> projectsToAllocate){
         numberOfUnnalocatedProjects=0;
-        int totalProfitFromSelectedProjects = 0;
+        totalProfitFromSelectedProjects = 0;
         projectResultList = new ArrayList<>();
         getTasksInfo(projectsToAllocate);
 
@@ -221,5 +222,9 @@ public class StrategyContext {
 
     public static int getNumberOfUnnalocatedProjects() {
         return numberOfUnnalocatedProjects;
+    }
+
+    public static int getTotalProfitFromSelectedProjects() {
+        return totalProfitFromSelectedProjects;
     }
 }
