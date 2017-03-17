@@ -11,7 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import logic.FordFulkersonAlgorithm;
 import logic.GreedyAlgorithm;
@@ -101,7 +101,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         addEndTime.setMaxWidth(190);
         addEndTime.setPromptText("End Date (yyyy-MM-dd)");
 
-        final Button addButton = new Button("Add Task");
+        addButton.setTooltip(new Tooltip("Add task"));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -217,7 +217,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             }
         };
         table.getSelectionModel().selectedItemProperty().addListener(changeListener);
-
 
         multipleSelectionListener = new ListChangeListener<Task>() {
             @Override
@@ -436,9 +435,9 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
     };
 
-    VBox addCard() {
+    HBox addCard() {
         String[] names = {"ID", "Name", "Description", "Project id", "Start date", "End date", "Priority level", "Skills required", "Recommended assignee", "Allocated to employee"};
-        cardValues = new String[]{"", "", "", "", "", "", "", "Java, git, JUnit, Spring", "", ""};
+        cardValues = new String[]{"", "", "", "", "", "", "", "", "", ""};
         return super.addCard(names, cardValues);
     }
 

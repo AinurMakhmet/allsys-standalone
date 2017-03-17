@@ -8,7 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.util.converter.IntegerStringConverter;
 import models.Employee;
 import models.Skill;
@@ -45,7 +45,7 @@ public class EmployeesPage extends AbstractPage {
         addMonthlySalary.setPromptText("Monthly Salary");
         addMonthlySalary.setMaxWidth(150);
 
-        final Button addButton = new Button("Add Employee");
+        addButton.setTooltip(new Tooltip("Add employee"));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -134,7 +134,7 @@ public class EmployeesPage extends AbstractPage {
                             ((Employee)newSelection).getId().toString(),
                             ((Employee)newSelection).getFirstName(),
                             ((Employee) newSelection).getLastName(),
-                            ((Employee) newSelection).getMonthlySalary()==null ? "---" : ((Employee) newSelection).getMonthlySalary().toString(),
+                            ((Employee) newSelection).getMonthlySalary()==null ? "" : ((Employee) newSelection).getMonthlySalary().toString(),
                             skills,
                             tasks
                     };
@@ -221,9 +221,9 @@ public class EmployeesPage extends AbstractPage {
 
     }
 
-    VBox addCard() {
+    HBox addCard() {
         String[] names = {"ID", "First Name", "Last Name", "Monthly Salary", "Skills", "Allocated to tasks"};
-        cardValues = new String[]{"--", "---", "---", "----", "---", "not allocated to tasks"};
+        cardValues = new String[]{"", "", "", "", "", ""};
         return super.addCard(names, cardValues);
     }
 

@@ -1,15 +1,15 @@
 package ui;
 
+import constants.AwesomeIcons;
 import entity_utils.EmployeeSkillUtils;
 import entity_utils.EmployeeUtils;
 import entity_utils.TaskSkillUtils;
 import entity_utils.TaskUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -33,17 +33,23 @@ import java.util.*;
  */
 public abstract class AbstractPage extends BorderPane{
     private VBox cardVBox;
+    HBox cardHBox;
     private String[] cardPropertyNames;
     TableView table;
     String[] cardValues;
     HBox top;
     HBox bottom;
     TextField search;
-    Button deleteEntryButton = new Button("Delete");
+    Button deleteEntryButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_TRASH);
     TextArea descriptionTextArea;
-    Button editDescriptionValueButton = new Button("Edit");
-    Button editSkillsValueButton = new Button("Edit");
+    Button editDescriptionValueButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_PENCIL);
+    Button saveDescriptionValueButton = AwesomeDude
+            .createIconButton(AwesomeIcons.ICON_SAVE);
+    Button editSkillsValueButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_PENCIL);
+    Button addButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_PLUS);
     Dialog<Set<Skill>> dialog;
+    private VBox cardVBoxInner;
+    ScrollPane scrollPane;
 
 
     public AbstractPage() {
@@ -61,6 +67,12 @@ public abstract class AbstractPage extends BorderPane{
         bottom.setPadding(new Insets(10, 0, 10, 0));
         bottom.setSpacing(8);
         setBottom(bottom);
+
+        deleteEntryButton.setTooltip(new Tooltip("Delete"));
+        editDescriptionValueButton.setTooltip(new Tooltip("Edit Description"));
+        saveDescriptionValueButton.setTooltip(new Tooltip("Save"));
+
+        editSkillsValueButton.setTooltip(new Tooltip("Edit Skills"));
     }
 
     TableView addTable(String pageName) {
@@ -70,33 +82,58 @@ public abstract class AbstractPage extends BorderPane{
 
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
         return table;
     }
 
-    VBox addCard(String[] propertyNames, String[] propertyValues) {
+    HBox addCard(String[] propertyNames, String[] propertyValues) {
+        Separator separator = new Separator();
+        separator.setMaxWidth(0.2);
+        separator.setOrientation(Orientation.VERTICAL);
+
+        cardHBox = new HBox();
+        cardHBox.getChildren().add(separator);
+        cardHBox.setMinWidth(350);
+
+        //Delete button
+        HBox hbox = new HBox();
+        hbox.setAlignment(Pos.TOP_RIGHT);
+        hbox.getChildren().add(deleteEntryButton);
+        hbox.setPadding(new Insets(0, 2, 10, 0));
+
+
+        scrollPane = new ScrollPane();
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+
         cardVBox = new VBox();
         cardVBox.setPadding(new Insets(20, 10, 10, 10));
         cardVBox.setSpacing(10);
         cardVBox.getStyleClass().add("card");
         cardPropertyNames = propertyNames;
-        HBox hbox = new HBox();
-        hbox.setAlignment(Pos.TOP_RIGHT);
-        hbox.getChildren().add(deleteEntryButton);
+        cardVBox.setMaxWidth(430);
         cardVBox.getChildren().add(hbox);
-        hbox.setPadding(new Insets(0, 0, 10, 0));
-        cardVBox.setMaxWidth(350);
 
         descriptionTextArea  = new TextArea();
         descriptionTextArea.getStyleClass().add("text-area");
 
         setNewCard(propertyValues, null);
-        return cardVBox;
+
+        Assert.assertNotNull(scrollPane);
+        cardVBox.getChildren().add(scrollPane);
+        cardHBox.getChildren().add(cardVBox);
+
+        return cardHBox;
     }
 
     void setNewCard(String[] propertyValues, DatabaseEntity dEntity) {
-        ObservableList<Node> children = cardVBox.getChildren();
-        children.remove(1, children.size());
+        //ObservableList<Node> children = cardVBoxInner.getChildren();
+//        children.remove(1, children.size());
+        cardVBoxInner = new VBox();
+        cardVBoxInner.setPrefWidth(400);
+        scrollPane.setContent(cardVBoxInner);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+
 
         for (int i=0; i<propertyValues.length; i++) {
 
@@ -107,9 +144,8 @@ public abstract class AbstractPage extends BorderPane{
             propertyValue.setTextAlignment(TextAlignment.JUSTIFY);
 
             BorderPane borderPane = new BorderPane();
-            HBox hbox = new HBox();
-
             borderPane.setPadding(new Insets(0, 3, 0, 3));
+            HBox hbox = new HBox();
             hbox.setPadding(new Insets(0, 5, 0, 0));
             borderPane.setCenter(hbox);
             String propertyNameValue = propertyName.getText().toLowerCase();
@@ -124,7 +160,7 @@ public abstract class AbstractPage extends BorderPane{
                 descriptionTextArea.setText(propertyValues[i]);
                 descriptionTextArea.setFont(Font.font("Arial", 12));
                 descriptionTextArea.setWrapText(true);
-                setEditDescriptionValueButton(dEntity);
+                setEditSaveDescriptionButton(dEntity);
                 borderPane.setRight(editDescriptionValueButton);
                 descriptionTextArea.setEditable(false);
                 descriptionTextArea.setWrapText(true);
@@ -139,36 +175,39 @@ public abstract class AbstractPage extends BorderPane{
                 hbox.getChildren().add(propertyName);
                 hbox.getChildren().add(propertyValue);
             }
-
-            cardVBox.getChildren().add(borderPane);
+            cardVBoxInner.getChildren().add(borderPane);
+        }
+        cardHBox.getChildren().remove(1,1);
+        if (dEntity==null) {
+            cardVBox.setVisible(false);
+        } else {
+            cardVBox.setVisible(true);
         }
     }
 
 
-    public void setEditDescriptionValueButton(DatabaseEntity dEntity) {
+    public void setEditSaveDescriptionButton(DatabaseEntity dEntity) {
         editDescriptionValueButton.setOnAction(e-> {
-            if (editDescriptionValueButton.getText().equals("Edit")) {
-                descriptionTextArea.setEditable(true);
-                descriptionTextArea.getStyleClass().add("editable");
-                editDescriptionValueButton.setText("Save");
-                descriptionTextArea.setPrefHeight(120);
-                descriptionTextArea.setStyle("-fx-background-color: white");
-            } else {
-                descriptionTextArea.setEditable(false);
-                if (dEntity!=null) {
-                    if (dEntity.getClass().equals(Task.class)) {
-                        ((Task)dEntity).setDescription(descriptionTextArea.getText());
-                    } else if (dEntity.getClass().equals(Skill.class)) {
-                        ((Skill)dEntity).setDescription(descriptionTextArea.getText());
-                    } else if (dEntity.getClass().equals(Project.class)) {
-                        ((Project)dEntity).setDescription(descriptionTextArea.getText());
-                    }
-                }
-                descriptionTextArea.getStyleClass().remove("editable");
-                editDescriptionValueButton.setText("Edit");
-                descriptionTextArea.setPrefHeight(40);
-            }
+            descriptionTextArea.setEditable(true);
+            descriptionTextArea.setStyle("-fx-background-color: white");
+            descriptionTextArea.setPrefHeight(120);
+            ((BorderPane)editDescriptionValueButton.getParent()).setRight(saveDescriptionValueButton);
 
+        });
+        saveDescriptionValueButton.setOnAction(e-> {
+            descriptionTextArea.setEditable(false);
+            if (dEntity!=null) {
+                if (dEntity.getClass().equals(Task.class)) {
+                    ((Task)dEntity).setDescription(descriptionTextArea.getText());
+                } else if (dEntity.getClass().equals(Skill.class)) {
+                    ((Skill)dEntity).setDescription(descriptionTextArea.getText());
+                } else if (dEntity.getClass().equals(Project.class)) {
+                    ((Project)dEntity).setDescription(descriptionTextArea.getText());
+                }
+            }
+            descriptionTextArea.setStyle("-fx-background-color: transparent");
+            descriptionTextArea.setPrefHeight(40);
+            ((BorderPane)saveDescriptionValueButton.getParent()).setRight(editDescriptionValueButton);
         });
     }
 

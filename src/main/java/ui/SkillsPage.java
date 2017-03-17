@@ -8,7 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import models.Skill;
 import models.SystemData;
 
@@ -35,7 +35,7 @@ public class SkillsPage extends AbstractPage{
         final TextField addLevel = new TextField();
         addLevel.setMaxWidth(80);
         addLevel.setPromptText("Level");
-        final Button addButton = new Button("Add Skill");
+        addButton.setTooltip(new Tooltip("Add skill"));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -98,8 +98,8 @@ public class SkillsPage extends AbstractPage{
                 cardValues= new String[]{
                         ((Skill)newSelection).getId().toString(),
                         ((Skill) newSelection).getName(),
-                        ((Skill) newSelection).getDescription()==null ? "---" : ((Skill) newSelection).getDescription().toString(),
-                        ((Skill) newSelection).getLevel()==null ? "---" : ((Skill) newSelection).getLevel().toString(),
+                        ((Skill) newSelection).getDescription()==null ? "" : ((Skill) newSelection).getDescription().toString(),
+                        ((Skill) newSelection).getLevel()==null ? "" : ((Skill) newSelection).getLevel().toString(),
                 };
                 setNewCard(cardValues, (Skill)newSelection);
             }
@@ -151,9 +151,9 @@ public class SkillsPage extends AbstractPage{
         });
     }
 
-    VBox addCard() {
+    HBox addCard() {
         String[] names = {"ID", "Name", "Description", "Level"};
-        cardValues = new String[]{"--", "---", "---", "----"};
+        cardValues = new String[]{"", "", "", ""};
         return super.addCard(names, cardValues);
     }
 }

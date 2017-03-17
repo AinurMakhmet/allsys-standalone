@@ -12,7 +12,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import logic.MaximumProfitAlgorithm;
 import logic.StrategyContext;
 import models.Project;
@@ -78,6 +78,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
                         table.getSelectionModel().getSelectedItems().removeListener(multipleSelectionListener);
                         table.getSelectionModel().selectedItemProperty().addListener(changeListener);
+                        table.getSelectionModel().clearAndSelect(0);
                         allocateButton.setVisible(false);
                         deAllocateButton.setVisible(false);
                         maxProfitRecButton.setVisible(false);
@@ -96,7 +97,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         addPrice.setPrefWidth(100);
         addPrice.setPromptText("Price");
 
-        final Button addButton = new Button("Add Task");
+        addButton.setTooltip(new Tooltip("Add project"));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -246,12 +247,14 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         changeListener = new ChangeListener() {
             @Override
             public void changed(ObservableValue obs, Object oldSelection, Object newSelection) {
-                if (newSelection!=null) {
+                Project project = null;
+                project = (Project) newSelection;
+                if (project!=null) {
                     try {
                         String tasks = "---";
-                        if (((Project) newSelection).getTasks()!=null){
+                        if (project.getTasks()!=null){
                             tasks="";
-                            for (Task t : ((Project) newSelection).getTasks()) {
+                            for (Task t : project.getTasks()) {
                                 Task task = SystemData.getAllTasksMap().get(t.getId());
                                 tasks += task.getName() + "(ID=)"+task.getId()
                                         +"\n\t recommended assignee - "+ task.getRecommendedAssigneeName()
@@ -259,11 +262,11 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                             }
                         }
                         cardValues= new String[]{
-                                ((Project)newSelection).getId().toString(),
-                                ((Project)newSelection).getName(),
-                                ((Project) newSelection).getDescription(),
-                                ((Project) newSelection).getStartTime()==null ? "" : ((Project) newSelection).getStartTime().toString(),
-                                ((Project) newSelection).getEndTime()==null ? "" : ((Project) newSelection).getEndTime().toString(),
+                                project.getId().toString(),
+                                project.getName(),
+                                project.getDescription(),
+                                project.getStartTime()==null ? "" : project.getStartTime().toString(),
+                                project.getEndTime()==null ? "" : project.getEndTime().toString(),
                                 tasks,
                         };
                         setNewCard(cardValues, (Project) newSelection);
@@ -383,9 +386,9 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
 
     }
 
-    VBox addCard() {
+    HBox addCard() {
         String[] names = {"ID", "Name", "Description", "Start date", "End Date",  "Tasks"};
-        cardValues = new String[]{"1", "Project name", "", "2016-12-01", "2016-12-03", ""};
+        cardValues = new String[]{"", "", "", "", "", ""};
         return super.addCard(names, cardValues);
     }
 

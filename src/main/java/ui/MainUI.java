@@ -5,7 +5,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import scala.App;
+
+import java.io.InputStream;
 
 /**
  * Created by nura on 07/02/17.
@@ -30,6 +34,9 @@ public class MainUI {
         Scene scene = new Scene(borderPane);
         scene.setFill(Color.GHOSTWHITE);
         scene.getStylesheets().add(String.valueOf(getClass().getClassLoader().getResource("main.css")));
+        Font.loadFont(App.class.getResource("/fontawesome-webfont.ttf").
+                toExternalForm(), 12);
+
 
         borderPane.setLeft(Sidebar.getInstance());
         borderPane.setCenter(TasksPage.getInstance());
