@@ -69,6 +69,8 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
             LocalServer.mpLogger.trace("Max profit for the project = {}", profit);
 
         }
+        projectToAllocate.setEstimatedCost(projectPrimeCost);
+        projectToAllocate.setEstimatedProfit(profit);
         return isFullyAllocated;
     }
 
