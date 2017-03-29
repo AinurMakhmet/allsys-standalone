@@ -17,9 +17,7 @@ import java.util.List;
  * Model to represent a project.
  */
 @DatabaseTable(tableName = "project")
-public class Project implements DatabaseEntity{
-    @DatabaseField(generatedId = true)
-    private Integer id;
+public class Project extends DatabaseEntity{
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -32,9 +30,8 @@ public class Project implements DatabaseEntity{
     private Integer profit;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<Task> tasks;
-    @DatabaseField(columnName = "end_time")
+
     private Date endTime;
-    @DatabaseField(columnName = "start_time")
     private Date startTime;
 
     private Integer estimatedCost, estimatedProfit;
@@ -81,18 +78,8 @@ public class Project implements DatabaseEntity{
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-        ProjectUtils.updateEntity(this);
-    }
-
     public Date getStartTime() {
         return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-        ProjectUtils.updateEntity(this);
     }
 
     public Integer getCost() {
@@ -159,11 +146,6 @@ public class Project implements DatabaseEntity{
             });*/
         }
         return output;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
     }
 
     @Override

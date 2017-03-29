@@ -15,39 +15,32 @@ import java.util.*;
  * Created by nura on 20/11/16.
  */
 public class StrategyContext {
-    /**
-     * Only finds the matches for the unallocated tasks.
-     * @param tasksToAllocate
-     * @return
-     */
-    private List<Task> tasksToAllocate,
-            result,
+    private Strategy strategy;
+    private List<Task> taskResultList,
             highPriorityTasks,
             mediumPriorityTasks,
             lowPriorityTasks;
-    private List<Project> projectsToAllocate,
-            projectResultList;
-    private static int numberOfTasksUnvalidForAllocation,
-            numberOfUnnalocatedTasks,
-            numberOfUnnalocatedProjects,
+    private List<Project> projectResultList;
+    private static int numOfTasksInvalidForAllocation,
+            numOfUnnalocatedTasks,
+            numOfUnnalocatedProjects,
             totalProfitFromSelectedProjects;
-    private Strategy strategy;
+
     private Logger logger;
 
     public StrategyContext(Strategy allocationAlgorithm) {
         strategy = allocationAlgorithm;
         if (strategy.getClass().equals(MaximumProfitAlgorithm.class)) {
             logger = LocalServer.mpLogger;
-        } else if (strategy.getClass().equals(FordFulkersonAlgorithm.class)) {
-            logger = LocalServer.ffLogger;
-        } else if (strategy.getClass().equals(GreedyAlgorithm.class)) {
+        } else if (strategy.getClass().equals(EdmondsKarpStrategy.class)) {
+            logger = LocalServer.ekLogger;
+        } else if (strategy.getClass().equals(GreedyStrategy.class)) {
             logger = LocalServer.gLogger;
         }
     }
 
-    public List<Task> executeTaskStrategy(List<Task> tasksToAllocate){
-        this.tasksToAllocate = tasksToAllocate;
-        distributeValidTasksForAllocationByPriority();
+    public List<Task> maxAllocationAlgorithm(List<Task> tasksToAllocate){
+        distributeValidTasksForAllocationByPriority(tasksToAllocate);
         int numTries = 1;
 
         long begTime = System.currentTimeMillis();
@@ -65,34 +58,34 @@ public class StrategyContext {
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n",numberOfUnnalocatedTasks, numberOfTasksUnvalidForAllocation);
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
 
-        result.sort(new EntityComparator());
-        result.forEach(task -> logger.info(task.toString()));
-        return result;
+        taskResultList.sort(new EntityComparator());
+        taskResultList.forEach(task -> logger.info(task.toString()));
+        return taskResultList;
     }
 
     /**
      *
-     * @param listOfTasks tlists of tasks to Allocate. All the tasks in the list are of one priority level.
+     * @param listOfTasks lists of tasks to Allocate. All the tasks in the list are of one priority level.
      * @param priority priority level for logging purposes.
      */
     private void allocateTasks(List<Task> listOfTasks, String priority) {
         if (!listOfTasks.isEmpty()) {
             listOfTasks.forEach(task -> logger.trace(task.toString()));
             logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
-            result.addAll(strategy.allocate(listOfTasks));
-            numberOfUnnalocatedTasks +=  strategy.numOfUnnalocatedTasks;
+            taskResultList.addAll(strategy.allocate(listOfTasks));
+            numOfUnnalocatedTasks +=  strategy.numOfUnnalocatedTasks;
         }
     }
 
     /**
      * distribute tasks of different priority into separate list to deal with them separately.
-     * Is used internally by executeTaskStrategy.
+     * Is used internally by maxAllocationAlgorithm.
      */
-    private void distributeValidTasksForAllocationByPriority() {
-        numberOfUnnalocatedTasks = 0;
-        result = new ArrayList<>();
+    private void distributeValidTasksForAllocationByPriority(List<Task> tasksToAllocate) {
+        numOfUnnalocatedTasks = 0;
+        taskResultList = new ArrayList<>();
         highPriorityTasks = new ArrayList<>();
         mediumPriorityTasks = new ArrayList<>();
         lowPriorityTasks = new ArrayList<>();
@@ -116,15 +109,14 @@ public class StrategyContext {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            result.add(task);
+            taskResultList.add(task);
         }
-        tasksToAllocate = null;
-        numberOfTasksUnvalidForAllocation = result.size();
+        numOfTasksInvalidForAllocation = taskResultList.size();
 
     }
 
-    public List<Project> executeProjectStrategy(List<Project> projectsToAllocate){
-        numberOfUnnalocatedProjects=0;
+    public List<Project> maxProfitAlgorithm(List<Project> projectsToAllocate){
+        numOfUnnalocatedProjects =0;
         totalProfitFromSelectedProjects = 0;
         projectResultList = new ArrayList<>();
         getTasksInfo(projectsToAllocate);
@@ -153,7 +145,7 @@ public class StrategyContext {
             for (Project project : projectsToAllocate) {
                 try {
                     if (!MaximumProfitAlgorithm.getInstance().allocateByProject(project)) {
-                        numberOfUnnalocatedProjects++;
+                        numOfUnnalocatedProjects++;
                     } else {
                          totalProfitFromSelectedProjects += MaximumProfitAlgorithm.getInstance().getProfit();
                     }
@@ -164,7 +156,7 @@ public class StrategyContext {
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));
-        logger.info("Total number of unallocated projects: {}.\n",numberOfUnnalocatedProjects);
+        logger.info("Total number of unallocated projects: {}.\n", numOfUnnalocatedProjects);
         logger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
 
         projectsToAllocate.sort(new EntityComparator());
@@ -172,7 +164,7 @@ public class StrategyContext {
     }
 
     /**
-     * the method is used only for debugging purposes by executeProjectStrategy method.
+     * the method is used only for debugging purposes by maxProfitAlgorithm method.
      */
     private void getTasksInfo(List<Project> projectsToAllocate) {
         Set<Pair<Task, Task>> taskPairs = new HashSet<>();
@@ -212,16 +204,16 @@ public class StrategyContext {
         }
     }
 
-    public static int getNumberOfTasksUnvalidForAllocation() {
-        return numberOfTasksUnvalidForAllocation;
+    public static int getNumOfTasksInvalidForAllocation() {
+        return numOfTasksInvalidForAllocation;
     }
 
-    public static int getNumberOfUnnalocatedTasks() {
-        return numberOfUnnalocatedTasks;
+    public static int getNumOfUnnalocatedTasks() {
+        return numOfUnnalocatedTasks;
     }
 
-    public static int getNumberOfUnnalocatedProjects() {
-        return numberOfUnnalocatedProjects;
+    public static int getNumOfUnnalocatedProjects() {
+        return numOfUnnalocatedProjects;
     }
 
     public static int getTotalProfitFromSelectedProjects() {

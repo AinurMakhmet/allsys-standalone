@@ -15,21 +15,21 @@ import java.util.*;
  * to the first available employee in the list.
  * It starts with a task that has the least number of possible assignees.
  */
-public class GreedyAlgorithm extends Strategy {
+public class GreedyStrategy extends Strategy {
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
 
-    private static GreedyAlgorithm ourInstance = new GreedyAlgorithm();
+    private static GreedyStrategy ourInstance = new GreedyStrategy();
 
-    public static GreedyAlgorithm getInstance() {
+    public static GreedyStrategy getInstance() {
         return ourInstance;
     }
 
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
-        recommendedAllocation = new LinkedList<>();
+        result = new LinkedList<>();
 
         begTime = System.currentTimeMillis();
-        BipartiteGraph graph = new BipartiteGraph(GreedyAlgorithm.class, tasksToAllocate);
+        BipartiteGraph graph = new BipartiteGraph(GreedyStrategy.class, tasksToAllocate);
         listOfAdjacencyLists = graph.getListOfAdjacencyLists();
         endTime = System.currentTimeMillis();
         LocalServer.gLogger.info(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: {} ms", (endTime-begTime));
@@ -60,36 +60,19 @@ public class GreedyAlgorithm extends Strategy {
                 toAllocate.setRecommendedAssignee(chosenEmployee);
                 numOfUnnalocatedTasks--;
                 /*if (!updateEdgesOfGreedyGraph(chosenEmployee)) {
-                    LocalServer.ffLogger.error("Was unable to update appropriately the lists in greedy algorithm");
+                    LocalServer.ekLogger.error("Was unable to update appropriately the lists in greedy algorithm");
                     throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
                 }*/
             }
-            recommendedAllocation.add(toAllocate);
+            result.add(toAllocate);
             listOfAdjacencyLists.remove(indexWithMinPossibleEmployees);
             tasksToAllocate.remove(toAllocate);
         }
         endTime = System.currentTimeMillis();
         LocalServer.gLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
 
-        return recommendedAllocation;
+        return result;
     }
-
-    private boolean updateEdgesOfGreedyGraph(Employee toRemove) {
-        boolean updated = true;
-        outerLoop:
-        for ( int i = 0; i<listOfAdjacencyLists.size(); i++) {
-            ArrayList<Employee> listToUpdate = listOfAdjacencyLists.get(i).getValue();
-            for (Employee e: listToUpdate) {
-                if (toRemove.getId()==e.getId()) {
-                    updated = listToUpdate.remove(e);
-                    if (updated==true) break;
-                    else break outerLoop;
-                }
-            }
-        }
-        return updated;
-    }
-
 
     private Employee findAvailableEmployee(Task toAllocate, int indexWithMinPossibleEmployees) {
         choosingNextEmployee:

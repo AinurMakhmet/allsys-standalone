@@ -32,11 +32,9 @@ import java.util.List;
  */
 public class ProjectsPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Project> data = FXCollections.observableArrayList(SystemData.getAllProjectsMap().values());
-    private List<Project> projectsToAllocate;
     private List<Project> result;
     private List<Project> selectedProjects = new LinkedList<>();
     private Button maxProfitRecButton, allocateButton, deAllocateButton;
-    private List<Project> lastSavedAllocation;
     private TableColumn name, price, startTime, endTime;
     private ListChangeListener<Project> multipleSelectionListener;
     ChangeListener changeListener;
@@ -351,39 +349,6 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                     }
                 }
         );
-
-        startTime.setCellFactory(TextFieldTableCell.forTableColumn(TasksPage.stringToDateConverter));
-        startTime.setOnEditCommit(
-                new EventHandler<TableColumn.CellEditEvent<Project, Date>>() {
-                    @Override
-                    public void handle(TableColumn.CellEditEvent<Project, Date> t) {
-                        try {
-                            Project project = (Project) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow());
-                            project.setStartTime(t.getNewValue());
-                        } catch (DateTimeParseException exception) {
-                            MainUI.alertError(null, "Please enter the date in the format of yyyy-MM-dd");
-                        }
-                    }
-                }
-        );
-        endTime.setCellFactory(TextFieldTableCell.forTableColumn(TasksPage.stringToDateConverter));
-        endTime.setOnEditCommit(
-                new EventHandler<TableColumn.CellEditEvent<Project, Date>>() {
-                    @Override
-                    public void handle(TableColumn.CellEditEvent<Project, Date> t) {
-                        //TODO: handle null values
-                        try {
-                            Project project = (Project) t.getTableView().getItems().get(
-                                    t.getTablePosition().getRow());
-                            project.setEndTime(t.getNewValue());
-                        } catch (DateTimeParseException exception) {
-                            MainUI.alertError(null, "Please enter a date in the format of yyyy-MM-dd");
-                        }
-                    }
-                }
-        );
-
     }
 
     HBox addCard() {
@@ -407,12 +372,12 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
             MainUI.alertError("Invalid selection.", "Please select projects to allocate.");
             return;
         }
-        projectsToAllocate = selectedProjects;
+
         LocalServer.iLogger.info("MAX_PROFIT");
-        result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).executeProjectStrategy(selectedProjects);
+        result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).maxProfitAlgorithm(selectedProjects);
         Assert.assertEquals(result.size(), selectedProjects.size());
         table.refresh();
-        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumberOfUnnalocatedProjects()
+        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedProjects()
                 + ". \nTotal profit from the selected projects is equal to: "+ StrategyContext.getTotalProfitFromSelectedProjects());
         //MainUI.refreshTables();
         //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);

@@ -1,7 +1,7 @@
 package models.bipartite_matching;
 
 import javafx.util.Pair;
-import logic.FordFulkersonAlgorithm;
+import logic.EdmondsKarpStrategy;
 import logic.MaximumProfitAlgorithm;
 import org.apache.logging.log4j.Logger;
 import servers.LocalServer;
@@ -32,8 +32,8 @@ public class FlowNetworkProfit extends FlowNetwork{
         strategyClass = bipartiteGraph.strategyClass;
         if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
             logger = LocalServer.mpLogger;
-        } else if (strategyClass.equals(FordFulkersonAlgorithm.class)) {
-            logger = LocalServer.ffLogger;
+        } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
+            logger = LocalServer.ekLogger;
         }
         mapToSink = new HashMap<>();
 

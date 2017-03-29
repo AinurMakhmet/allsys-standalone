@@ -5,17 +5,17 @@ public class DefaultDatabase {
 	//Test1- Complete Bipratite Graph
 	public static String[] InsertQueriesEmployee = new String[]{
 			//Test1
-			/*"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee1', 'Dede', 2);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee2', 'Emin', 3);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee3', 'Ekin', 4);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee4', 'Kartal', 1);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee5', 'Aksoy', 3);",
+			/*"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee1', 'Dede', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee2', 'Emin', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee3', 'Ekin', 4);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee4', 'Kartal', 1);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee5', 'Aksoy', 3);",
 			*///Test2
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee1', 'Dede', 2);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee2', 'Emin', 3);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee3', 'Ekin', 4);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee4', 'Dede', 2);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee5', 'Emin', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee1', 'Dede', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee2', 'Emin', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee3', 'Ekin', 4);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee4', 'Dede', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee5', 'Emin', 3);",
 
 	};
 

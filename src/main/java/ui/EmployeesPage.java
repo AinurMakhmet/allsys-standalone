@@ -134,7 +134,7 @@ public class EmployeesPage extends AbstractPage {
                             ((Employee)newSelection).getId().toString(),
                             ((Employee)newSelection).getFirstName(),
                             ((Employee) newSelection).getLastName(),
-                            ((Employee) newSelection).getMonthlySalary()==null ? "" : ((Employee) newSelection).getMonthlySalary().toString(),
+                            ((Employee) newSelection).getDailySalary()==null ? "" : ((Employee) newSelection).getDailySalary().toString(),
                             skills,
                             tasks
                     };
@@ -214,7 +214,7 @@ public class EmployeesPage extends AbstractPage {
                 if (salary!=null && salary>=0) {
                     ((Employee) event.getTableView().getItems().get(
                             event.getTablePosition().getRow())
-                    ).setMonthlySalary(salary);
+                    ).setDailySalary(salary);
                 }
             }
         });

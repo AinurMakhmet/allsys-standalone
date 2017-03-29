@@ -1,9 +1,15 @@
 package models;
 
+import com.j256.ormlite.field.DatabaseField;
+
 /**
  * Created by nura on 19/11/16.
  */
-public interface DatabaseEntity {
+public abstract class DatabaseEntity {
+    @DatabaseField(generatedId = true)
+    private int id;
 
-    public Integer getId();
+    public Integer getId() {
+        return id;
+    }
 }

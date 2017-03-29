@@ -5,8 +5,8 @@
             <PatternLayout
                     pattern="[%-5level] %d{yyyyMMdd-HHmmss} [%t] %M- %msg%n" />
         </Console>
-        <RollingFile name="rollingfileTraceFF" fileName="src/test/resources/logs/f-trace.log"
-                     filePattern="src/test/resources/logs/trace/ff/ff-trace-%d{yyyy-MM-dd-HH:mm:ss}.log">
+        <RollingFile name="rollingfileTraceEK" fileName="src/test/resources/logs/ek-trace.log"
+                     filePattern="src/test/resources/logs/trace/ek/ek-trace-%d{yyyy-MM-dd-HH:mm:ss}.log">
             <PatternLayout>
                 <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%t] %M- %msg%n
                 </pattern>
@@ -53,8 +53,8 @@
             <AppenderRef ref="rollingfileInfo"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
-        <logger name="ffLogger" level="all" additivity="false" >
-            <AppenderRef ref="rollingfileTraceFF"/>
+        <logger name="edLogger" level="all" additivity="false" >
+            <AppenderRef ref="rollingfileTraceEK"/>
             <AppenderRef ref="rollingfileInfo" level="info"/>
             <AppenderRef ref="console" level="all"/>
         </logger>

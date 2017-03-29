@@ -7,9 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * Model to represent a particular skill of a particular employee.
  */
 @DatabaseTable(tableName = "employee_skill")
-public class EmployeeSkill implements DatabaseEntity{
-    @DatabaseField(generatedId = true)
-    private Integer id;
+public class EmployeeSkill extends DatabaseEntity{
     @DatabaseField(columnName = "employee_id", foreign = true, foreignAutoRefresh = true, canBeNull = false)
     private Employee employee;
     @DatabaseField(columnName = "skill_id", foreign = true, foreignAutoRefresh = true, canBeNull = false)
@@ -35,11 +33,6 @@ public class EmployeeSkill implements DatabaseEntity{
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
     }
 
     @Override

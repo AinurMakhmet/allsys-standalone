@@ -16,9 +16,7 @@ import java.util.List;
  * Model to represent a skill.
  */
 @DatabaseTable(tableName = "skill")
-public class Skill implements DatabaseEntity{
-    @DatabaseField(generatedId = true)
-    private Integer id;
+public class Skill extends DatabaseEntity{
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -133,11 +131,6 @@ public class Skill implements DatabaseEntity{
             });*/
         }
         return output;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
     }
 
     @Override

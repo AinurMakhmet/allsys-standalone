@@ -5,13 +5,13 @@ public class DefaultDatabaseOld {
 	public static String[] InsertQueriesEmployee = new String[]{
 			//"SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";",
 			//"SET time_zone = \"+00:00\";",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee1', 'Dede', 2);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee2', 'Emin', 3);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee3', 'Ekin', 4);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee4', 'Kartal', 1);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee5', 'Aksoy', 3);",
-			//"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee6', 'Nas', 5);",
-			//"INSERT INTO `employee` (`first_name`, `last_name`, `monthly_salary`) VALUES ('Employee7', 'Albayrak', 1);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee1', 'Dede', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee2', 'Emin', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee3', 'Ekin', 4);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee4', 'Kartal', 1);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee5', 'Aksoy', 3);",
+			//"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee6', 'Nas', 5);",
+			//"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee7', 'Albayrak', 1);",
 			//"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Altan', 'Gunduz');",
 			//"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Asli', 'Kiraz');"
 	};

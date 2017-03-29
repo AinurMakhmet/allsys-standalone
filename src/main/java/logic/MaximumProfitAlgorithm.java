@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Created by nura on 27/02/17.
  */
-public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
+public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
     //private FlowNetwork residualNetwork;
     //private Queue<Vertex> augmentedPathQueue;
     private Map<Vertex, Pair<Vertex, Integer>> shortestPathMap;
@@ -63,7 +63,7 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
             for(Task t: projectToAllocate.getTasks()) {
                 Task task = SystemData.getAllTasksMap().get(t.getId());
                 assert(task.getRecommendedAssignee()!=null);
-                projectPrimeCost += task.getRecommendedAssignee().getMonthlySalary();
+                projectPrimeCost += task.getRecommendedAssignee().getDailySalary();
             }
             profit = projectToAllocate.getPrice() - projectPrimeCost;
             LocalServer.mpLogger.trace("Max profit for the project = {}", profit);
@@ -234,7 +234,7 @@ public class MaximumProfitAlgorithm extends FordFulkersonAlgorithm {
             childVertex = parentVertex;
         }
 
-        //path.forEach(vertex ->LocalServer.ffLogger.trace(vertex));
+        //path.forEach(vertex ->LocalServer.ekLogger.trace(vertex));
 
         augmentedPathQueue.clear();
         augmentedPathQueue.addAll(path);

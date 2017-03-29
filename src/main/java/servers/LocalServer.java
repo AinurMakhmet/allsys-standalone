@@ -17,7 +17,7 @@ import java.io.File;
  */
 public class LocalServer extends Application{
     public static Logger gLogger = LogManager.getLogger("gLogger");
-    public static Logger ffLogger = LogManager.getLogger("ffLogger");
+    public static Logger ekLogger = LogManager.getLogger("ekLogger");
     public static Logger iLogger = LogManager.getLogger("iLogger");
     public static Logger mpLogger = LogManager.getLogger("mpLogger");
     /**

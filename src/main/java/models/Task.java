@@ -17,9 +17,7 @@ import java.util.List;
  * Model to represent task.
  */
 @DatabaseTable(tableName = "task")
-public class Task implements DatabaseEntity{
-    @DatabaseField(generatedId = true)
-    private Integer id;
+public class Task extends DatabaseEntity{
     @DatabaseField(canBeNull = false)
     private String name;
     @DatabaseField
@@ -27,9 +25,6 @@ public class Task implements DatabaseEntity{
     //private String state;
     @DatabaseField(columnName = "priority", dataType = DataType.ENUM_STRING, defaultValue = "LOW")
     private Priority priority;
-    //how many days it takes to complete a task
-    @DatabaseField
-    private int duration;
     @DatabaseField(columnName = "end_time")
     private Date endTime;
     @DatabaseField(columnName = "start_time")
@@ -42,6 +37,7 @@ public class Task implements DatabaseEntity{
     private ForeignCollection<TaskSkill> skills;
     public ArrayList<Employee> possibleAssignee;
     private Employee recommendedAssignee;
+
     private String recommendedAssigneeName;
 
     // ORMLite needs a no-arg constructor
@@ -55,11 +51,6 @@ public class Task implements DatabaseEntity{
         this.priority = priority;
     }
 
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -125,14 +116,6 @@ public class Task implements DatabaseEntity{
     public void setPriority(Priority priority) {
         this.priority = priority;
         TaskUtils.updateEntity(this);
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     public Date getEndTime() {

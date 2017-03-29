@@ -13,8 +13,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
-import logic.FordFulkersonAlgorithm;
-import logic.GreedyAlgorithm;
+import logic.EdmondsKarpStrategy;
+import logic.GreedyStrategy;
 import logic.StrategyContext;
 import models.*;
 import servers.LocalServer;
@@ -36,7 +36,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
     private List<Task> tasksToAllocate, result;
     private List<Task> selectedTasks = new LinkedList<>();
-    private Button greedyRecButton, ffRecButton, allocateButton, deAllocateButton;
+    private Button greedyRecButton, ekRecButton, allocateButton, deAllocateButton;
     private ListChangeListener<Task> multipleSelectionListener;
     private ChangeListener changeListener;
     private TableColumn name, employeeId, startTime, endTime, projectId, priorityLevel;
@@ -72,7 +72,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         table.getSelectionModel().selectedItemProperty().removeListener(changeListener);
                         allocateButton.setVisible(true);
                         deAllocateButton.setVisible(true);
-                        ffRecButton.setVisible(true);
+                        ekRecButton.setVisible(true);
                         greedyRecButton.setVisible(true);
                     } else if (toggle.getUserData().equals(Mode.View)) {
                         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -80,7 +80,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         table.getSelectionModel().selectedItemProperty().addListener(changeListener);
                         allocateButton.setVisible(false);
                         deAllocateButton.setVisible(false);
-                        ffRecButton.setVisible(false);
+                        ekRecButton.setVisible(false);
                         greedyRecButton.setVisible(false);
                     }
                 }
@@ -206,7 +206,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                 ((Task) newSelection).getEndTime()==null ? "" : ((Task) newSelection).getEndTime().toString(),
                                 ((Task) newSelection).getPriority().toString(),
                                 skills,
-                                ((Task) newSelection).getRecommendedAssigneeName()==null ? "not recommendation" : ((Task) newSelection).getRecommendedAssigneeName(),
+                                ((Task) newSelection).getRecommendedAssigneeName()==null ? "no recommendation" : ((Task) newSelection).getRecommendedAssigneeName(),
                                 ((Task) newSelection).getEmployeeName()==null ? "not allocated" : ((Task) newSelection).getEmployeeName()
                         };
                         setNewCard(cardValues, (Task)newSelection);
@@ -254,9 +254,11 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
     private void constructAllocationMode() {
         greedyRecButton = new Button("G REC");
+        greedyRecButton.setTooltip(new Tooltip("Greedy strategy"));
         greedyRecButton.setOnAction(this);
-        ffRecButton = new Button("FF REC");
-        ffRecButton.setOnAction(this);
+        ekRecButton = new Button("EK REC");
+        ekRecButton.setTooltip(new Tooltip("Edmonds-Karp strategy"));
+        ekRecButton.setOnAction(this);
         allocateButton = new Button("Allocate");
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -287,10 +289,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         });
         allocateButton.setVisible(false);
         deAllocateButton.setVisible(false);
-        ffRecButton.setVisible(false);
+        ekRecButton.setVisible(false);
         greedyRecButton.setVisible(false);
         top.getChildren().add(greedyRecButton);
-        top.getChildren().add(ffRecButton);
+        top.getChildren().add(ekRecButton);
         top.getChildren().add(allocateButton);
         top.getChildren().add(deAllocateButton);
     }
@@ -459,17 +461,17 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             LocalServer.gLogger.info("GREEDY");
-            result = new StrategyContext(GreedyAlgorithm.getInstance()).executeTaskStrategy(tasksToAllocate);
-        } else if (((Button)event.getSource()).equals(ffRecButton)) {
-            LocalServer.ffLogger.info("FF");
-            result = new StrategyContext(FordFulkersonAlgorithm.getInstance()).executeTaskStrategy(tasksToAllocate);
+            result = new StrategyContext(GreedyStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
+        } else if (((Button)event.getSource()).equals(ekRecButton)) {
+            LocalServer.ekLogger.info("EK");
+            result = new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
         } else {
             return;
         }
         assert(result.size()==selectedTasks.size());
         table.refresh();
-        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumberOfUnnalocatedTasks()
-                + ". \nAmong them number of tasks non-valid for allocation: "+ StrategyContext.getNumberOfTasksUnvalidForAllocation());
+        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedTasks()
+                + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfTasksInvalidForAllocation());
         //MainUI.refreshTables();
     }
 

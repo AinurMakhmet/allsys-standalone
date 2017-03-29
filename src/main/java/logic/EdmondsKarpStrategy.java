@@ -15,24 +15,22 @@ import java.util.*;
  * Ford-Fulkerson algorithm finds largest matching possible for a given set of tasks.
  * The algorithm uses BFS to find the augmented path.
  */
-public class FordFulkersonAlgorithm extends Strategy {
-    private Map<Vertex, Map<Vertex, Boolean>> taskMap = new HashMap<>();
-    private Map<Vertex, Map<Vertex, Boolean>> employeeMap = new HashMap<>();
-
+public class EdmondsKarpStrategy extends Strategy {
     protected FlowNetwork residualNetwork;
     protected Queue<Vertex> augmentedPathQueue;
     protected Map<Vertex, Vertex> augmentedPathBFS;
     private Map<Vertex, Boolean> adjacentVertices;
     protected static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
     protected static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
-    private int pathNumber;
     public Map<Vertex, Vertex> matching;
+
+    private int pathNumber;
     protected Class strategyClass;
     Logger logger;
 
-    private static FordFulkersonAlgorithm ourInstance = new FordFulkersonAlgorithm();
+    private static EdmondsKarpStrategy ourInstance = new EdmondsKarpStrategy();
 
-    public static FordFulkersonAlgorithm getInstance() {
+    public static EdmondsKarpStrategy getInstance() {
         return ourInstance;
     }
 
@@ -40,8 +38,8 @@ public class FordFulkersonAlgorithm extends Strategy {
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
         strategyClass = this.getClass();
-        logger = LocalServer.ffLogger;
-        recommendedAllocation = new LinkedList<>();
+        logger = LocalServer.ekLogger;
+        result = new LinkedList<>();
         numOfUnnalocatedTasks=tasksToAllocate.size();
         List<Task> remainingTasksToAllocate = tasksToAllocate;
         begTime = System.currentTimeMillis();
@@ -55,13 +53,13 @@ public class FordFulkersonAlgorithm extends Strategy {
 
 
         remainingTasksToAllocate.forEach(task -> {
-            if (!recommendedAllocation.contains(task)) {
-                recommendedAllocation.add(task);
+            if (!result.contains(task)) {
+                result.add(task);
             }
         });
         endTime = System.currentTimeMillis();
         logger.info("Time for running algorithm: {} ms", (endTime-begTime));
-        return recommendedAllocation;
+        return result;
     }
 
     protected boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
@@ -69,9 +67,6 @@ public class FordFulkersonAlgorithm extends Strategy {
         residualNetwork = new FlowNetwork(new BipartiteGraph(strategyClass, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
         logger.info("Time for constrcuting data structure: {} ms", (endTime-begTime));
-
-        taskMap = residualNetwork.getMapFromSource();
-        employeeMap = residualNetwork.getMapToSink();
         return residualNetwork.getSource().getValue().size()>0;
     }
 
@@ -94,7 +89,7 @@ public class FordFulkersonAlgorithm extends Strategy {
             Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
             numOfUnnalocatedTasks--;
-            recommendedAllocation.add(task);
+            result.add(task);
             logger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
         });
         return remainingTasksToAllocate;

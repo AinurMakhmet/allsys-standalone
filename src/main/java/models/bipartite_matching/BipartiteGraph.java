@@ -1,10 +1,9 @@
 package models.bipartite_matching;
 
 import javafx.util.Pair;
-import logic.FordFulkersonAlgorithm;
-import logic.GreedyAlgorithm;
+import logic.EdmondsKarpStrategy;
+import logic.GreedyStrategy;
 import logic.MaximumProfitAlgorithm;
-import logic.Strategy;
 import models.Employee;
 import models.Skill;
 import models.SystemData;
@@ -29,10 +28,10 @@ public class BipartiteGraph {
 
     public BipartiteGraph(Class strategyClass, List<Task> tasksToAllocate) {
         this.strategyClass = strategyClass;
-        if (strategyClass.equals(GreedyAlgorithm.class)) {
+        if (strategyClass.equals(GreedyStrategy.class)) {
             logger = LocalServer.gLogger;
-        } else if (strategyClass.equals(FordFulkersonAlgorithm.class)) {
-            logger = LocalServer.ffLogger;
+        } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
+            logger = LocalServer.ekLogger;
         } else if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
             logger = LocalServer.gLogger;
         }
@@ -58,7 +57,7 @@ public class BipartiteGraph {
                 if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
                     listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
 
-                    if (!strategyClass.equals(GreedyAlgorithm.class)) {
+                    if (!strategyClass.equals(GreedyStrategy.class)) {
                         initialiseMaps(task);
                     }
                 }
@@ -75,7 +74,7 @@ public class BipartiteGraph {
         task.possibleAssignee.forEach(employee ->  {
             Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
             if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
-                employeeVertex.setCost(employee.getMonthlySalary());
+                employeeVertex.setCost(employee.getDailySalary());
             }
             //Integer employeeId = employee.getId();
             Map<Vertex, Boolean> adjacentVerticesOfEmployee = new HashMap<>();
@@ -116,7 +115,7 @@ public class BipartiteGraph {
         }
 
 
-        if (!strategyClass.equals(GreedyAlgorithm.class)) {
+        if (!strategyClass.equals(GreedyStrategy.class)) {
             removeCandiatesWithTimeOverlappingTasks(task);
         }
     }

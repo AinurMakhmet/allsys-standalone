@@ -15,21 +15,18 @@ import java.util.*;
  * Model to represent an employee.
  */
 @DatabaseTable(tableName = "employee")
-public class Employee implements DatabaseEntity{
-    @DatabaseField(generatedId = true)
-    private Integer id;
+public class Employee extends DatabaseEntity{
     @DatabaseField(canBeNull = false, columnName = "first_name")
     private String firstName;
     @DatabaseField(canBeNull = false, columnName = "last_name")
     private String lastName;
-    @DatabaseField(columnName = "monthly_salary")
-    private Integer monthlySalary;
+    @DatabaseField(columnName = "daily_salary")
+    private Integer dailySalary;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<Task> tasks;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<EmployeeSkill> skills;
     private Set<Task> matchedTasks = new HashSet<>();
-    private Set<Task> possibleAssignments = new HashSet<>();
 
 
     /**
@@ -38,14 +35,10 @@ public class Employee implements DatabaseEntity{
     public Employee() {
     }
 
-    public Employee(String firstName, String lastName, int monthlySalary) {
+    public Employee(String firstName, String lastName, int dailySalary) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.monthlySalary = monthlySalary;
-    }
-
-    public Integer getId() {
-        return id;
+        this.dailySalary = dailySalary;
     }
 
     public String getFirstName() {
@@ -66,12 +59,12 @@ public class Employee implements DatabaseEntity{
         EmployeeUtils.updateEntity(this);
     }
 
-    public Integer getMonthlySalary() {
-        return monthlySalary;
+    public Integer getDailySalary() {
+        return dailySalary;
     }
 
-    public void setMonthlySalary(int monthlySalary) {
-        this.monthlySalary = monthlySalary;
+    public void setDailySalary(int dailySalary) {
+        this.dailySalary = dailySalary;
         EmployeeUtils.updateEntity(this);
     }
 
