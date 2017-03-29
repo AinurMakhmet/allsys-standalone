@@ -34,6 +34,10 @@ public class GreedyAlgorithm extends Strategy {
         endTime = System.currentTimeMillis();
         LocalServer.gLogger.info(getClass().getSimpleName()+": Time for constructing Bipartite Graph structure: {} ms", (endTime-begTime));
 
+        listOfAdjacencyLists.forEach(pair->{
+            LocalServer.gLogger.trace("Task{} has the following possible assignee: {}", pair.getKey(), pair.getValue());
+        });
+
         begTime = System.currentTimeMillis();
         numOfUnnalocatedTasks=tasksToAllocate.size();
         Collections.sort(listOfAdjacencyLists, new Comparator<Pair<Integer, ArrayList>>() {
