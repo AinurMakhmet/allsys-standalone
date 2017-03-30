@@ -39,6 +39,39 @@ public class StrategyContext {
         }
     }
 
+    public List<Task> maxAllocationAlgorithmNoPriotity(List<Task> tasksToAllocate){
+        numOfUnnalocatedTasks = 0;
+        taskResultList = new ArrayList<>();
+        Iterator it = tasksToAllocate.iterator();
+        while(it.hasNext()) {
+            Task task = (Task)it.next();
+            try {
+                task.setRecommendedAssignee(null);
+                if(task.getEmployee()==null && task.getEndTime()!=null && task.getStartTime()!=null && task.getSkills().size()>0) {
+                    continue;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            it.remove();
+            taskResultList.add(task);
+        }
+        numOfTasksInvalidForAllocation = taskResultList.size();
+
+        long begTime = System.currentTimeMillis();
+        if (!tasksToAllocate.isEmpty()) {
+            allocateTasks(tasksToAllocate, "all");
+        }
+        long endTime = System.currentTimeMillis();
+        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
+
+        taskResultList.sort(new EntityComparator());
+        //taskResultList.forEach(task -> logger.info(task.toString()));
+        return taskResultList;
+    }
+
+
     public List<Task> maxAllocationAlgorithm(List<Task> tasksToAllocate){
         distributeValidTasksForAllocationByPriority(tasksToAllocate);
 
@@ -55,7 +88,7 @@ public class StrategyContext {
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
 
         taskResultList.sort(new EntityComparator());
         //taskResultList.forEach(task -> logger.info(task.toString()));

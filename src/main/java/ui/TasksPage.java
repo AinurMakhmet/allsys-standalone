@@ -36,7 +36,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
     private List<Task> tasksToAllocate, result;
     private List<Task> selectedTasks = new LinkedList<>();
-    private Button greedyRecButton, ekRecButton, allocateButton, deAllocateButton;
+    private Button greedyRecButton, ekRecButton, ekRecButtonNoPriority, allocateButton, deAllocateButton;
     private ListChangeListener<Task> multipleSelectionListener;
     private ChangeListener changeListener;
     private TableColumn name, employeeId, startTime, endTime, projectId, priorityLevel;
@@ -73,6 +73,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         allocateButton.setVisible(true);
                         deAllocateButton.setVisible(true);
                         ekRecButton.setVisible(true);
+                        ekRecButtonNoPriority.setVisible(true);
                         greedyRecButton.setVisible(true);
                     } else if (toggle.getUserData().equals(Mode.View)) {
                         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -81,6 +82,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         allocateButton.setVisible(false);
                         deAllocateButton.setVisible(false);
                         ekRecButton.setVisible(false);
+                        ekRecButtonNoPriority.setVisible(false);
                         greedyRecButton.setVisible(false);
                     }
                 }
@@ -231,7 +233,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //int selectdIndex = table.getSelectionModel().getSelectedCells();
                 ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
                 TablePosition tablePosition = (TablePosition) selectedCells.get(0);
                 Task toRemove = ((Task) table.getItems().get(tablePosition.getRow()));
@@ -244,8 +245,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 } else {
                     MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
                 }
-                //delete the selected item in data
-                //data.remove(selectdIndex);
             }
         });
 
@@ -253,12 +252,15 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     }
 
     private void constructAllocationMode() {
-        greedyRecButton = new Button("G REC");
+        greedyRecButton = new Button("G");
         greedyRecButton.setTooltip(new Tooltip("Greedy strategy"));
         greedyRecButton.setOnAction(this);
-        ekRecButton = new Button("EK REC");
+        ekRecButton = new Button("EK");
         ekRecButton.setTooltip(new Tooltip("Edmonds-Karp strategy"));
         ekRecButton.setOnAction(this);
+        ekRecButtonNoPriority = new Button("EK NP");
+        ekRecButtonNoPriority.setTooltip(new Tooltip("Edmonds-Karp strategy no priority"));
+        ekRecButtonNoPriority.setOnAction(this);
         allocateButton = new Button("Allocate");
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -290,9 +292,11 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         allocateButton.setVisible(false);
         deAllocateButton.setVisible(false);
         ekRecButton.setVisible(false);
+        ekRecButtonNoPriority.setVisible(false);
         greedyRecButton.setVisible(false);
         top.getChildren().add(greedyRecButton);
         top.getChildren().add(ekRecButton);
+        top.getChildren().add(ekRecButtonNoPriority);
         top.getChildren().add(allocateButton);
         top.getChildren().add(deAllocateButton);
     }
@@ -465,6 +469,9 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         } else if (((Button)event.getSource()).equals(ekRecButton)) {
             LocalServer.ekLogger.info("EK");
             result = new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
+        } else if (((Button)event.getSource()).equals(ekRecButtonNoPriority)) {
+            LocalServer.ekLogger.info("EK - NO PRIORITY");
+            result = new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithmNoPriotity(tasksToAllocate);
         } else {
             return;
         }
@@ -472,7 +479,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         table.refresh();
         MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedTasks()
                 + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfTasksInvalidForAllocation());
-        //MainUI.refreshTables();
     }
 
     enum Mode {
