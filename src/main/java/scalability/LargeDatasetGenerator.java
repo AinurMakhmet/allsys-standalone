@@ -55,12 +55,8 @@ public class LargeDatasetGenerator {
     private static void generateTasks(PrintWriter writer) {
         StringBuilder builder = new StringBuilder();
         String taskLine = "INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('";
-        //+value1+"', '"+value2+"', '"+value3+"', '"+value4+"');";
         Date startDate;
         Date endDate;
-        /*Date startRangeDate;
-        Date endRangeDate;
-        */
         Random rand = new Random();
         String[] priorities = {"HIGH", "MEDIUM", "LOW"};
 
@@ -68,7 +64,6 @@ public class LargeDatasetGenerator {
         while(i<numberOfTasks) {
             value1 = new StringBuilder().append("Task").append(((Integer)(i+1)).toString()).toString();
             value2 = priorities[rand.nextInt(3)];
-            //value2 = priorities[0];
             startDate = getValidRandomDate();
             endDate = getValidRandomDate();
             while (endDate.before(startDate)) {
@@ -139,7 +134,6 @@ public class LargeDatasetGenerator {
     }
 
     /**
-     * http://www.quietaffiliate.com/free-first-name-and-last-name-databases-csv-and-sql/
      * @param writer
      * @throws FileNotFoundException
      */
@@ -147,17 +141,9 @@ public class LargeDatasetGenerator {
         StringBuilder builder = new StringBuilder();
         String employeeLineStart = "INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('";
 
-        /*String firstNamesFile = "src/main/resources/large_dataset/Database_of_First_Names.csv";
-        String lastNamesFile = "src/main/resources/large_dataset/Database_of_Last_Names.csv";
-
-        Scanner scannerFN = new Scanner(new File(firstNamesFile));
-        Scanner scannerLN = new Scanner(new File(lastNamesFile));
-        */
         int i=0;
         value1 = "Employee";
         while(i<numberOfEmployees) {
-            //value1= scannerFN.nextLine();
-            //value2= scannerLN.nextLine();
             value2 = i+1+"";
             builder.append(employeeLineStart);
             builder.append(value1);
@@ -168,15 +154,11 @@ public class LargeDatasetGenerator {
             builder.delete(0, builder.length());
             i++;
         }
-        /*scannerFN.close();
-        scannerLN.close();
-*/
-
     }
 
     private static void generateSkills(PrintWriter writer) {
         StringBuilder builder = new StringBuilder();
-        String skillLineStart = "INSERT INTO `skill` (`name`, `level`) VALUES ('";//+value1+"', '"+value2+"');";
+        String skillLineStart = "INSERT INTO `skill` (`name`, `level`) VALUES ('";
         int i=0;
         String[] names = { "C++", "Java", "Python", "Ruby", "Linux Shell", "Functional Programming", "Artificial Intelligence", "SQL", "Databases", "Distributed Systems", "Regex", "Security" };
         int[] levels = new int[numberOfSkillLevels];
@@ -204,7 +186,6 @@ public class LargeDatasetGenerator {
     private static void generateEmployeeSkills(PrintWriter writer) {
         StringBuilder builder = new StringBuilder();
         String employeeSkillLineStart = "INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('";
-        //+value1+"', '"+value2+"');";
         int i=0;
         int[] employeeIds = new int[numberOfEmployees];
         int[] skillIds = new int[totalNumberOfSkills];
@@ -265,7 +246,6 @@ public class LargeDatasetGenerator {
     private static void generateTaskSkills(PrintWriter writer) {
         StringBuilder builder = new StringBuilder();
         String taskSkillLine = "INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('";
-        //+value1+"', '"+value2+"');";
         int i=0;
         int[] taskIds = new int[numberOfTasks];
         int[] skillIds = new int[totalNumberOfSkills];
