@@ -14,12 +14,6 @@ import java.util.*;
 public class FlowNetwork {
     private Map<Vertex, Map<Vertex, Boolean>> mapFromSource = new HashMap<>();
     private Map<Vertex, Map<Vertex, Boolean>> mapToSink = new HashMap<>();
-    private int maximumFlow;
-    private int totalTaskMatches = 0;
-    private int totalEmployeeMatches = 0;
-    private BipartiteGraph bipartiteGraph;
-    private Class strategyClass;
-    private Logger logger;
     private static final Integer SOURCE_ID = -1;
     private static final Integer SINK_ID = -2;
     public static final Vertex SOURCE_VERTEX = new Vertex(SOURCE_ID, VertexType.SOURCE);
@@ -28,6 +22,8 @@ public class FlowNetwork {
     private final Pair<Vertex, Map<Vertex, Boolean>> SOURCE = new Pair(SOURCE_VERTEX, new HashMap<>());
     private final Pair<Vertex, Map<Vertex, Boolean>> SINK = new Pair(SINK_VERTEX, new HashMap<>());
 
+    private Class strategyClass;
+    private Logger logger;
     public FlowNetwork() {
 
     }
@@ -40,7 +36,6 @@ public class FlowNetwork {
         }
         mapToSink = new HashMap<>();
 
-        this.bipartiteGraph = bipartiteGraph;
         //initialises mapFromSource for Network flow
         mapFromSource = bipartiteGraph.getTaskMap();
         //initialises mapToSink for Network flow

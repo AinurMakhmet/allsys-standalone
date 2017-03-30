@@ -41,23 +41,20 @@ public class StrategyContext {
 
     public List<Task> maxAllocationAlgorithm(List<Task> tasksToAllocate){
         distributeValidTasksForAllocationByPriority(tasksToAllocate);
-        int numTries = 1;
 
         long begTime = System.currentTimeMillis();
         //TODO: fix Greedy returns only allocated tasks. Need to return all tasks.
-        for (int i = 0; i < numTries; ++i) {
-            if (!highPriorityTasks.isEmpty()) {
-                allocateTasks(highPriorityTasks, "high");
-            }
-            if (!mediumPriorityTasks.isEmpty()) {
-                allocateTasks(mediumPriorityTasks, "medium");
-            }
-            if (!lowPriorityTasks.isEmpty()) {
-                allocateTasks(lowPriorityTasks, "low");
-            }
+        if (!highPriorityTasks.isEmpty()) {
+            allocateTasks(highPriorityTasks, "high");
+        }
+        if (!mediumPriorityTasks.isEmpty()) {
+            allocateTasks(mediumPriorityTasks, "medium");
+        }
+        if (!lowPriorityTasks.isEmpty()) {
+            allocateTasks(lowPriorityTasks, "low");
         }
         long endTime = System.currentTimeMillis();
-        logger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));
+        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
         logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
 
         taskResultList.sort(new EntityComparator());
@@ -141,23 +138,20 @@ public class StrategyContext {
             }
         }
 
-        int numTries = 1;
         long begTime = System.currentTimeMillis();
-        for (int i = 0; i < numTries; ++i) {
-            for (Project project : projectsToAllocate) {
-                try {
-                    if (!MaximumProfitAlgorithm.getInstance().allocateByProject(project)) {
-                        numOfUnnalocatedProjects++;
-                    } else {
-                         totalProfitFromSelectedProjects += MaximumProfitAlgorithm.getInstance().getProfit();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+        for (Project project : projectsToAllocate) {
+            try {
+                if (!MaximumProfitAlgorithm.getInstance().allocateByProject(project)) {
+                    numOfUnnalocatedProjects++;
+                } else {
+                     totalProfitFromSelectedProjects += MaximumProfitAlgorithm.getInstance().getProfit();
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         long endTime = System.currentTimeMillis();
-        logger.info(strategy.getClass().getSimpleName()+": Total time for {} tries: {} ms", numTries, (endTime-begTime));
+        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
         logger.info("Total number of unallocated projects: {}.\n", numOfUnnalocatedProjects);
         logger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
 

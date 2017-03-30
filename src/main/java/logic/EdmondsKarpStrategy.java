@@ -20,11 +20,8 @@ public class EdmondsKarpStrategy extends Strategy {
     protected Queue<Vertex> augmentedPathQueue;
     protected Map<Vertex, Vertex> augmentedPathBFS;
     private Map<Vertex, Boolean> adjacentVertices;
-    protected static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
-    protected static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
     public Map<Vertex, Vertex> matching;
 
-    private int pathNumber;
     protected Class strategyClass;
     Logger logger;
 
@@ -73,12 +70,10 @@ public class EdmondsKarpStrategy extends Strategy {
     private List<Task> doNextAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
         augmentedPathQueue = new LinkedList<>();
-        pathNumber = 0;
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
-            //logger.trace("Path Number "+ ++pathNumber);
             constructResidualNetwork();
             residualNetwork.printGraph();
         }
@@ -114,8 +109,8 @@ public class EdmondsKarpStrategy extends Strategy {
     private boolean findAugmentingPathBFS() {
         augmentedPathBFS = new HashMap<>();
         Queue<Vertex> traversalQueue = new LinkedList<>();
-        traversalQueue.add(SOURCE_VERTEX);
-        Vertex childVertex = SOURCE_VERTEX;
+        traversalQueue.add(FlowNetwork.SOURCE_VERTEX);
+        Vertex childVertex = FlowNetwork.SOURCE_VERTEX;
 
         while (!traversalQueue.isEmpty()) {
             Vertex parentVertex = traversalQueue.remove();
@@ -124,7 +119,7 @@ public class EdmondsKarpStrategy extends Strategy {
                     traversalQueue.add(childVertex);
                     augmentedPathBFS.putIfAbsent(childVertex, parentVertex);
                 }
-                if (childVertex.equals(SINK_VERTEX)) {
+                if (childVertex.equals(FlowNetwork.SINK_VERTEX)) {
                     return true;
                 }
             }
@@ -154,7 +149,7 @@ public class EdmondsKarpStrategy extends Strategy {
             a: for (Vertex childVertex : adjacentVertices.keySet()) {
                 if (childVertex.getVertexType()==VertexType.SOURCE || adjacentVertices.get(childVertex)) {
                     continue a;
-                } else if (childVertex.equals(SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
+                } else if (childVertex.equals(FlowNetwork.SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
                     vertexToReturn = childVertex;
                     //set the isVisited for the vertex to be true
                     adjacentVertices.put(childVertex, true);
@@ -172,7 +167,7 @@ public class EdmondsKarpStrategy extends Strategy {
      * @param
      */
     private void constructResidualNetwork() {
-        Vertex childVertex = SINK_VERTEX;
+        Vertex childVertex = FlowNetwork.SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
         Stack path = new Stack();
@@ -191,7 +186,7 @@ public class EdmondsKarpStrategy extends Strategy {
             childVertex = augmentedPathQueue.poll();
             parentVertex  = augmentedPathQueue.peek();
             doAddDeleteVertices(parentVertex, childVertex);
-            if (parentVertex.equals(SOURCE_VERTEX)) break;
+            if (parentVertex.equals(FlowNetwork.SOURCE_VERTEX)) break;
         }
 
         residualNetwork.getSource().getValue().forEach((vertex, aBoolean) -> residualNetwork.getSource().getValue().put(vertex, false));

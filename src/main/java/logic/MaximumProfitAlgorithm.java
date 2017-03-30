@@ -19,9 +19,6 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
     //private Queue<Vertex> augmentedPathQueue;
     private Map<Vertex, Pair<Vertex, Integer>> shortestPathMap;
     private Map<Vertex, Boolean> adjacentVertices;
-    //private static final Vertex SOURCE_VERTEX = FlowNetwork.SOURCE_VERTEX;
-    //private static final Vertex SINK_VERTEX = FlowNetwork.SINK_VERTEX;
-    private int pathNumber;
     //public Map<Vertex, Vertex> matching;
     private int profit;
     private int projectPrimeCost;
@@ -85,12 +82,10 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
     private List<Task> doNextAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
         augmentedPathQueue = new LinkedList<>();
-        pathNumber = 0;
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
         //TODO: compute a shortest-path tree T in G from v to all nodes reachable from v;
         while (findShortestAugmentingPath()) {
-            //LocalServer.mpLogger.trace("Path Number "+ ++pathNumber);
             constructResidualNetwork();
             residualNetwork.printGraph();
             findMatching();
@@ -116,8 +111,8 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         shortestPathMap = new HashMap<>();
         bellmanFordInitialization();
         Queue<Vertex> traversalQueue = new LinkedList<>();
-        traversalQueue.add(SOURCE_VERTEX);
-        Vertex childVertex = SOURCE_VERTEX;
+        traversalQueue.add(FlowNetwork.SOURCE_VERTEX);
+        Vertex childVertex = FlowNetwork.SOURCE_VERTEX;
 
         while (!traversalQueue.isEmpty()) {
             Vertex parentVertex = traversalQueue.remove();
@@ -125,7 +120,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
                 traversalQueue = doBellmanFordRelax(parentVertex, childVertex, traversalQueue);
             }
         }
-        if (shortestPathMap.containsKey(SINK_VERTEX) && shortestPathMap.get(SINK_VERTEX).getKey()!=null) return true;
+        if (shortestPathMap.containsKey(FlowNetwork.SINK_VERTEX) && shortestPathMap.get(FlowNetwork.SINK_VERTEX).getKey()!=null) return true;
         return false;
     }
 
@@ -156,14 +151,14 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
     }
 
     private void bellmanFordInitialization() {
-        shortestPathMap.put(SOURCE_VERTEX, new Pair(null, 0));
+        shortestPathMap.put(FlowNetwork.SOURCE_VERTEX, new Pair(null, 0));
         residualNetwork.getMapFromSource().keySet().forEach(vertex-> {
             shortestPathMap.put(vertex, new Pair(null, Integer.MAX_VALUE));
         });
         residualNetwork.getMapToSink().keySet().forEach(vertex-> {
             shortestPathMap.put(vertex, new Pair(null, Integer.MAX_VALUE));
         });
-        shortestPathMap.put(SINK_VERTEX, new Pair(null, Integer.MAX_VALUE));
+        shortestPathMap.put(FlowNetwork.SINK_VERTEX, new Pair(null, Integer.MAX_VALUE));
     }
 
 
@@ -205,7 +200,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
                         }
                     }
                 }
-                if (childVertex.equals(SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
+                if (childVertex.equals(FlowNetwork.SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
                     vertexToReturn = childVertex;
                     //set the isVisited for the vertex to be true
                     adjacentVertices.put(childVertex, true);
@@ -223,7 +218,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
      * @param
      */
     private void constructResidualNetwork() {
-        Vertex childVertex = SINK_VERTEX;
+        Vertex childVertex = FlowNetwork.SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
         Stack path = new Stack();
@@ -242,7 +237,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
             childVertex = augmentedPathQueue.poll();
             parentVertex  = augmentedPathQueue.peek();
             doAddDeleteVertices(parentVertex, childVertex);
-            if (parentVertex.equals(SOURCE_VERTEX)) break;
+            if (parentVertex.equals(FlowNetwork.SOURCE_VERTEX)) break;
         }
 
         residualNetwork.getSource().getValue().forEach((vertex, aBoolean) -> residualNetwork.getSource().getValue().put(vertex, false));
