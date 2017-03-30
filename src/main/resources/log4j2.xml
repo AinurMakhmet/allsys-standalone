@@ -53,7 +53,7 @@
             <AppenderRef ref="rollingfileInfo"/>
             <AppenderRef ref="console" level="all"/>
         </logger>
-        <logger name="edLogger" level="all" additivity="false" >
+        <logger name="ekLogger" level="all" additivity="false" >
             <AppenderRef ref="rollingfileTraceEK"/>
             <AppenderRef ref="rollingfileInfo" level="info"/>
             <AppenderRef ref="console" level="all"/>

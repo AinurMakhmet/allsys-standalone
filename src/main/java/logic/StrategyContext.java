@@ -61,7 +61,7 @@ public class StrategyContext {
         logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
 
         taskResultList.sort(new EntityComparator());
-        taskResultList.forEach(task -> logger.info(task.toString()));
+        //taskResultList.forEach(task -> logger.info(task.toString()));
         return taskResultList;
     }
 
@@ -76,6 +76,8 @@ public class StrategyContext {
             logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
             taskResultList.addAll(strategy.allocate(listOfTasks));
             numOfUnnalocatedTasks +=  strategy.numOfUnnalocatedTasks;
+            logger.info("Number of unallocated tasks: {}. \n", strategy.numOfUnnalocatedTasks);
+
         }
     }
 

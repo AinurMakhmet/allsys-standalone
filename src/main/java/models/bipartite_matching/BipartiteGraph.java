@@ -134,12 +134,14 @@ public class BipartiteGraph {
                         for (Task employeeTask : employee.getTasks()) {
                             if (task.timeOverlapWith(employeeTask))
                                 it.remove();
+                                continue candidateWithTimeOverlappingTasksFiltering;
                         }
                     }
                     if (!(employee.getMatchedTasks() == null || employee.getMatchedTasks().size() == 0)) {
                         for (Task employeeMatchedTask : employee.getMatchedTasks()) {
                             if (task.timeOverlapWith(employeeMatchedTask))
                                 it.remove();
+                                continue candidateWithTimeOverlappingTasksFiltering;
                         }
                     }
                 }

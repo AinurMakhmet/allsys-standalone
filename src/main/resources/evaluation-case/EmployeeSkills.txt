@@ -1,0 +1,11 @@
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '4');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '12');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '3');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '1');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '4');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '4');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('5', '2');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('5', '5');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('5', '10');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('6', '8');
+INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('6', '12');

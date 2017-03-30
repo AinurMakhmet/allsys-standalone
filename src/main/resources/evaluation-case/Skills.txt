@@ -1,0 +1,12 @@
+INSERT INTO `skill` (`name`, `level`) VALUES ('C++', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Java', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Python', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Ruby', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Linux Shell', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Functional Programming', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Artificial Intelligence', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('SQL', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Databases', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Distributed Systems', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Regex', '1');
+INSERT INTO `skill` (`name`, `level`) VALUES ('Security', '1');

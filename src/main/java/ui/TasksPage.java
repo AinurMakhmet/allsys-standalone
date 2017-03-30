@@ -264,7 +264,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             @Override
             public void handle(ActionEvent event) {
                 selectedTasks.forEach(task -> {
-                    if (task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
+                    if (task!=null && task.getEmployee()==null && task.getRecommendedAssigneeName()!=null) {
                         task.setEmployee(task.getRecommendedAssignee());
                         task.setRecommendedAssignee(null);
                     }
@@ -279,7 +279,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             @Override
             public void handle(ActionEvent event) {
                 selectedTasks.forEach(task -> {
-                    if (task.getEmployee()!=null ) {
+                    if (task!=null && task.getEmployee()!=null ) {
                         task.setEmployee(null);
                     }
                 });
