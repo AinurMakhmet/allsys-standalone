@@ -12,12 +12,13 @@ import java.util.*;
  * Created by nura on 16/02/17.
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfEmployees = 500;
-    public static final int numberOfTasks = numberOfEmployees * 2;
-    public static final int numberOfSkillLevels = 40;
+    public static final int numberOfEmployees = 6;
+    public static final int numberOfTasks = numberOfEmployees*2;
+    public static final int numberOfSkillLevels = 1;
     public static final int totalNumberOfSkills = numberOfSkillLevels*12;
     public static final int maxNumberOfSkillsPerEmployee = 4;
-    public static final int maxNumberOfSkillsPerTask = 3;
+    public static final int maxNumberOfSkillsPerTask = 1;
+    public static final int monthsRange = 5;
     public static int numberOfEmployeeSkillsRows = 0;
     public static int numberOfTaskSkillsRows = 0;
 
@@ -67,6 +68,7 @@ public class LargeDatasetGenerator {
         while(i<numberOfTasks) {
             value1 = new StringBuilder().append("Task").append(((Integer)(i+1)).toString()).toString();
             value2 = priorities[rand.nextInt(3)];
+            //value2 = priorities[0];
             startDate = getValidRandomDate();
             endDate = getValidRandomDate();
             while (endDate.before(startDate)) {
@@ -92,7 +94,7 @@ public class LargeDatasetGenerator {
     public static Date getValidRandomDate() {
         int month, year, day;
         Random call = new Random();
-        month = call.nextInt(1);
+        month = call.nextInt(monthsRange);
         //year = call.nextInt(2017) + 1;
         year = 2017;
         day  = call.nextInt(30);
@@ -136,20 +138,27 @@ public class LargeDatasetGenerator {
         return new Date(ms);
     }
 
+    /**
+     * http://www.quietaffiliate.com/free-first-name-and-last-name-databases-csv-and-sql/
+     * @param writer
+     * @throws FileNotFoundException
+     */
     private static void generateEmployees(PrintWriter writer) throws FileNotFoundException {
         StringBuilder builder = new StringBuilder();
         String employeeLineStart = "INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('";
 
-        String firstNamesFile = "src/main/resources/large_dataset/Database_of_First_Names.csv";
+        /*String firstNamesFile = "src/main/resources/large_dataset/Database_of_First_Names.csv";
         String lastNamesFile = "src/main/resources/large_dataset/Database_of_Last_Names.csv";
 
         Scanner scannerFN = new Scanner(new File(firstNamesFile));
         Scanner scannerLN = new Scanner(new File(lastNamesFile));
+        */
         int i=0;
+        value1 = "Employee";
         while(i<numberOfEmployees) {
-            value1= scannerFN.nextLine();
-            value2= scannerLN.nextLine();
-
+            //value1= scannerFN.nextLine();
+            //value2= scannerLN.nextLine();
+            value2 = i+1+"";
             builder.append(employeeLineStart);
             builder.append(value1);
             builder.append("', '");
@@ -159,9 +168,9 @@ public class LargeDatasetGenerator {
             builder.delete(0, builder.length());
             i++;
         }
-        scannerFN.close();
+        /*scannerFN.close();
         scannerLN.close();
-
+*/
 
     }
 
