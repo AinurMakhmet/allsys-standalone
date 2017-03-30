@@ -22,8 +22,6 @@ import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.time.format.DateTimeParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -290,7 +288,6 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //int selectdIndex = table.getSelectionModel().getSelectedCells();
                 ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
                 TablePosition tablePosition = (TablePosition) selectedCells.get(0);
                 Project toRemove = ((Project) table.getItems().get(tablePosition.getRow()));
@@ -303,8 +300,6 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                 } else {
                     MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
                 }
-                //delete the selected item in data
-                //data.remove(selectdIndex);
             }
         });
         return table;
@@ -379,9 +374,6 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         table.refresh();
         MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedProjects()
                 + ". \nTotal profit from the selected projects is equal to: "+ StrategyContext.getTotalProfitFromSelectedProjects());
-        //MainUI.refreshTables();
-        //System.out.print("Total number of unallocated tasks: "+ StrategyContext.numberOfUnnalocatedTasks);
-        //System.out.println("Among them number of tasks non-valid for allocation: "+ StrategyContext.numberOfTasksUnvalidForAllocation);
     }
 
     enum Mode {

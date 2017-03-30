@@ -9,8 +9,6 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import scala.App;
 
-import java.io.InputStream;
-
 /**
  * Created by nura on 07/02/17.
  */
@@ -27,7 +25,6 @@ public class MainUI {
     static BorderPane borderPane = new BorderPane();
 
     public void startUI(Stage stage) throws Exception{
-        //Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main-view.fxml"));
         pStage = stage;
         stage.setTitle("Allsys - Task Allocation system");
 
@@ -47,18 +44,6 @@ public class MainUI {
 
     public static Stage getPrimaryStage() {
         return pStage;
-    }
-
-    static void refreshTables() {
-        /*TasksPage.getInstance().data.clear();
-        TasksPage.getInstance().data.addAll(TaskUtils.getAllTasks());
-        */TasksPage.getInstance().table.refresh();
-        /*EmployeesPage.getInstance().data.clear();
-        EmployeesPage.getInstance().data.addAll(EmployeeUtils.getAllEmployees());
-        */EmployeesPage.getInstance().table.refresh();
-        /*SkillsPage.getInstance().data.clear();
-        SkillsPage.getInstance().data.addAll(SkillUtils.getAllSkills());
-        */SkillsPage.getInstance().table.refresh();
     }
 
     public static void alertWarning(String header, String message) {
