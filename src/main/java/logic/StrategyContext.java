@@ -73,7 +73,7 @@ public class StrategyContext {
 
 
     public List<Task> maxAllocationAlgorithm(List<Task> tasksToAllocate){
-        distributeValidTasksForAllocationByPriority(tasksToAllocate);
+        distributeValidForAllocationTasksByPriority(tasksToAllocate);
 
         long begTime = System.currentTimeMillis();
         //TODO: fix Greedy returns only allocated tasks. Need to return all tasks.
@@ -115,7 +115,7 @@ public class StrategyContext {
      * distribute tasks of different priority into separate list to deal with them separately.
      * Is used internally by maxAllocationAlgorithm.
      */
-    private void distributeValidTasksForAllocationByPriority(List<Task> tasksToAllocate) {
+    private void distributeValidForAllocationTasksByPriority(List<Task> tasksToAllocate) {
         numOfUnnalocatedTasks = 0;
         taskResultList = new ArrayList<>();
         highPriorityTasks = new ArrayList<>();

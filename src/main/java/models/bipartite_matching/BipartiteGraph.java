@@ -43,22 +43,22 @@ public class BipartiteGraph {
                 taskSkills = new ArrayList<>(task.getSkills());
 
                 // finds the index of the skill that is possessed by smallest amount of employees.
-                int indexSmallestSize = getIndexOfDefiningSkill(taskSkills);
+                int indexOfScarceSkill = getIndexOfScarceSkill(taskSkills);
 
-                task.possibleAssignee = (ArrayList<Employee>) taskSkills.get(indexSmallestSize).getEmployees();
+                task.possibleAssignees = (ArrayList<Employee>) taskSkills.get(indexOfScarceSkill).getEmployees();
                 //logger.trace("task" +task);
-                taskSkills.remove(indexSmallestSize);
+                taskSkills.remove(indexOfScarceSkill);
 
-                ArrayList<Employee> definingSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexSmallestSize).getEmployees();
-                filterPossibleAssignee(task, taskSkills, definingSkillEmployees);
+                ArrayList<Employee> scarceSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexOfScarceSkill).getEmployees();
+                filterPossibleAssignees(task, taskSkills, scarceSkillEmployees);
 
-                logger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignee.size());
+                logger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignees.size());
 
-                if (task.possibleAssignee!=null && task.possibleAssignee.size()>0) {
-                    listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignee));
-
-                    if (!strategyClass.equals(GreedyStrategy.class)) {
-                        initialiseMaps(task);
+                if (task.possibleAssignees !=null && task.possibleAssignees.size()>0) {
+                    if (strategyClass.equals(GreedyStrategy.class)) {
+                        listOfAdjacencyLists.add(new Pair(task.getId(), task.possibleAssignees));
+                    } else {
+                        createGraphEdgesFor(task);
                     }
                 }
             } catch (IOException e) {
@@ -67,11 +67,11 @@ public class BipartiteGraph {
         }
     }
 
-    private void initialiseMaps(Task task) {
+    private void createGraphEdgesFor(Task task) {
         Vertex taskVertex = new Vertex(task.getId(), VertexType.TASK);
         Map<Vertex, Boolean> adjacentVerticesOfTask = new HashMap<>();
         //adds new entries to the adjacency map of both tasks and employees
-        task.possibleAssignee.forEach(employee ->  {
+        task.possibleAssignees.forEach(employee ->  {
             Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
             if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
                 employeeVertex.setCost(employee.getDailySalary());
@@ -94,10 +94,10 @@ public class BipartiteGraph {
         taskMap.put(taskVertex, adjacentVerticesOfTask);
     }
 
-    private void filterPossibleAssignee(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> definingSkillEmployees) throws IOException {
+    private void filterPossibleAssignees(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> scarceSkillEmployees) throws IOException {
         for (Skill s : taskSkills){
-            for (int i=0; i<definingSkillEmployees.size(); i++) {
-                ArrayList<Skill> employeeSkills = (ArrayList<Skill>) definingSkillEmployees.get(i).getSkills();
+            for (int i=0; i<scarceSkillEmployees.size(); i++) {
+                ArrayList<Skill> employeeSkills = (ArrayList<Skill>) scarceSkillEmployees.get(i).getSkills();
                 for (int j = 0; j< employeeSkills.size(); j++) {
                     if (s.getId()==employeeSkills.get(j).getId())  {
                         break;
@@ -108,7 +108,7 @@ public class BipartiteGraph {
 
                         //the employee doesn'task have all the required taskSkills to complete the task,
                         //so it will be removed from the list of candidates
-                        task.possibleAssignee.remove(definingSkillEmployees.get(i));
+                        task.possibleAssignees.remove(scarceSkillEmployees.get(i));
                     }
                 }
             }
@@ -121,7 +121,7 @@ public class BipartiteGraph {
     }
 
     private void removeCandiatesWithTimeOverlappingTasks(Task task) {
-        Iterator it = task.possibleAssignee.iterator();
+        Iterator it = task.possibleAssignees.iterator();
 
         candidateWithTimeOverlappingTasksFiltering:
         while (it.hasNext()) {
@@ -151,7 +151,7 @@ public class BipartiteGraph {
         }
     }
 
-    int getIndexOfDefiningSkill(ArrayList<Skill> taskSkills) throws IOException {
+    int getIndexOfScarceSkill(ArrayList<Skill> taskSkills) throws IOException {
         //index of the skill in the taskSkills that have a minimum number of Employees that posses this skill
         int indexSmallestSize = 0;
 

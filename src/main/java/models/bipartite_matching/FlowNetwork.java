@@ -12,8 +12,8 @@ import java.util.*;
  *Created by nura on 15/01/17.
 */
 public class FlowNetwork {
-    private Map<Vertex, Map<Vertex, Boolean>> mapFromSource = new HashMap<>();
-    private Map<Vertex, Map<Vertex, Boolean>> mapToSink = new HashMap<>();
+    private Map<Vertex, Map<Vertex, Boolean>> mapFromSource;
+    private Map<Vertex, Map<Vertex, Boolean>> mapToSink;
     private static final Integer SOURCE_ID = -1;
     private static final Integer SINK_ID = -2;
     public static final Vertex SOURCE_VERTEX = new Vertex(SOURCE_ID, VertexType.SOURCE);
@@ -34,7 +34,6 @@ public class FlowNetwork {
         } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
         }
-        mapToSink = new HashMap<>();
 
         //initialises mapFromSource for Network flow
         mapFromSource = bipartiteGraph.getTaskMap();

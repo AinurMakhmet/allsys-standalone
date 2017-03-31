@@ -35,7 +35,7 @@ public class Task extends DatabaseEntity{
     private Project project;
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> skills;
-    public ArrayList<Employee> possibleAssignee;
+    public ArrayList<Employee> possibleAssignees;
     private Employee recommendedAssignee;
 
     private String recommendedAssigneeName;
@@ -141,8 +141,8 @@ public class Task extends DatabaseEntity{
     }
 
     public void setEmployee(Employee employee) {
-        if (possibleAssignee!=null && possibleAssignee.size()>0) {
-            possibleAssignee.clear();
+        if (possibleAssignees !=null && possibleAssignees.size()>0) {
+            possibleAssignees.clear();
         }
         this.employee = employee;
         if (employee!=null) {
