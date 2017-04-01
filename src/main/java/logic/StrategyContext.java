@@ -177,7 +177,7 @@ public class StrategyContext {
                 if (!MaximumProfitAlgorithm.getInstance().allocateByProject(project)) {
                     numOfUnnalocatedProjects++;
                 } else {
-                     totalProfitFromSelectedProjects += MaximumProfitAlgorithm.getInstance().getProfit();
+                     totalProfitFromSelectedProjects += project.getEstimatedProfit();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

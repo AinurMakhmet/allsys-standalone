@@ -16,13 +16,13 @@ import java.util.*;
  */
 public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
     //private FlowNetwork residualNetwork;
-    //private Queue<Vertex> augmentedPathQueue;
+    //private Queue<Vertex> augmentingPathQueue;
     private Map<Vertex, Pair<Vertex, Integer>> shortestPathMap;
-    private Map<Vertex, Boolean> adjacentVertices;
+    //private Map<Vertex, Boolean> adjacentVertices;
     //public Map<Vertex, Vertex> matching;
-    private int profit;
-    private int projectPrimeCost;
-    private Project projectToAllocate;
+    //private int profit;
+    //private int projectPrimeCost;
+    //private Project projectToAllocate;
 
     private static MaximumProfitAlgorithm ourInstance = new MaximumProfitAlgorithm();
 
@@ -34,7 +34,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         strategyClass = this.getClass();
         logger = LocalServer.mpLogger;
         boolean isFullyAllocated = false;
-        this.projectToAllocate = projectToAllocate;
+        //this.projectToAllocate = projectToAllocate;
         List<Task> remainingTasksToAllocate = null;
         remainingTasksToAllocate = projectToAllocate.getTasks();
         numOfUnnalocatedTasks=remainingTasksToAllocate.size();
@@ -42,7 +42,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         begTime = System.currentTimeMillis();
         while(remainingTasksToAllocate.size()>0) {
             if (canAllocateMoreTasks(remainingTasksToAllocate)) {
-                remainingTasksToAllocate = doNextAllocationRound(remainingTasksToAllocate);
+                remainingTasksToAllocate = runAllocationRound(remainingTasksToAllocate);
             } else {
                 break;
             }
@@ -50,6 +50,8 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
 
         endTime = System.currentTimeMillis();
         LocalServer.mpLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+        Integer profit = null;
+        Integer projectPrimeCost = null;
         if (remainingTasksToAllocate.size()>0) {
             isFullyAllocated=false;
             for(Task task: projectToAllocate.getTasks()) {
@@ -79,9 +81,8 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         return residualNetwork.getSource().getValue().size()>0;
     }*/
 
-    private List<Task> doNextAllocationRound(List<Task> remainingTasksToAllocate) {
+    private List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
-        augmentedPathQueue = new LinkedList<>();
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
         //TODO: compute a shortest-path tree T in G from v to all nodes reachable from v;
@@ -163,6 +164,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
 
 
     private Vertex findUnvisitedChild(Vertex parentVertex) {
+        Map<Vertex, Boolean> adjacentVertices = null;
         Vertex toReturn = null;
         switch (parentVertex.getVertexType()) {
             case SOURCE:
@@ -231,12 +233,12 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
 
         //path.forEach(vertex ->LocalServer.ekLogger.trace(vertex));
 
-        augmentedPathQueue.clear();
-        augmentedPathQueue.addAll(path);
-        while (!augmentedPathQueue.isEmpty()) {
-            childVertex = augmentedPathQueue.poll();
-            parentVertex  = augmentedPathQueue.peek();
-            doAddDeleteVertices(parentVertex, childVertex);
+        Queue<Vertex> augmentingPathQueue = new LinkedList<>();
+        augmentingPathQueue.addAll(path);
+        while (!augmentingPathQueue.isEmpty()) {
+            childVertex = augmentingPathQueue.poll();
+            parentVertex  = augmentingPathQueue.peek();
+            updateNetworkEdges(parentVertex, childVertex);
             if (parentVertex.equals(FlowNetwork.SOURCE_VERTEX)) break;
         }
 
@@ -253,7 +255,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
                 });
     }
 
-    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+    private void updateNetworkEdges(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
@@ -270,10 +272,6 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
             residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
             residualNetwork.getSource().getValue().put(parentVertex, false);
         }
-    }
-
-    public int getProfit() {
-        return profit;
     }
 
 }
