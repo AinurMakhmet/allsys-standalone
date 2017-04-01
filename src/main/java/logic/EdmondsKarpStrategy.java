@@ -12,14 +12,11 @@ import servers.LocalServer;
 import java.util.*;
 
 /**
- * Ford-Fulkerson algorithm finds largest matching possible for a given set of tasks.
- * The algorithm uses BFS to find the augmented path.
+ * Algorithm finds largest matching possible for a given set of tasks.
+ * The algorithm based on Edmonds-Karp method (does breadth-first-search to find augmenting path).
  */
 public class EdmondsKarpStrategy extends Strategy {
     protected FlowNetwork residualNetwork;
-    protected Queue<Vertex> augmentedPathQueue;
-    protected Map<Vertex, Vertex> augmentedPathBFS;
-    private Map<Vertex, Boolean> adjacentVertices;
     public Map<Vertex, Vertex> matching;
 
     protected Class strategyClass;
@@ -36,13 +33,15 @@ public class EdmondsKarpStrategy extends Strategy {
     public List<Task> allocate(List<Task> tasksToAllocate) {
         strategyClass = this.getClass();
         logger = LocalServer.ekLogger;
+
         result = new LinkedList<>();
         numOfUnnalocatedTasks=tasksToAllocate.size();
+
         List<Task> remainingTasksToAllocate = tasksToAllocate;
         begTime = System.currentTimeMillis();
         while(remainingTasksToAllocate.size()>0) {
             if (canAllocateMoreTasks(remainingTasksToAllocate)) {
-                remainingTasksToAllocate = doNextAllocationRound(remainingTasksToAllocate);
+                remainingTasksToAllocate = runAllocationRound(remainingTasksToAllocate);
             } else {
                 break;
             }
@@ -67,14 +66,15 @@ public class EdmondsKarpStrategy extends Strategy {
         return residualNetwork.getSource().getValue().size()>0;
     }
 
-    private List<Task> doNextAllocationRound(List<Task> remainingTasksToAllocate) {
+    private List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
-        augmentedPathQueue = new LinkedList<>();
+
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
         //TODO: BFS, DFS is non-deterministic!!!!!!!
-        while (findAugmentingPathBFS()) {
-            constructResidualNetwork();
+        Map<Vertex, Vertex> augmentingPathBFS;
+        while ((augmentingPathBFS = getAugmentingPathBFS())!=null) {
+            constructResidualNetwork(augmentingPathBFS);
             residualNetwork.printGraph();
         }
         findMatching();
@@ -106,8 +106,8 @@ public class EdmondsKarpStrategy extends Strategy {
      * O(m), where m is the number of edges in the residual graph.
      * @return
      */
-    private boolean findAugmentingPathBFS() {
-        augmentedPathBFS = new HashMap<>();
+    private Map<Vertex, Vertex> getAugmentingPathBFS() {
+        Map<Vertex, Vertex> augmentingPathBFS = new HashMap<>();
         Queue<Vertex> traversalQueue = new LinkedList<>();
         traversalQueue.add(FlowNetwork.SOURCE_VERTEX);
         Vertex childVertex = FlowNetwork.SOURCE_VERTEX;
@@ -117,18 +117,19 @@ public class EdmondsKarpStrategy extends Strategy {
             while((childVertex=findUnvisitedChild(parentVertex))!=null) {
                 if (!traversalQueue.contains(childVertex)){
                     traversalQueue.add(childVertex);
-                    augmentedPathBFS.putIfAbsent(childVertex, parentVertex);
+                    augmentingPathBFS.putIfAbsent(childVertex, parentVertex);
                 }
                 if (childVertex.equals(FlowNetwork.SINK_VERTEX)) {
-                    return true;
+                    return augmentingPathBFS;
                 }
             }
         }
-        return false;
+        return null;
     }
 
 
     private Vertex findUnvisitedChild(Vertex parentVertex) {
+        Map<Vertex, Boolean> adjacentVertices=null;
         Vertex toReturn = null;
         switch (parentVertex.getVertexType()) {
             case SOURCE:
@@ -166,26 +167,25 @@ public class EdmondsKarpStrategy extends Strategy {
      * Therfore O(n) is the running time for constructing residual network, where n is the number of nodes(employees + tasks + source a+ sink) and
      * @param
      */
-    private void constructResidualNetwork() {
+    private void constructResidualNetwork(Map<Vertex, Vertex> augmentingPathBFS) {
         Vertex childVertex = FlowNetwork.SINK_VERTEX;
         Vertex parentVertex = childVertex;
 
         Stack path = new Stack();
         path.push(childVertex);
         while (parentVertex.getVertexType()!=VertexType.SOURCE) {
-            parentVertex = (Vertex)augmentedPathBFS.get(childVertex);
+            parentVertex = (Vertex)augmentingPathBFS.get(childVertex);
             path.push(parentVertex);
             childVertex = parentVertex;
         }
 
         //path.forEach(vertex ->logger.trace(vertex));
-
-        augmentedPathQueue.clear();
-        augmentedPathQueue.addAll(path);
-        while (!augmentedPathQueue.isEmpty()) {
-            childVertex = augmentedPathQueue.poll();
-            parentVertex  = augmentedPathQueue.peek();
-            doAddDeleteVertices(parentVertex, childVertex);
+        Queue<Vertex> augmentingPathQueue = new LinkedList<>();
+        augmentingPathQueue.addAll(path);
+        while (!augmentingPathQueue.isEmpty()) {
+            childVertex = augmentingPathQueue.poll();
+            parentVertex  = augmentingPathQueue.peek();
+            updateNetworkEdges(parentVertex, childVertex);
             if (parentVertex.equals(FlowNetwork.SOURCE_VERTEX)) break;
         }
 
@@ -202,7 +202,7 @@ public class EdmondsKarpStrategy extends Strategy {
                 });
     }
 
-    private void doAddDeleteVertices(Vertex parentVertex, Vertex childVertex) {
+    private void updateNetworkEdges(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
             residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);

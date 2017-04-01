@@ -27,6 +27,7 @@ public class GreedyStrategy extends Strategy {
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
         result = new LinkedList<>();
+        numOfUnnalocatedTasks=tasksToAllocate.size();
 
         begTime = System.currentTimeMillis();
         BipartiteGraph graph = new BipartiteGraph(GreedyStrategy.class, tasksToAllocate);
@@ -39,7 +40,6 @@ public class GreedyStrategy extends Strategy {
         });
 
         begTime = System.currentTimeMillis();
-        numOfUnnalocatedTasks=tasksToAllocate.size();
         Collections.sort(listOfAdjacencyLists, new Comparator<Pair<Integer, ArrayList>>() {
             @Override
             public int compare(Pair<Integer, ArrayList> o1, Pair<Integer, ArrayList> o2) {
