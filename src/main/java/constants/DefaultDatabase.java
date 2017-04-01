@@ -19,12 +19,12 @@ public class DefaultDatabase {
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee5', 'Emin', 3);",
 */
 //Evaluation
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee', '1');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee', '2');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee', '3');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee', '4');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee', '5');",
-			"INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('Employee', '6');"
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '1', 1);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '2', 2);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '3', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '4', 4);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '5', 5);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '6', 6);"
 
 };
 
