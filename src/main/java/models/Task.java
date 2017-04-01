@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Model to represent task.
@@ -37,7 +38,6 @@ public class Task extends DatabaseEntity{
     private ForeignCollection<TaskSkill> skills;
     public ArrayList<Employee> possibleAssignees;
     private Employee recommendedAssignee;
-
     private String recommendedAssigneeName;
 
     // ORMLite needs a no-arg constructor
@@ -189,6 +189,12 @@ public class Task extends DatabaseEntity{
         this.recommendedAssigneeName = recommendedAssigneeName;
     }
 
+    public int getDuration() {
+        long duration  = endTime.getTime() - startTime.getTime();
+        int diffInDays = (int)TimeUnit.MILLISECONDS.toDays(duration);
+        return diffInDays;
+    }
+
     public Project getProject() {
         return project;
     }
@@ -251,17 +257,7 @@ public class Task extends DatabaseEntity{
      */
     public boolean timeOverlapWith(Task anotherTask) {
         //TODO: check the whether it is strongly greater and strongly less 0;
-/*
-        if (getStartTime().equals(anotherTask.getStartTime())
-                || getStartTime().compareTo(anotherTask.getEndTime())<=0
-                || getEndTime().compareTo(anotherTask.getStartTime())>=0) return true;
-*//*
-        if (getStartTime().equals(anotherTask.getStartTime())
-                || (getStartTime().before(anotherTask.getEndTime())&& getEndTime().after(anotherTask.getStartTime()))
-                || getEndTime().after(anotherTask.getStartTime())
-                || getStartTime().before(anotherTask.getStartTime())) return true;
-        */
-        if (getEndTime().before(anotherTask.getStartTime())
+        if (this.equals(anotherTask) || getEndTime().before(anotherTask.getStartTime())
                 || anotherTask.getEndTime().before(getStartTime())) return false;
         return true;
     }
