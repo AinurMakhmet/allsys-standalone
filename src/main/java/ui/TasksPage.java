@@ -120,6 +120,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                     TaskUtils.createEntity(Task.class, newTask);
                     Integer id = newTask.getId();
                     if (id!=null) {
+                        newTask = TaskUtils.getTask(newTask.getId());
                         SystemData.getAllTasksMap().put(id, newTask);
                         data.add(newTask);
                         addName.clear();
@@ -371,7 +372,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                     @Override
                     public void handle(TableColumn.CellEditEvent<Task, Integer> t) {
                         Integer projectId = t.getNewValue();
-                        if (projectId!=null) {
+                        if (projectId!=null && projectId>0) {
                             Project project = SystemData.getAllProjectsMap().get(projectId);
                             if (project != null) {
                                 ((Task) t.getTableView().getItems().get(

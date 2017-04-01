@@ -55,6 +55,7 @@ public class SkillsPage extends AbstractPage{
                     Skill newSkill = new Skill(addName.getText(), addLevel.getText());
                     SkillUtils.createEntity(Skill.class, newSkill);
                     if (newSkill.getId() != null) {
+                        newSkill = SkillUtils.getSkill(newSkill.getId());
                         SystemData.allSkills.add(newSkill);
                         data.add(newSkill);
                         addName.clear();

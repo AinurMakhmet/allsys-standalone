@@ -114,6 +114,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                     ProjectUtils.createEntity(Project.class, newProject);
                     Integer id = newProject.getId();
                     if (id!=null) {
+                        newProject = ProjectUtils.getProject(newProject.getId());
                         SystemData.getAllProjectsMap().put(id, newProject);
                         data.add(newProject);
                         addName.clear();

@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 public class EmployeesPage extends AbstractPage {
     final ObservableList<Employee> data = FXCollections.observableArrayList(SystemData.getAllEmployeesMap().values());
-    private TableColumn firstName, lastName, monthlySalary;
+    private TableColumn firstName, lastName, dailySalary;
 
     private static EmployeesPage ourInstance = new EmployeesPage();
 
@@ -41,9 +41,9 @@ public class EmployeesPage extends AbstractPage {
         final TextField addLastName = new TextField();
         addLastName.setPromptText("Last Name");
         addLastName.setMaxWidth(100);
-        final TextField addMonthlySalary = new TextField();
-        addMonthlySalary.setPromptText("Monthly Salary");
-        addMonthlySalary.setMaxWidth(150);
+        final TextField addDailySalary = new TextField();
+        addDailySalary.setPromptText("Daily Salary");
+        addDailySalary.setMaxWidth(150);
 
         addButton.setTooltip(new Tooltip("Add employee"));
         addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -51,8 +51,8 @@ public class EmployeesPage extends AbstractPage {
             public void handle(ActionEvent e) {
                 try {
                     Integer salary = null;
-                    if (!addMonthlySalary.getText().equals("")) {
-                        salary = Integer.parseInt(addMonthlySalary.getText());
+                    if (!addDailySalary.getText().equals("")) {
+                        salary = Integer.parseInt(addDailySalary.getText());
                     }
                     if (salary!=null && salary<0) {
                         MainUI.alertError("Invalid input", "Employee salary cannot be of a negative value ");
@@ -66,11 +66,12 @@ public class EmployeesPage extends AbstractPage {
                     EmployeeUtils.createEntity(Employee.class, newEmployee);
                     Integer id = newEmployee.getId();
                     if (id!=null) {
+                        newEmployee = EmployeeUtils.getEmployee(newEmployee.getId());
                         SystemData.getAllEmployeesMap().put(id, newEmployee);
                         data.add(newEmployee);
                         addFirstName.clear();
                         addLastName.clear();
-                        addMonthlySalary.clear();
+                        addDailySalary.clear();
                         table.refresh();
                     }
                 } catch (NumberFormatException | ClassCastException exc) {
@@ -78,7 +79,7 @@ public class EmployeesPage extends AbstractPage {
                 }
             }
         });
-        bottom.getChildren().addAll(addFirstName, addLastName, addMonthlySalary, addButton);
+        bottom.getChildren().addAll(addFirstName, addLastName, addDailySalary, addButton);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class EmployeesPage extends AbstractPage {
         TableColumn id = new TableColumn("ID");
         firstName = new TableColumn("First Name");
         lastName= new TableColumn("Last Name");
-        monthlySalary = new TableColumn("Monthly Salary");
+        dailySalary = new TableColumn("Daily Salary");
 
         id.setMinWidth(50);
         id.setCellValueFactory(
@@ -101,12 +102,12 @@ public class EmployeesPage extends AbstractPage {
         lastName.setCellValueFactory(
                 new PropertyValueFactory<Employee, String>("lastName"));
 
-        monthlySalary.setMinWidth(100);
-        monthlySalary.setCellValueFactory(
-                new PropertyValueFactory<Employee, String>("monthlySalary"));
+        dailySalary.setMinWidth(100);
+        dailySalary.setCellValueFactory(
+                new PropertyValueFactory<Employee, String>("dailySalary"));
 
 
-        table.getColumns().addAll(id, firstName, lastName, monthlySalary);
+        table.getColumns().addAll(id, firstName, lastName, dailySalary);
         table.setItems(data);
 
         setEditableCells();
@@ -192,7 +193,7 @@ public class EmployeesPage extends AbstractPage {
         });
 
         //http://stackoverflow.com/a/34701925
-        monthlySalary.setCellFactory(col -> new TextFieldTableCell<Employee, Integer>(new EditIntegerStringConverter()) {
+        dailySalary.setCellFactory(col -> new TextFieldTableCell<Employee, Integer>(new EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {
                 if (empty) {
@@ -207,7 +208,7 @@ public class EmployeesPage extends AbstractPage {
                 }
             }
         });
-        monthlySalary.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Employee, Integer>>() {
+        dailySalary.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Employee, Integer>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<Employee, Integer> event) {
                 Integer salary = event.getNewValue();
@@ -222,7 +223,7 @@ public class EmployeesPage extends AbstractPage {
     }
 
     HBox addCard() {
-        String[] names = {"ID", "First Name", "Last Name", "Monthly Salary", "Skills", "Allocated to tasks"};
+        String[] names = {"ID", "First Name", "Last Name", "Daily Salary", "Skills", "Allocated to tasks"};
         cardValues = new String[]{"", "", "", "", "", ""};
         return super.addCard(names, cardValues);
     }
