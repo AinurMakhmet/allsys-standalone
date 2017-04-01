@@ -32,7 +32,7 @@ public class EmployeesPage extends AbstractPage {
 
     private EmployeesPage() {
         super();
-        search.setPromptText("Search employees");
+        //search.setPromptText("Search employees");
         setCenter(addTable("Employees"));
 
         final TextField addFirstName = new TextField();

@@ -39,7 +39,7 @@ public abstract class AbstractPage extends BorderPane{
     String[] cardValues;
     HBox top;
     HBox bottom;
-    TextField search;
+    //TextField search;
     Button deleteEntryButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_TRASH);
     TextArea descriptionTextArea;
     Button editDescriptionValueButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_PENCIL);
@@ -58,9 +58,9 @@ public abstract class AbstractPage extends BorderPane{
         top = new HBox();
         top.setPadding(new Insets(10, 0, 10, 0));
         top.setSpacing(8);
-        search = new TextField();
+        //search = new TextField();
 
-        top.getChildren().add(search);
+        //top.getChildren().add(search);
         setTop(top);
 
         bottom = new HBox();

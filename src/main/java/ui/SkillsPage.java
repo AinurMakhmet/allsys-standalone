@@ -26,7 +26,7 @@ public class SkillsPage extends AbstractPage{
 
     private SkillsPage() {
         super();
-        search.setPromptText("Search skills");
+        //search.setPromptText("Search skills");
         setCenter(addTable("Skills"));
 
         final TextField addName = new TextField();

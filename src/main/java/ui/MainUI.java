@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import scala.App;
 
 /**
- * Created by nura on 07/02/17.
+ * Class that constructs UI
  */
 public class MainUI {
     private static Stage pStage;

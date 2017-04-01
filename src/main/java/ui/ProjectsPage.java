@@ -46,7 +46,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
 
     private ProjectsPage() {
         super();
-        search.setPromptText("Search projects");
+        //search.setPromptText("Search projects");
 
         final ToggleGroup group = new ToggleGroup();
         RadioButton viewModeButton = new RadioButton("View Mode");
@@ -82,9 +82,9 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                 }
             }
         });
-        constructAllocationMode();
         top.getChildren().add(viewModeButton);
         top.getChildren().add(allocateModeButton);
+        constructAllocationMode();
 
         final TextField addName = new TextField();
         addName.setPromptText("Name");

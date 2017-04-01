@@ -9,17 +9,15 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import models.Employee;
 
 /**
- * Creates sidebar that contains menu and page filters for search
+ * Creates sidebar that contains menu
  */
 public class Sidebar extends VBox implements EventHandler {
     private Hyperlink tasksLink =  new Hyperlink("Assignments");
     private Hyperlink employeesLink =  new Hyperlink("Employees");
     private Hyperlink skillsLink =  new Hyperlink("Skills");
     private Hyperlink projectsLink =  new Hyperlink("Projects");
-    private Hyperlink importDataLink =  new Hyperlink("Import Data");
     private Hyperlink visitedPageLink = tasksLink;
 
     private Sidebar() {
@@ -47,11 +45,10 @@ public class Sidebar extends VBox implements EventHandler {
                 tasksLink,
                 employeesLink,
                 skillsLink,
-                projectsLink,
-                importDataLink
+                projectsLink
         };
 
-        for (int i=0; i<5; i++) {
+        for (int i=0; i<pageHyperlinks.length; i++) {
             this.getChildren().add(pageHyperlinks[i]);
             pageHyperlinks[i].getStyleClass().add("sidebar-item");
             pageHyperlinks[i].setPadding(new Insets(0, 0, 0, 8));
@@ -63,7 +60,7 @@ public class Sidebar extends VBox implements EventHandler {
             pageHyperlinks[i].prefWidthProperty().bind(this.widthProperty());
         }
 
-        VBox filterPane = new VBox();
+        /*VBox filterPane = new VBox();
         this.getChildren().add(filterPane);
         //this.setMargin(filterPane, new Insets(50, 0, 0, 0));
         filterPane.prefWidthProperty().bind(this.widthProperty());
@@ -91,7 +88,7 @@ public class Sidebar extends VBox implements EventHandler {
             filterOptions[i].getStyleClass().add("filter-item");
             filterPane.getChildren().add(filterOptions[i]);
         }
-
+*/
     }
 
     public static Sidebar getInstance() {

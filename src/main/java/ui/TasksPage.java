@@ -50,7 +50,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
     private TasksPage() {
         super();
-        search.setPromptText("Search tasks");
+        //search.setPromptText("Search tasks");
         final ToggleGroup group = new ToggleGroup();
         RadioButton viewModeButton = new RadioButton("View Mode");
         viewModeButton.setToggleGroup(group);
@@ -89,9 +89,9 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             }
         });
 
-        constructAllocationMode();
         top.getChildren().add(viewModeButton);
         top.getChildren().add(allocateModeButton);
+        constructAllocationMode();
 
         final TextField addName = new TextField();
         addName.setPromptText("Name");
@@ -252,13 +252,13 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     }
 
     private void constructAllocationMode() {
-        greedyRecButton = new Button("G");
+        greedyRecButton = new Button("GREEDY REC");
         greedyRecButton.setTooltip(new Tooltip("Greedy strategy"));
         greedyRecButton.setOnAction(this);
-        ekRecButton = new Button("EK");
+        ekRecButton = new Button("EK REC");
         ekRecButton.setTooltip(new Tooltip("Edmonds-Karp strategy"));
         ekRecButton.setOnAction(this);
-        ekRecButtonNoPriority = new Button("EK NP");
+        ekRecButtonNoPriority = new Button("EK NP REC");
         ekRecButtonNoPriority.setTooltip(new Tooltip("Edmonds-Karp strategy no priority"));
         ekRecButtonNoPriority.setOnAction(this);
         allocateButton = new Button("Allocate");
