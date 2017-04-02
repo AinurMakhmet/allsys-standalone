@@ -6,6 +6,7 @@ import models.Project;
 import models.SystemData;
 import models.Task;
 import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
@@ -147,7 +148,77 @@ public class StrategyContext {
 
     }
 
-    public List<Project> maxProfitAlgorithm(List<Project> projectsToAllocate){
+    public List<Project> maxProfit(List<Project> projectsToAllocate){
+        numOfUnnalocatedProjects =0;
+        totalProfitFromSelectedProjects = 0;
+        projectResultList = new ArrayList<>();
+        getTasksInfo(projectsToAllocate);
+
+        Iterator<Project> iter = projectsToAllocate.iterator();
+        while (iter.hasNext()) {
+            Project project = iter.next();
+            try {
+                for(Task t: project.getTasks()) {
+                    Task task = SystemData.getAllTasksMap().get(t.getId());
+                    task.setRecommendedAssignee(null);
+                    if (t.getStartTime() == null || t.getEndTime() == null || task.getSkills().size()<=0) {
+                        projectResultList.add(project);
+                        iter.remove();
+                        logger.info("project contains tasks with unspecified startdate or end date, therefore will not be considered for allocation");
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        long begTime = System.currentTimeMillis();
+        for (Project project : projectsToAllocate) {
+            try {
+                numOfUnnalocatedTasks = 0;
+                taskResultList = new ArrayList<>();
+                boolean isFullyAllocated = false;
+
+                allocateTasks(project.getTasks(), "all");
+
+                Integer profit = 0;
+                Integer projectPrimeCost = 0;
+                if (numOfUnnalocatedTasks>0) {
+                    isFullyAllocated=false;
+                    for(Task task: project.getTasks()) {
+                        task.setRecommendedAssignee(null);
+                    }
+                } else {
+                    isFullyAllocated=true;
+                    for(Task t: project.getTasks()) {
+                        Task task = SystemData.getAllTasksMap().get(t.getId());
+                        projectPrimeCost += task.getRecommendedAssignee().getDailySalary()*task.getDuration();
+                    }
+                    profit = project.getPrice() - projectPrimeCost;
+                    logger.trace("Max profit for the project = {}", profit);
+
+                }
+                project.setEstimatedCost(projectPrimeCost);
+                project.setEstimatedProfit(profit);
+                if (!isFullyAllocated) {
+                    numOfUnnalocatedProjects++;
+                } else {
+                    totalProfitFromSelectedProjects += project.getEstimatedProfit();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
+        logger.info("Total number of unallocated projects: {}.\n", numOfUnnalocatedProjects);
+        logger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
+
+        projectsToAllocate.sort(new EntityComparator());
+        return projectsToAllocate;
+    }
+
+    /*public List<Project> maxProfitAlgorithm(List<Project> projectsToAllocate){
         numOfUnnalocatedProjects =0;
         totalProfitFromSelectedProjects = 0;
         projectResultList = new ArrayList<>();
@@ -190,7 +261,7 @@ public class StrategyContext {
 
         projectsToAllocate.sort(new EntityComparator());
         return projectsToAllocate;
-    }
+    }*/
 
     /**
      * the method is used only for debugging purposes by maxProfitAlgorithm method.

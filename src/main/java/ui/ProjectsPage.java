@@ -370,7 +370,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         }
 
         LocalServer.iLogger.info("MAX_PROFIT");
-        result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).maxProfitAlgorithm(selectedProjects);
+        result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).maxProfit(selectedProjects);
         Assert.assertEquals(result.size(), selectedProjects.size());
         table.refresh();
         MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedProjects()

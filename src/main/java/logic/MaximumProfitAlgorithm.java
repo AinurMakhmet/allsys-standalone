@@ -15,14 +15,15 @@ import java.util.*;
 /**
  * Created by nura on 27/02/17.
  */
-public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
+public class MaximumProfitAlgorithm extends MaximumFlowAlgorithm implements Strategy{
+    List<Task> result;
     private static MaximumProfitAlgorithm ourInstance = new MaximumProfitAlgorithm();
 
     public static MaximumProfitAlgorithm getInstance() {
         return ourInstance;
     }
 
-    public boolean allocateByProject(Project projectToAllocate) throws IOException {
+    /*public boolean allocateByProject(Project projectToAllocate) throws IOException {
         strategyClass = this.getClass();
         logger = LocalServer.mpLogger;
         boolean isFullyAllocated = false;
@@ -62,9 +63,34 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         projectToAllocate.setEstimatedCost(projectPrimeCost);
         projectToAllocate.setEstimatedProfit(profit);
         return isFullyAllocated;
+    }*/
+
+    @Override
+    public List<Task> allocate(List<Task> tasksToAllocate) {
+        strategyClass = this.getClass();
+        logger = LocalServer.mpLogger;
+        result = new LinkedList<>();
+        List<Task> remainingTasksToAllocate = tasksToAllocate;
+        numOfUnallocatedTasks=remainingTasksToAllocate.size();
+
+        begTime = System.currentTimeMillis();
+        while(remainingTasksToAllocate.size()>0) {
+            if (canAllocateMoreTasks(remainingTasksToAllocate)) {
+                remainingTasksToAllocate = runAllocationRound(remainingTasksToAllocate);
+            } else {
+                break;
+            }
+        }
+        endTime = System.currentTimeMillis();
+        logger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+        return result;
+
     }
 
-    
+    @Override
+    public int getNumberOfUnallocatedTasks() {
+        return numOfUnallocatedTasks;
+    }
 
     @Override
     List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
