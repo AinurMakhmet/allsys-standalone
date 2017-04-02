@@ -16,7 +16,6 @@ import java.util.*;
  * It starts with a task that has the least number of possible assignees.
  */
 public class GreedyStrategy implements Strategy {
-    List<Task> result;
     public int numOfUnallocatedTasks =0;
 
     protected long begTime;
@@ -31,8 +30,7 @@ public class GreedyStrategy implements Strategy {
     }
 
     @Override
-    public List<Task> allocate(List<Task> tasksToAllocate) {
-        result = new LinkedList<>();
+    public void allocate(List<Task> tasksToAllocate) {
         numOfUnallocatedTasks =tasksToAllocate.size();
 
         begTime = System.currentTimeMillis();
@@ -70,14 +68,11 @@ public class GreedyStrategy implements Strategy {
                     throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
                 }*/
             }
-            result.add(toAllocate);
             listOfAdjacencyLists.remove(indexWithMinPossibleEmployees);
             tasksToAllocate.remove(toAllocate);
         }
         endTime = System.currentTimeMillis();
         LocalServer.gLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
-
-        return result;
     }
 
     @Override

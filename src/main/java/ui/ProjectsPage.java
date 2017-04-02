@@ -18,7 +18,6 @@ import logic.StrategyContext;
 import models.Project;
 import models.SystemData;
 import models.Task;
-import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
@@ -30,7 +29,6 @@ import java.util.List;
  */
 public class ProjectsPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Project> data = FXCollections.observableArrayList(SystemData.getAllProjectsMap().values());
-    private List<Project> result;
     private List<Project> selectedProjects = new LinkedList<>();
     private Button maxProfitRecButton, allocateButton, deAllocateButton;
     private TableColumn name, price, startTime, endTime;
@@ -370,10 +368,10 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         }
 
         LocalServer.iLogger.info("MAX_PROFIT");
-        result = new StrategyContext(MaximumProfitAlgorithm.getInstance()).maxProfit(selectedProjects);
-        Assert.assertEquals(result.size(), selectedProjects.size());
+        new StrategyContext(MaximumProfitAlgorithm.getInstance()).maxProfit(selectedProjects);
         table.refresh();
-        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedProjects()
+        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnallocatedProjects()
+                + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfProjectsInvalidForAllocation()
                 + ". \nTotal profit from the selected projects is equal to: "+ StrategyContext.getTotalProfitFromSelectedProjects());
     }
 

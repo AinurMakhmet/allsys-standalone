@@ -14,9 +14,7 @@ import java.util.*;
  * Algorithm finds largest matching possible for a given set of tasks.
  * The algorithm based on Edmonds-Karp method (does breadth-first-search to find augmenting path).
  */
-public class EdmondsKarpStrategy extends MaximumFlowAlgorithm implements Strategy {
-    List<Task> result;
-
+public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
     private static EdmondsKarpStrategy ourInstance = new EdmondsKarpStrategy();
 
     public static EdmondsKarpStrategy getInstance() {
@@ -24,37 +22,10 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm implements Strateg
     }
 
     @Override
-    public List<Task> allocate(List<Task> tasksToAllocate) {
+    public void allocate(List<Task> tasksToAllocate) {
         strategyClass = this.getClass();
         logger = LocalServer.ekLogger;
-
-        result = new LinkedList<>();
-        List<Task> remainingTasksToAllocate = tasksToAllocate;
-        numOfUnallocatedTasks=remainingTasksToAllocate.size();
-
-        begTime = System.currentTimeMillis();
-        while(remainingTasksToAllocate.size()>0) {
-            if (canAllocateMoreTasks(remainingTasksToAllocate)) {
-                remainingTasksToAllocate = runAllocationRound(remainingTasksToAllocate);
-            } else {
-                break;
-            }
-        }
-
-
-        remainingTasksToAllocate.forEach(task -> {
-            if (!result.contains(task)) {
-                result.add(task);
-            }
-        });
-        endTime = System.currentTimeMillis();
-        logger.info("Time for running algorithm: {} ms", (endTime-begTime));
-        return result;
-    }
-
-    @Override
-    public int getNumberOfUnallocatedTasks() {
-        return numOfUnallocatedTasks;
+        super.allocate(tasksToAllocate);
     }
 
     @Override
@@ -74,7 +45,6 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm implements Strateg
             Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
             numOfUnallocatedTasks--;
-            result.add(task);
             logger.trace("{} is matched to {} {}", task.getName(), employee.getFirstName(), employee.getLastName());
         });
         return remainingTasksToAllocate;

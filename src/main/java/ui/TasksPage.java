@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class TasksPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
-    private List<Task> tasksToAllocate, result;
+    private List<Task> tasksToAllocate;
     private List<Task> selectedTasks = new LinkedList<>();
     private Button greedyRecButton, ekRecButton, ekRecButtonNoPriority, allocateButton, deAllocateButton;
     private ListChangeListener<Task> multipleSelectionListener;
@@ -466,19 +466,18 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             LocalServer.gLogger.info("GREEDY");
-            result = new StrategyContext(GreedyStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
+            new StrategyContext(GreedyStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ekRecButton)) {
             LocalServer.ekLogger.info("EK");
-            result = new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
+            new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ekRecButtonNoPriority)) {
             LocalServer.ekLogger.info("EK - NO PRIORITY");
-            result = new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithmNoPriotity(tasksToAllocate);
+            new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithmNoPriotity(tasksToAllocate);
         } else {
             return;
         }
-        assert(result.size()==selectedTasks.size());
         table.refresh();
-        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnnalocatedTasks()
+        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnallocatedTasks()
                 + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfTasksInvalidForAllocation());
     }
 

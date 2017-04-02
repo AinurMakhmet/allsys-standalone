@@ -8,6 +8,6 @@ import java.util.List;
  */
 public interface Strategy {
 
-    List<Task> allocate(List<Task> tasksToAllocate);
+    void allocate(List<Task> tasksToAllocate);
     int getNumberOfUnallocatedTasks();
 }

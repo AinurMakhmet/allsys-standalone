@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Created by nura on 01/04/17.
  */
-public abstract class MaximumFlowAlgorithm {
+public abstract class MaximumFlowAlgorithm implements Strategy{
     long begTime;
     long endTime;
     int numOfUnallocatedTasks =0;
@@ -25,6 +25,24 @@ public abstract class MaximumFlowAlgorithm {
 
     Map<Vertex, Pair<Vertex, Integer>> shortestPathMap;
     Map<Vertex, Vertex> augmentingPathBFS;
+
+
+    @Override
+    public void allocate(List<Task> tasksToAllocate) {
+        List<Task> remainingTasksToAllocate = tasksToAllocate;
+        numOfUnallocatedTasks=remainingTasksToAllocate.size();
+
+        begTime = System.currentTimeMillis();
+        while(remainingTasksToAllocate.size()>0) {
+            if (canAllocateMoreTasks(remainingTasksToAllocate)) {
+                remainingTasksToAllocate = runAllocationRound(remainingTasksToAllocate);
+            } else {
+                break;
+            }
+        }
+        endTime = System.currentTimeMillis();
+        logger.info("Time for running algorithm: {} ms", (endTime-begTime));
+    }
 
     boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
         begTime = System.currentTimeMillis();
@@ -99,7 +117,6 @@ public abstract class MaximumFlowAlgorithm {
                 });
     }
 
-
     void updateNetworkEdges(Vertex parentVertex, Vertex childVertex) {
         if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
             residualNetwork.getSource().getValue().remove(childVertex);
@@ -121,5 +138,10 @@ public abstract class MaximumFlowAlgorithm {
             residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
             residualNetwork.getSource().getValue().put(parentVertex, false);
         }
+    }
+
+    @Override
+    public int getNumberOfUnallocatedTasks() {
+        return numOfUnallocatedTasks;
     }
 }

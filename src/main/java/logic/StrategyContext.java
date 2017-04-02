@@ -6,7 +6,6 @@ import models.Project;
 import models.SystemData;
 import models.Task;
 import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
@@ -17,14 +16,13 @@ import java.util.*;
  */
 public class StrategyContext {
     private Strategy strategy;
-    private List<Task> taskResultList,
-            highPriorityTasks,
+    private List<Task> highPriorityTasks,
             mediumPriorityTasks,
             lowPriorityTasks;
-    private List<Project> projectResultList;
-    private static int numOfTasksInvalidForAllocation,
-            numOfUnnalocatedTasks,
-            numOfUnnalocatedProjects,
+    private static int numOfTasksInvalidForAllocation ,
+            numOfUnallocatedTasks,
+            numOfUnallocatedProjects,
+            numOfProjectsInvalidForAllocation,
             totalProfitFromSelectedProjects;
 
     private Logger logger;
@@ -40,9 +38,9 @@ public class StrategyContext {
         }
     }
 
-    public List<Task> maxAllocationAlgorithmNoPriotity(List<Task> tasksToAllocate){
-        numOfUnnalocatedTasks = 0;
-        taskResultList = new ArrayList<>();
+    public void maxAllocationAlgorithmNoPriotity(List<Task> tasksToAllocate){
+        numOfUnallocatedTasks = 0;
+        numOfTasksInvalidForAllocation = 0;
         Iterator it = tasksToAllocate.iterator();
         while(it.hasNext()) {
             Task task = (Task)it.next();
@@ -55,25 +53,20 @@ public class StrategyContext {
                 e.printStackTrace();
             }
             it.remove();
-            taskResultList.add(task);
+            numOfTasksInvalidForAllocation++;
         }
-        numOfTasksInvalidForAllocation = taskResultList.size();
-
+        numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
         long begTime = System.currentTimeMillis();
         if (!tasksToAllocate.isEmpty()) {
             allocateTasks(tasksToAllocate, "all");
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
-
-        taskResultList.sort(new EntityComparator());
-        //taskResultList.forEach(task -> logger.info(task.toString()));
-        return taskResultList;
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
     }
 
 
-    public List<Task> maxAllocationAlgorithm(List<Task> tasksToAllocate){
+    public void maxAllocationAlgorithm(List<Task> tasksToAllocate){
         distributeValidForAllocationTasksByPriority(tasksToAllocate);
 
         long begTime = System.currentTimeMillis();
@@ -89,11 +82,7 @@ public class StrategyContext {
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks non-valid for allocation: {}\n\n", numOfUnnalocatedTasks, numOfTasksInvalidForAllocation);
-
-        taskResultList.sort(new EntityComparator());
-        //taskResultList.forEach(task -> logger.info(task.toString()));
-        return taskResultList;
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
     }
 
     /**
@@ -105,8 +94,9 @@ public class StrategyContext {
         if (!listOfTasks.isEmpty()) {
             listOfTasks.forEach(task -> logger.trace(task.toString()));
             logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
-            taskResultList.addAll(strategy.allocate(listOfTasks));
-            numOfUnnalocatedTasks +=  strategy.getNumberOfUnallocatedTasks();
+            strategy.allocate(listOfTasks);
+            //taskResultList.addAll(strategy.allocate(listOfTasks));
+            numOfUnallocatedTasks +=  strategy.getNumberOfUnallocatedTasks();
             logger.info("Number of unallocated tasks: {}. \n", strategy.getNumberOfUnallocatedTasks());
 
         }
@@ -117,8 +107,8 @@ public class StrategyContext {
      * Is used internally by maxAllocationAlgorithm.
      */
     private void distributeValidForAllocationTasksByPriority(List<Task> tasksToAllocate) {
-        numOfUnnalocatedTasks = 0;
-        taskResultList = new ArrayList<>();
+        numOfUnallocatedTasks = 0;
+        numOfTasksInvalidForAllocation = 0;
         highPriorityTasks = new ArrayList<>();
         mediumPriorityTasks = new ArrayList<>();
         lowPriorityTasks = new ArrayList<>();
@@ -142,48 +132,52 @@ public class StrategyContext {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            taskResultList.add(task);
+            numOfTasksInvalidForAllocation++;
         }
-        numOfTasksInvalidForAllocation = taskResultList.size();
-
+        numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
     }
 
-    public List<Project> maxProfit(List<Project> projectsToAllocate){
-        numOfUnnalocatedProjects =0;
+    public void maxProfit(List<Project> projectsToAllocate){
+        numOfUnallocatedProjects =0;
+        numOfProjectsInvalidForAllocation=0;
         totalProfitFromSelectedProjects = 0;
-        projectResultList = new ArrayList<>();
         getTasksInfo(projectsToAllocate);
 
         Iterator<Project> iter = projectsToAllocate.iterator();
         while (iter.hasNext()) {
             Project project = iter.next();
             try {
-                for(Task t: project.getTasks()) {
-                    Task task = SystemData.getAllTasksMap().get(t.getId());
-                    task.setRecommendedAssignee(null);
-                    if (t.getStartTime() == null || t.getEndTime() == null || task.getSkills().size()<=0) {
-                        projectResultList.add(project);
-                        iter.remove();
-                        logger.info("project contains tasks with unspecified startdate or end date, therefore will not be considered for allocation");
+                if (project.getTasks().isEmpty()) {
+                    numOfProjectsInvalidForAllocation++;
+                    iter.remove();
+                } else {
+                    for (Task t : project.getTasks()) {
+                        Task task = SystemData.getAllTasksMap().get(t.getId());
+                        task.setRecommendedAssignee(null);
+                        if (t.getStartTime() == null || t.getEndTime() == null || task.getSkills().size() <= 0) {
+                            numOfProjectsInvalidForAllocation++;
+                            iter.remove();
+                            logger.info("project contains tasks with unspecified startdate or end date, therefore will not be considered for allocation");
+                        }
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        numOfUnallocatedProjects = numOfProjectsInvalidForAllocation;
 
         long begTime = System.currentTimeMillis();
         for (Project project : projectsToAllocate) {
             try {
-                numOfUnnalocatedTasks = 0;
-                taskResultList = new ArrayList<>();
+                numOfUnallocatedTasks = 0;
                 boolean isFullyAllocated = false;
 
                 allocateTasks(project.getTasks(), "all");
 
                 Integer profit = 0;
                 Integer projectPrimeCost = 0;
-                if (numOfUnnalocatedTasks>0) {
+                if (numOfUnallocatedTasks >0) {
                     isFullyAllocated=false;
                     for(Task task: project.getTasks()) {
                         task.setRecommendedAssignee(null);
@@ -201,7 +195,7 @@ public class StrategyContext {
                 project.setEstimatedCost(projectPrimeCost);
                 project.setEstimatedProfit(profit);
                 if (!isFullyAllocated) {
-                    numOfUnnalocatedProjects++;
+                    numOfUnallocatedProjects++;
                 } else {
                     totalProfitFromSelectedProjects += project.getEstimatedProfit();
                 }
@@ -211,57 +205,9 @@ public class StrategyContext {
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated projects: {}.\n", numOfUnnalocatedProjects);
+        logger.info("Total number of unallocated projects: {}. Among them number of projects invalid for allocation: {}\n\n", numOfUnallocatedProjects, numOfProjectsInvalidForAllocation);
         logger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
-
-        projectsToAllocate.sort(new EntityComparator());
-        return projectsToAllocate;
     }
-
-    /*public List<Project> maxProfitAlgorithm(List<Project> projectsToAllocate){
-        numOfUnnalocatedProjects =0;
-        totalProfitFromSelectedProjects = 0;
-        projectResultList = new ArrayList<>();
-        getTasksInfo(projectsToAllocate);
-
-        Iterator<Project> iter = projectsToAllocate.iterator();
-        while (iter.hasNext()) {
-            Project project = iter.next();
-            try {
-                for(Task t: project.getTasks()) {
-                    Task task = SystemData.getAllTasksMap().get(t.getId());
-                    task.setRecommendedAssignee(null);
-                    if (t.getStartTime() == null || t.getEndTime() == null) {
-                        projectResultList.add(project);
-                        iter.remove();
-                        logger.info("project contains with unspecified start tate or end date, therefore will not be considered for allocation");
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        long begTime = System.currentTimeMillis();
-        for (Project project : projectsToAllocate) {
-            try {
-                if (!MaximumProfitAlgorithm.getInstance().allocateByProject(project)) {
-                    numOfUnnalocatedProjects++;
-                } else {
-                     totalProfitFromSelectedProjects += project.getEstimatedProfit();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        long endTime = System.currentTimeMillis();
-        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated projects: {}.\n", numOfUnnalocatedProjects);
-        logger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
-
-        projectsToAllocate.sort(new EntityComparator());
-        return projectsToAllocate;
-    }*/
 
     /**
      * the method is used only for debugging purposes by maxProfitAlgorithm method.
@@ -308,12 +254,16 @@ public class StrategyContext {
         return numOfTasksInvalidForAllocation;
     }
 
-    public static int getNumOfUnnalocatedTasks() {
-        return numOfUnnalocatedTasks;
+    public static int getNumOfProjectsInvalidForAllocation() {
+        return numOfProjectsInvalidForAllocation;
     }
 
-    public static int getNumOfUnnalocatedProjects() {
-        return numOfUnnalocatedProjects;
+    public static int getNumOfUnallocatedTasks() {
+        return numOfUnallocatedTasks;
+    }
+
+    public static int getNumOfUnallocatedProjects() {
+        return numOfUnallocatedProjects;
     }
 
     public static int getTotalProfitFromSelectedProjects() {
