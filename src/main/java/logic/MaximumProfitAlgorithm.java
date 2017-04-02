@@ -6,6 +6,7 @@ import models.Project;
 import models.SystemData;
 import models.Task;
 import models.bipartite_matching.*;
+import org.junit.Assert;
 import servers.LocalServer;
 
 import java.io.IOException;
@@ -15,15 +16,6 @@ import java.util.*;
  * Created by nura on 27/02/17.
  */
 public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
-    //private FlowNetwork residualNetwork;
-    //private Queue<Vertex> augmentingPathQueue;
-    private Map<Vertex, Pair<Vertex, Integer>> shortestPathMap;
-    //private Map<Vertex, Boolean> adjacentVertices;
-    //public Map<Vertex, Vertex> matching;
-    //private int profit;
-    //private int projectPrimeCost;
-    //private Project projectToAllocate;
-
     private static MaximumProfitAlgorithm ourInstance = new MaximumProfitAlgorithm();
 
     public static MaximumProfitAlgorithm getInstance() {
@@ -34,10 +26,8 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         strategyClass = this.getClass();
         logger = LocalServer.mpLogger;
         boolean isFullyAllocated = false;
-        //this.projectToAllocate = projectToAllocate;
-        List<Task> remainingTasksToAllocate = null;
-        remainingTasksToAllocate = projectToAllocate.getTasks();
-        numOfUnnalocatedTasks=remainingTasksToAllocate.size();
+        List<Task> remainingTasksToAllocate = projectToAllocate.getTasks();
+        numOfUnallocatedTasks =remainingTasksToAllocate.size();
 
         begTime = System.currentTimeMillis();
         while(remainingTasksToAllocate.size()>0) {
@@ -47,11 +37,11 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
                 break;
             }
         }
-
         endTime = System.currentTimeMillis();
-        LocalServer.mpLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
-        Integer profit = null;
-        Integer projectPrimeCost = null;
+        logger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
+
+        Integer profit = 0;
+        Integer projectPrimeCost = 0;
         if (remainingTasksToAllocate.size()>0) {
             isFullyAllocated=false;
             for(Task task: projectToAllocate.getTasks()) {
@@ -61,11 +51,12 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
             isFullyAllocated=true;
             for(Task t: projectToAllocate.getTasks()) {
                 Task task = SystemData.getAllTasksMap().get(t.getId());
-                assert(task.getRecommendedAssignee()!=null);
-                projectPrimeCost += task.getRecommendedAssignee().getDailySalary();
+                Assert.assertNotNull(task);
+                Assert.assertNotNull(task.getRecommendedAssignee());
+                projectPrimeCost += task.getRecommendedAssignee().getDailySalary()*task.getDuration();
             }
             profit = projectToAllocate.getPrice() - projectPrimeCost;
-            LocalServer.mpLogger.trace("Max profit for the project = {}", profit);
+            logger.trace("Max profit for the project = {}", profit);
 
         }
         projectToAllocate.setEstimatedCost(projectPrimeCost);
@@ -73,15 +64,10 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         return isFullyAllocated;
     }
 
-    /*private boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
-        begTime = System.currentTimeMillis();
-        residualNetwork = new FlowNetwork(new BipartiteGraph(this.getClass(), remainingTasksToAllocate));
-        endTime = System.currentTimeMillis();
-        LocalServer.mpLogger.info(getClass().getSimpleName()+": Time for constrcuting data structure: {} ms", (endTime-begTime));
-        return residualNetwork.getSource().getValue().size()>0;
-    }*/
+    
 
-    private List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
+    @Override
+    List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
@@ -98,8 +84,8 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
             remainingTasksToAllocate.remove(task);
             Employee employee = SystemData.getAllEmployeesMap().get(b.getVertexId());
             task.setRecommendedAssignee(employee);
-            numOfUnnalocatedTasks--;
-            LocalServer.mpLogger.trace("{} is matched to {}", task.getName(), employee.getFirstName());
+            numOfUnallocatedTasks--;
+            logger.trace("{} is matched to {} {}", task.getName(), employee.getFirstName(), employee.getLastName());
         });
         return remainingTasksToAllocate;
     }
@@ -109,7 +95,6 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
      * @return
      */
     private boolean findShortestAugmentingPath() {
-        shortestPathMap = new HashMap<>();
         bellmanFordInitialization();
         Queue<Vertex> traversalQueue = new LinkedList<>();
         traversalQueue.add(FlowNetwork.SOURCE_VERTEX);
@@ -152,6 +137,7 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
     }
 
     private void bellmanFordInitialization() {
+        shortestPathMap = new HashMap<>();
         shortestPathMap.put(FlowNetwork.SOURCE_VERTEX, new Pair(null, 0));
         residualNetwork.getMapFromSource().keySet().forEach(vertex-> {
             shortestPathMap.put(vertex, new Pair(null, Integer.MAX_VALUE));
@@ -162,8 +148,8 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         shortestPathMap.put(FlowNetwork.SINK_VERTEX, new Pair(null, Integer.MAX_VALUE));
     }
 
-
-    private Vertex findUnvisitedChild(Vertex parentVertex) {
+    @Override
+    Vertex findUnvisitedChild(Vertex parentVertex) {
         Map<Vertex, Boolean> adjacentVertices = null;
         Vertex toReturn = null;
         switch (parentVertex.getVertexType()) {
@@ -212,66 +198,4 @@ public class MaximumProfitAlgorithm extends EdmondsKarpStrategy {
         }
         return vertexToReturn;
     }
-
-    /**
-     *
-     * n-1 is length of the longest possible augmented path
-     * Therfore O(n) is the running time for constructing residual network, where n is the number of nodes(employees + tasks + source a+ sink) and
-     * @param
-     */
-    private void constructResidualNetwork() {
-        Vertex childVertex = FlowNetwork.SINK_VERTEX;
-        Vertex parentVertex = childVertex;
-
-        Stack path = new Stack();
-        path.push(childVertex);
-        while (parentVertex.getVertexType()!=VertexType.SOURCE) {
-            parentVertex = (Vertex)shortestPathMap.get(childVertex).getKey();
-            path.push(parentVertex);
-            childVertex = parentVertex;
-        }
-
-        //path.forEach(vertex ->LocalServer.ekLogger.trace(vertex));
-
-        Queue<Vertex> augmentingPathQueue = new LinkedList<>();
-        augmentingPathQueue.addAll(path);
-        while (!augmentingPathQueue.isEmpty()) {
-            childVertex = augmentingPathQueue.poll();
-            parentVertex  = augmentingPathQueue.peek();
-            updateNetworkEdges(parentVertex, childVertex);
-            if (parentVertex.equals(FlowNetwork.SOURCE_VERTEX)) break;
-        }
-
-        residualNetwork.getSource().getValue().forEach((vertex, aBoolean) -> residualNetwork.getSource().getValue().put(vertex, false));
-        residualNetwork.getMapFromSource().keySet().forEach(
-                vertex-> {
-                    Map<Vertex, Boolean> vertices = residualNetwork.getMapFromSource().get(vertex);
-                    vertices.forEach((adVertex, isVisited)-> vertices.put(adVertex, false));
-                });
-        residualNetwork.getMapToSink().keySet().forEach(
-                vertex-> {
-                    Map<Vertex, Boolean> vertices = residualNetwork.getMapToSink().get(vertex);
-                    vertices.forEach((adVertex, isVisited)-> vertices.put(adVertex, false));
-                });
-    }
-
-    private void updateNetworkEdges(Vertex parentVertex, Vertex childVertex) {
-        if (parentVertex.getVertexType()==VertexType.SOURCE && childVertex.getVertexType()==VertexType.TASK) {
-            residualNetwork.getSource().getValue().remove(childVertex);
-            residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
-        } else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.EMPLOYEE) {
-            residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
-            residualNetwork.getMapToSink().get(childVertex).put(parentVertex, false);
-        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.TASK) {
-            residualNetwork.getMapToSink().get(parentVertex).remove(childVertex);
-            residualNetwork.getMapFromSource().get(childVertex).put(parentVertex, false);
-        } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SINK) {
-            residualNetwork.getMapToSink().get(parentVertex).put(childVertex, false);
-            residualNetwork.getSink().getValue().put(parentVertex, false);
-        } else if (parentVertex.getVertexType()==VertexType.TASK && childVertex.getVertexType()==VertexType.SOURCE) {
-            residualNetwork.getMapFromSource().get(parentVertex).remove(childVertex);
-            residualNetwork.getSource().getValue().put(parentVertex, false);
-        }
-    }
-
 }

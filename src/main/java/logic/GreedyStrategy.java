@@ -15,7 +15,13 @@ import java.util.*;
  * to the first available employee in the list.
  * It starts with a task that has the least number of possible assignees.
  */
-public class GreedyStrategy extends Strategy {
+public class GreedyStrategy implements Strategy {
+    List<Task> result;
+    public int numOfUnallocatedTasks =0;
+
+    protected long begTime;
+    protected long endTime;
+
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
 
     private static GreedyStrategy ourInstance = new GreedyStrategy();
@@ -27,7 +33,7 @@ public class GreedyStrategy extends Strategy {
     @Override
     public List<Task> allocate(List<Task> tasksToAllocate) {
         result = new LinkedList<>();
-        numOfUnnalocatedTasks=tasksToAllocate.size();
+        numOfUnallocatedTasks =tasksToAllocate.size();
 
         begTime = System.currentTimeMillis();
         BipartiteGraph graph = new BipartiteGraph(GreedyStrategy.class, tasksToAllocate);
@@ -58,7 +64,7 @@ public class GreedyStrategy extends Strategy {
 
             if (chosenEmployee!=null) {
                 toAllocate.setRecommendedAssignee(chosenEmployee);
-                numOfUnnalocatedTasks--;
+                numOfUnallocatedTasks--;
                 /*if (!updateEdgesOfGreedyGraph(chosenEmployee)) {
                     LocalServer.ekLogger.error("Was unable to update appropriately the lists in greedy algorithm");
                     throw new InternalError("Was unable to update appropriately the lists in greedy algorithm");
@@ -72,6 +78,11 @@ public class GreedyStrategy extends Strategy {
         LocalServer.gLogger.info(getClass().getSimpleName()+": Time for running algorithm: {} ms", (endTime-begTime));
 
         return result;
+    }
+
+    @Override
+    public int getNumberOfUnallocatedTasks() {
+        return numOfUnallocatedTasks;
     }
 
     private Employee findAvailableEmployee(Task toAllocate, int indexWithMinPossibleEmployees) {

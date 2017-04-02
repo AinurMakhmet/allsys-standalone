@@ -105,8 +105,8 @@ public class StrategyContext {
             listOfTasks.forEach(task -> logger.trace(task.toString()));
             logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
             taskResultList.addAll(strategy.allocate(listOfTasks));
-            numOfUnnalocatedTasks +=  strategy.numOfUnnalocatedTasks;
-            logger.info("Number of unallocated tasks: {}. \n", strategy.numOfUnnalocatedTasks);
+            numOfUnnalocatedTasks +=  strategy.getNumberOfUnallocatedTasks();
+            logger.info("Number of unallocated tasks: {}. \n", strategy.getNumberOfUnallocatedTasks());
 
         }
     }
@@ -157,7 +157,7 @@ public class StrategyContext {
         while (iter.hasNext()) {
             Project project = iter.next();
             try {
-                project.getTasks().forEach(t -> {
+                for(Task t: project.getTasks()) {
                     Task task = SystemData.getAllTasksMap().get(t.getId());
                     task.setRecommendedAssignee(null);
                     if (t.getStartTime() == null || t.getEndTime() == null) {
@@ -165,7 +165,7 @@ public class StrategyContext {
                         iter.remove();
                         logger.info("project contains with unspecified start tate or end date, therefore will not be considered for allocation");
                     }
-                });
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
