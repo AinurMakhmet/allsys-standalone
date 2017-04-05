@@ -83,6 +83,9 @@ public class BipartiteGraph {
                 adjacentVerticesOfEmployee = employeeMap.get(employeeVertex);
             } else {
                 adjacentVerticesOfEmployee = new HashMap<>();
+                if (strategyClass.equals(EdmondsKarpStrategy.class)) {
+                    adjacentVerticesOfEmployee = new TreeMap(new Vertex.VertexComparator());
+                }
             }
             totalEmployeeMatches++;
             adjacentVerticesOfEmployee.put(taskVertex, false);

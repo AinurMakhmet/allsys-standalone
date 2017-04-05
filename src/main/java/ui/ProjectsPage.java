@@ -368,7 +368,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         }
 
         LocalServer.iLogger.info("MAX_PROFIT");
-        new StrategyContext(MaximumProfitStrategy.getInstance()).computeAllocationForProjects(selectedProjects);
+        new StrategyContext(MaximumProfitStrategy.getInstance(),selectedProjects);
         table.refresh();
         MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnallocatedProjects()
                 + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfProjectsInvalidForAllocation()

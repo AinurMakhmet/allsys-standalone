@@ -36,7 +36,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
     private List<Task> tasksToAllocate;
     private List<Task> selectedTasks = new LinkedList<>();
-    private Button greedyRecButton, ekRecButton, ekRecButtonNoPriority, allocateButton, deAllocateButton;
+    private Button greedyRecButton, ekRecButton, allocateButton, deAllocateButton;
     private ListChangeListener<Task> multipleSelectionListener;
     private ChangeListener changeListener;
     private TableColumn name, employeeId, startTime, endTime, projectId, priorityLevel;
@@ -73,7 +73,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         allocateButton.setVisible(true);
                         deAllocateButton.setVisible(true);
                         ekRecButton.setVisible(true);
-                        ekRecButtonNoPriority.setVisible(true);
                         greedyRecButton.setVisible(true);
                     } else if (toggle.getUserData().equals(Mode.View)) {
                         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -82,7 +81,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         allocateButton.setVisible(false);
                         deAllocateButton.setVisible(false);
                         ekRecButton.setVisible(false);
-                        ekRecButtonNoPriority.setVisible(false);
                         greedyRecButton.setVisible(false);
                     }
                 }
@@ -259,9 +257,6 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         ekRecButton = new Button("EK REC");
         ekRecButton.setTooltip(new Tooltip("Edmonds-Karp strategy"));
         ekRecButton.setOnAction(this);
-        ekRecButtonNoPriority = new Button("EK NP REC");
-        ekRecButtonNoPriority.setTooltip(new Tooltip("Edmonds-Karp strategy no priority"));
-        ekRecButtonNoPriority.setOnAction(this);
         allocateButton = new Button("Allocate");
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -293,11 +288,9 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         allocateButton.setVisible(false);
         deAllocateButton.setVisible(false);
         ekRecButton.setVisible(false);
-        ekRecButtonNoPriority.setVisible(false);
         greedyRecButton.setVisible(false);
         top.getChildren().add(greedyRecButton);
         top.getChildren().add(ekRecButton);
-        top.getChildren().add(ekRecButtonNoPriority);
         top.getChildren().add(allocateButton);
         top.getChildren().add(deAllocateButton);
     }
@@ -466,13 +459,10 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             LocalServer.gLogger.info("GREEDY");
-            new StrategyContext(GreedyStrategy.getInstance()).computeAllocationForTasks(tasksToAllocate);
+            new StrategyContext(GreedyStrategy.getInstance(), tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ekRecButton)) {
             LocalServer.ekLogger.info("EK");
-            new StrategyContext(EdmondsKarpStrategy.getInstance()).computeAllocationForTasks(tasksToAllocate);
-        } else if (((Button)event.getSource()).equals(ekRecButtonNoPriority)) {
-            LocalServer.ekLogger.info("EK - NO PRIORITY");
-            new StrategyContext(EdmondsKarpStrategy.getInstance()).computeAllocationForTasksNoPriority(tasksToAllocate);
+            new StrategyContext(EdmondsKarpStrategy.getInstance(), tasksToAllocate);
         } else {
             return;
         }

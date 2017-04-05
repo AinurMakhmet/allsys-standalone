@@ -1,5 +1,9 @@
 package models.bipartite_matching;
 
+import models.SystemData;
+
+import java.util.Comparator;
+
 /**
  * Created by nura on 15/01/17.
  */
@@ -76,6 +80,15 @@ public class Vertex {
         int result = getVertexId().hashCode();
         result = 31 * result + getVertexType().hashCode();
         return result;
+    }
+
+    public static class VertexComparator implements Comparator<Vertex> {
+        @Override
+        public int compare(Vertex v1, Vertex v2) {
+            Integer priorityT1= SystemData.getAllTasksMap().get(v1.getVertexId()).getPriorityNumber();
+            Integer priorityT2=SystemData.getAllTasksMap().get(v2.getVertexId()).getPriorityNumber();
+            return priorityT1.compareTo(priorityT2);
+        }
     }
 }
 

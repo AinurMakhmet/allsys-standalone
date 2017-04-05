@@ -75,6 +75,17 @@ public class Task extends DatabaseEntity{
         HIGH, MEDIUM, LOW
     }
 
+    public Integer getPriorityNumber(){
+        if (getPriority().equals(Task.Priority.HIGH)) {
+            return 1;
+        } else if (getPriority().equals(Task.Priority.MEDIUM)) {
+            return 2;
+        } else if (getPriority().equals(Task.Priority.LOW)) {
+            return 3;
+        }
+        return 3;
+    }
+
     private String employeeName;
 
     public Integer getEmployeeId() {

@@ -16,9 +16,6 @@ import java.util.*;
  */
 public class StrategyContext {
     private Strategy strategy;
-    private List<Task> highPriorityTasks,
-            mediumPriorityTasks,
-            lowPriorityTasks;
     private static int numOfTasksInvalidForAllocation ,
             numOfUnallocatedTasks,
             numOfUnallocatedProjects,
@@ -26,19 +23,23 @@ public class StrategyContext {
             totalProfitFromSelectedProjects;
 
     private Logger logger;
+    private long begTime, endTime;
 
-    public StrategyContext(Strategy allocationAlgorithm) {
+    public StrategyContext(Strategy allocationAlgorithm, List selectedEntitiesToAllocate) {
         strategy = allocationAlgorithm;
         if (strategy.getClass().equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.mpLogger;
+            computeAllocationForProjects((List<Project>)selectedEntitiesToAllocate);
         } else if (strategy.getClass().equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
+            computeAllocationForTasksEK((List<Task>)selectedEntitiesToAllocate);
         } else if (strategy.getClass().equals(GreedyStrategy.class)) {
             logger = LocalServer.gLogger;
+            computeAllocationForTasksGreedy((List<Task>)selectedEntitiesToAllocate);
         }
     }
 
-    public void computeAllocationForTasksNoPriority(List<Task> tasksToAllocate){
+    public void computeAllocationForTasksEK(List<Task> tasksToAllocate){
         numOfUnallocatedTasks = 0;
         numOfTasksInvalidForAllocation = 0;
         Iterator it = tasksToAllocate.iterator();
@@ -56,61 +57,22 @@ public class StrategyContext {
             numOfTasksInvalidForAllocation++;
         }
         numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
-        long begTime = System.currentTimeMillis();
-        if (!tasksToAllocate.isEmpty()) {
-            startAllocatingTasks(tasksToAllocate, "all");
-        }
-        long endTime = System.currentTimeMillis();
+        begTime = System.currentTimeMillis();
+        startAllocatingTasks(tasksToAllocate, "all");
+        endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
         logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
     }
 
 
-    public void computeAllocationForTasks(List<Task> tasksToAllocate){
-        distributeValidForAllocationTasksByPriority(tasksToAllocate);
-
-        long begTime = System.currentTimeMillis();
-        //TODO: fix Greedy returns only allocated tasks. Need to return all tasks.
-        if (!highPriorityTasks.isEmpty()) {
-            startAllocatingTasks(highPriorityTasks, "high");
-        }
-        if (!mediumPriorityTasks.isEmpty()) {
-            startAllocatingTasks(mediumPriorityTasks, "medium");
-        }
-        if (!lowPriorityTasks.isEmpty()) {
-            startAllocatingTasks(lowPriorityTasks, "low");
-        }
-        long endTime = System.currentTimeMillis();
-        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
-    }
-
-    /**
-     *
-     * @param listOfTasks lists of tasks to Allocate. All the tasks in the list are of one priority level.
-     * @param priority priority level for logging purposes.
-     */
-    private void startAllocatingTasks(List<Task> listOfTasks, String priority) {
-        if (!listOfTasks.isEmpty()) {
-            listOfTasks.forEach(task -> logger.trace(task.toString()));
-            logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
-            strategy.allocate(listOfTasks);
-            numOfUnallocatedTasks +=  strategy.getNumberOfUnallocatedTasks();
-            logger.info("Number of unallocated tasks: {}. \n", strategy.getNumberOfUnallocatedTasks());
-
-        }
-    }
-
-    /**
-     * distribute tasks of different priority into separate list to deal with them separately.
-     * Is used internally by computeAllocationForTasks.
-     */
-    private void distributeValidForAllocationTasksByPriority(List<Task> tasksToAllocate) {
+    public void computeAllocationForTasksGreedy(List<Task> tasksToAllocate){
         numOfUnallocatedTasks = 0;
         numOfTasksInvalidForAllocation = 0;
-        highPriorityTasks = new ArrayList<>();
-        mediumPriorityTasks = new ArrayList<>();
-        lowPriorityTasks = new ArrayList<>();
+        List<Task> highPriorityTasks = new ArrayList<>();
+        List<Task> mediumPriorityTasks = new ArrayList<>();
+        List<Task> lowPriorityTasks = new ArrayList<>();
+
+        //distribute tasks of different priority into separate list to deal with them separately.
         for (Task task: tasksToAllocate) {
             try {
                 task.setRecommendedAssignee(null);
@@ -134,6 +96,30 @@ public class StrategyContext {
             numOfTasksInvalidForAllocation++;
         }
         numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
+
+        begTime = System.currentTimeMillis();
+        startAllocatingTasks(highPriorityTasks, "high");
+        startAllocatingTasks(mediumPriorityTasks, "medium");
+        startAllocatingTasks(lowPriorityTasks, "low");
+        endTime = System.currentTimeMillis();
+        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
+    }
+
+    /**
+     *
+     * @param listOfTasks lists of tasks to Allocate. All the tasks in the list are of one priority level.
+     * @param priority priority level for logging purposes.
+     */
+    private void startAllocatingTasks(List<Task> listOfTasks, String priority) {
+        if (!listOfTasks.isEmpty()) {
+            listOfTasks.forEach(task -> logger.trace(task.toString()));
+            logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
+            strategy.allocate(listOfTasks);
+            numOfUnallocatedTasks +=  strategy.getNumberOfUnallocatedTasks();
+            logger.info("Number of unallocated tasks: {}. \n", strategy.getNumberOfUnallocatedTasks());
+
+        }
     }
 
     public void computeAllocationForProjects(List<Project> projectsToAllocate){
@@ -166,7 +152,7 @@ public class StrategyContext {
         }
         numOfUnallocatedProjects = numOfProjectsInvalidForAllocation;
 
-        long begTime = System.currentTimeMillis();
+        begTime = System.currentTimeMillis();
         for (Project project : projectsToAllocate) {
             try {
                 numOfUnallocatedTasks = 0;
@@ -195,7 +181,7 @@ public class StrategyContext {
                 e.printStackTrace();
             }
         }
-        long endTime = System.currentTimeMillis();
+        endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
         logger.info("Total number of unallocated projects: {}. Among them number of projects invalid for allocation: {}\n\n", numOfUnallocatedProjects, numOfProjectsInvalidForAllocation);
         logger.info(strategy.getClass().getSimpleName()+": Max profit = {}", totalProfitFromSelectedProjects);
@@ -231,15 +217,6 @@ public class StrategyContext {
             }
         }
 
-    }
-
-    static class EntityComparator implements Comparator<DatabaseEntity> {
-        @Override
-        public int compare(DatabaseEntity e1, DatabaseEntity e2) {
-            if (e1.getId() > e2.getId()) return 1;
-            else if (e1.getId() == e2.getId()) return 0;
-            else return -1;
-        }
     }
 
     public static int getNumOfTasksInvalidForAllocation() {

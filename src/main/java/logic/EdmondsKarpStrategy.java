@@ -98,7 +98,10 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
             a: for (Vertex childVertex : adjacentVertices.keySet()) {
                 if (childVertex.getVertexType()==VertexType.SOURCE || adjacentVertices.get(childVertex)) {
                     continue a;
-                } else if (childVertex.equals(FlowNetwork.SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
+                } /*else if (parentVertex.getVertexType().equals(VertexType.SOURCE)) {
+
+
+                } */else if (childVertex.equals(FlowNetwork.SINK_VERTEX) || !adjacentVertices.get(childVertex)) {
                     vertexToReturn = childVertex;
                     //set the isVisited for the vertex to be true
                     adjacentVertices.put(childVertex, true);
