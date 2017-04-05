@@ -466,13 +466,13 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
             LocalServer.gLogger.info("GREEDY");
-            new StrategyContext(GreedyStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
+            new StrategyContext(GreedyStrategy.getInstance()).computeAllocationForTasks(tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ekRecButton)) {
             LocalServer.ekLogger.info("EK");
-            new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithm(tasksToAllocate);
+            new StrategyContext(EdmondsKarpStrategy.getInstance()).computeAllocationForTasks(tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ekRecButtonNoPriority)) {
             LocalServer.ekLogger.info("EK - NO PRIORITY");
-            new StrategyContext(EdmondsKarpStrategy.getInstance()).maxAllocationAlgorithmNoPriotity(tasksToAllocate);
+            new StrategyContext(EdmondsKarpStrategy.getInstance()).computeAllocationForTasksNoPriority(tasksToAllocate);
         } else {
             return;
         }

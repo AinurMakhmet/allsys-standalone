@@ -2,7 +2,7 @@ package models.bipartite_matching;
 
 import javafx.util.Pair;
 import logic.EdmondsKarpStrategy;
-import logic.MaximumProfitAlgorithm;
+import logic.MaximumProfitStrategy;
 import org.apache.logging.log4j.Logger;
 import servers.LocalServer;
 
@@ -29,7 +29,7 @@ public class FlowNetwork {
     }
     public FlowNetwork(BipartiteGraph bipartiteGraph) {
         strategyClass = bipartiteGraph.strategyClass;
-        if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+        if (strategyClass.equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.mpLogger;
         } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;

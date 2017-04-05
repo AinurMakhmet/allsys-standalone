@@ -3,7 +3,7 @@ package models.bipartite_matching;
 import javafx.util.Pair;
 import logic.EdmondsKarpStrategy;
 import logic.GreedyStrategy;
-import logic.MaximumProfitAlgorithm;
+import logic.MaximumProfitStrategy;
 import models.Employee;
 import models.Skill;
 import models.SystemData;
@@ -32,7 +32,7 @@ public class BipartiteGraph {
             logger = LocalServer.gLogger;
         } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
-        } else if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+        } else if (strategyClass.equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.gLogger;
         }
         for (Task task: tasksToAllocate) {
@@ -73,7 +73,7 @@ public class BipartiteGraph {
         //adds new entries to the adjacency map of both tasks and employees
         task.possibleAssignees.forEach(employee ->  {
             Vertex employeeVertex = new Vertex(employee.getId(), VertexType.EMPLOYEE);
-            if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+            if (strategyClass.equals(MaximumProfitStrategy.class)) {
                 employeeVertex.setCost(employee.getDailySalary());
             }
             //Integer employeeId = employee.getId();

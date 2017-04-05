@@ -13,7 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
-import logic.MaximumProfitAlgorithm;
+import logic.MaximumProfitStrategy;
 import logic.StrategyContext;
 import models.Project;
 import models.SystemData;
@@ -368,7 +368,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         }
 
         LocalServer.iLogger.info("MAX_PROFIT");
-        new StrategyContext(MaximumProfitAlgorithm.getInstance()).maxProfit(selectedProjects);
+        new StrategyContext(MaximumProfitStrategy.getInstance()).computeAllocationForProjects(selectedProjects);
         table.refresh();
         MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnallocatedProjects()
                 + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfProjectsInvalidForAllocation()

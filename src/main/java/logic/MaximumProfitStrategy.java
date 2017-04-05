@@ -2,23 +2,20 @@ package logic;
 
 import javafx.util.Pair;
 import models.Employee;
-import models.Project;
 import models.SystemData;
 import models.Task;
 import models.bipartite_matching.*;
-import org.junit.Assert;
 import servers.LocalServer;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
  * Created by nura on 27/02/17.
  */
-public class MaximumProfitAlgorithm extends MaximumFlowAlgorithm {
-    private static MaximumProfitAlgorithm ourInstance = new MaximumProfitAlgorithm();
+public class MaximumProfitStrategy extends MaximumFlowAlgorithm {
+    private static MaximumProfitStrategy ourInstance = new MaximumProfitStrategy();
 
-    public static MaximumProfitAlgorithm getInstance() {
+    public static MaximumProfitStrategy getInstance() {
         return ourInstance;
     }
 

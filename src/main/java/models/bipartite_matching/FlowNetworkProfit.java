@@ -2,7 +2,7 @@ package models.bipartite_matching;
 
 import javafx.util.Pair;
 import logic.EdmondsKarpStrategy;
-import logic.MaximumProfitAlgorithm;
+import logic.MaximumProfitStrategy;
 import org.apache.logging.log4j.Logger;
 import servers.LocalServer;
 
@@ -30,14 +30,14 @@ public class FlowNetworkProfit extends FlowNetwork{
     public FlowNetworkProfit(BipartiteGraph bipartiteGraph) {
         //initialises mapFromSource for Network flow
         strategyClass = bipartiteGraph.strategyClass;
-        if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+        if (strategyClass.equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.mpLogger;
         } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
         }
         mapToSink = new HashMap<>();
 
-        if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+        if (strategyClass.equals(MaximumProfitStrategy.class)) {
             mapFromSource = bipartiteGraph.getEmployeeMap();
             //initialises mapToSink for Network flow
             bipartiteGraph.getTaskMap().keySet().forEach(taskVertex -> {

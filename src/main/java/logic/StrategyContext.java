@@ -29,7 +29,7 @@ public class StrategyContext {
 
     public StrategyContext(Strategy allocationAlgorithm) {
         strategy = allocationAlgorithm;
-        if (strategy.getClass().equals(MaximumProfitAlgorithm.class)) {
+        if (strategy.getClass().equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.mpLogger;
         } else if (strategy.getClass().equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
@@ -38,7 +38,7 @@ public class StrategyContext {
         }
     }
 
-    public void maxAllocationAlgorithmNoPriotity(List<Task> tasksToAllocate){
+    public void computeAllocationForTasksNoPriority(List<Task> tasksToAllocate){
         numOfUnallocatedTasks = 0;
         numOfTasksInvalidForAllocation = 0;
         Iterator it = tasksToAllocate.iterator();
@@ -58,7 +58,7 @@ public class StrategyContext {
         numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
         long begTime = System.currentTimeMillis();
         if (!tasksToAllocate.isEmpty()) {
-            allocateTasks(tasksToAllocate, "all");
+            startAllocatingTasks(tasksToAllocate, "all");
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
@@ -66,19 +66,19 @@ public class StrategyContext {
     }
 
 
-    public void maxAllocationAlgorithm(List<Task> tasksToAllocate){
+    public void computeAllocationForTasks(List<Task> tasksToAllocate){
         distributeValidForAllocationTasksByPriority(tasksToAllocate);
 
         long begTime = System.currentTimeMillis();
         //TODO: fix Greedy returns only allocated tasks. Need to return all tasks.
         if (!highPriorityTasks.isEmpty()) {
-            allocateTasks(highPriorityTasks, "high");
+            startAllocatingTasks(highPriorityTasks, "high");
         }
         if (!mediumPriorityTasks.isEmpty()) {
-            allocateTasks(mediumPriorityTasks, "medium");
+            startAllocatingTasks(mediumPriorityTasks, "medium");
         }
         if (!lowPriorityTasks.isEmpty()) {
-            allocateTasks(lowPriorityTasks, "low");
+            startAllocatingTasks(lowPriorityTasks, "low");
         }
         long endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
@@ -90,12 +90,11 @@ public class StrategyContext {
      * @param listOfTasks lists of tasks to Allocate. All the tasks in the list are of one priority level.
      * @param priority priority level for logging purposes.
      */
-    private void allocateTasks(List<Task> listOfTasks, String priority) {
+    private void startAllocatingTasks(List<Task> listOfTasks, String priority) {
         if (!listOfTasks.isEmpty()) {
             listOfTasks.forEach(task -> logger.trace(task.toString()));
             logger.info("Start allocating the list of {} priority tasks with a size of {}", priority, listOfTasks.size());
             strategy.allocate(listOfTasks);
-            //taskResultList.addAll(strategy.allocate(listOfTasks));
             numOfUnallocatedTasks +=  strategy.getNumberOfUnallocatedTasks();
             logger.info("Number of unallocated tasks: {}. \n", strategy.getNumberOfUnallocatedTasks());
 
@@ -104,7 +103,7 @@ public class StrategyContext {
 
     /**
      * distribute tasks of different priority into separate list to deal with them separately.
-     * Is used internally by maxAllocationAlgorithm.
+     * Is used internally by computeAllocationForTasks.
      */
     private void distributeValidForAllocationTasksByPriority(List<Task> tasksToAllocate) {
         numOfUnallocatedTasks = 0;
@@ -137,7 +136,7 @@ public class StrategyContext {
         numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
     }
 
-    public void maxProfit(List<Project> projectsToAllocate){
+    public void computeAllocationForProjects(List<Project> projectsToAllocate){
         numOfUnallocatedProjects =0;
         numOfProjectsInvalidForAllocation=0;
         totalProfitFromSelectedProjects = 0;
@@ -171,33 +170,26 @@ public class StrategyContext {
         for (Project project : projectsToAllocate) {
             try {
                 numOfUnallocatedTasks = 0;
-                boolean isFullyAllocated = false;
-
-                allocateTasks(project.getTasks(), "all");
+                startAllocatingTasks(project.getTasks(), "all");
 
                 Integer profit = 0;
                 Integer projectPrimeCost = 0;
                 if (numOfUnallocatedTasks >0) {
-                    isFullyAllocated=false;
                     for(Task task: project.getTasks()) {
                         task.setRecommendedAssignee(null);
                     }
+                    numOfUnallocatedProjects++;
                 } else {
-                    isFullyAllocated=true;
                     for(Task t: project.getTasks()) {
                         Task task = SystemData.getAllTasksMap().get(t.getId());
                         projectPrimeCost += task.getRecommendedAssignee().getDailySalary()*task.getDuration();
                     }
                     profit = project.getPrice() - projectPrimeCost;
                     logger.trace("Max profit for the project = {}", profit);
-
-                }
-                project.setEstimatedCost(projectPrimeCost);
-                project.setEstimatedProfit(profit);
-                if (!isFullyAllocated) {
-                    numOfUnallocatedProjects++;
-                } else {
+                    project.setEstimatedCost(projectPrimeCost);
+                    project.setEstimatedProfit(profit);
                     totalProfitFromSelectedProjects += project.getEstimatedProfit();
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -210,7 +202,7 @@ public class StrategyContext {
     }
 
     /**
-     * the method is used only for debugging purposes by maxProfitAlgorithm method.
+     * the method is used only for debugging purposes by computeAllocationForProjects method.
      */
     private void getTasksInfo(List<Project> projectsToAllocate) {
         Set<Pair<Task, Task>> taskPairs = new HashSet<>();

@@ -87,7 +87,7 @@ public abstract class MaximumFlowAlgorithm implements Strategy{
         while (parentVertex.getVertexType()!=VertexType.SOURCE) {
             if (strategyClass.equals(EdmondsKarpStrategy.class)) {
                 parentVertex = (Vertex) augmentingPathBFS.get(childVertex);
-            } else if (strategyClass.equals(MaximumProfitAlgorithm.class)) {
+            } else if (strategyClass.equals(MaximumProfitStrategy.class)) {
                 parentVertex = (Vertex) shortestPathMap.get(childVertex).getKey();
             }
             path.push(parentVertex);
@@ -130,7 +130,7 @@ public abstract class MaximumFlowAlgorithm implements Strategy{
         } else if (parentVertex.getVertexType()==VertexType.EMPLOYEE && childVertex.getVertexType()==VertexType.SINK) {
             if (strategyClass.equals(EdmondsKarpStrategy.class)) {
                 residualNetwork.getMapToSink().get(parentVertex).remove(childVertex);
-            } else if (strategyClass.equals(MaximumProfitAlgorithm.class)){
+            } else if (strategyClass.equals(MaximumProfitStrategy.class)){
                 residualNetwork.getMapToSink().get(parentVertex).put(childVertex, false);
             }
             residualNetwork.getSink().getValue().put(parentVertex, false);
