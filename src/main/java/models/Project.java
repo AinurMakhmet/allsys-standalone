@@ -75,10 +75,38 @@ public class Project extends DatabaseEntity{
     }
 
     public Date getEndTime() {
+        try {
+            if(!getTasks().isEmpty()) {
+                Date latestEndTime = getTasks().get(0).getEndTime();
+                for (Task task : getTasks()) {
+                    if (task.getEndTime().after(latestEndTime)) {
+                        latestEndTime = task.getEndTime();
+                    }
+                }
+                endTime = latestEndTime;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return endTime;
     }
 
     public Date getStartTime() {
+        try {
+            if (!getTasks().isEmpty()) {
+                Date earliestStartTime = getTasks().get(0).getStartTime();
+                for (Task task : getTasks()) {
+                    if (task.getStartTime().before(earliestStartTime)) {
+                        earliestStartTime = task.getStartTime();
+                    }
+                }
+                startTime = earliestStartTime;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return startTime;
     }
 
