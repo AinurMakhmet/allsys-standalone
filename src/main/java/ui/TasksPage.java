@@ -386,7 +386,26 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         );
 
 
-        startTime.setCellFactory(TextFieldTableCell.forTableColumn(stringToDateConverter));
+        //startTime.setCellFactory(TextFieldTableCell.forTableColumn(new TaskStringToDateConverter()));
+        startTime.setCellFactory(col -> new TextFieldTableCell<Task, Date>(new TaskStringToDateConverter()) {
+            @Override
+            public void updateItem(Date item, boolean empty) {
+                if (empty) {
+                    super.updateItem(item, empty) ;
+                } else {
+                    // if out of range, revert to previous value;
+                    Task task = (Task) getTableView().getItems().get(table.getFocusModel().getFocusedCell().getRow());
+                    if (item!=null && item.equals(task.getStartTime())) {
+
+                    } else if (item!=null && item.after(task.getEndTime())) {
+                        item = getItem();
+                        MainUI.alertWarning(null, "Start date of the task must be before its end date");
+                    }
+                    super.updateItem(item, empty);
+                }
+            }
+        });
+
         startTime.setOnEditCommit(
                 new EventHandler<TableColumn.CellEditEvent<Task, Date>>() {
                     @Override
@@ -394,14 +413,38 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         try {
                             Task task = (Task) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow());
-                            task.setStartTime(t.getNewValue());
+                            if (t.getNewValue()==null
+                                    || (t.getNewValue()!=null
+                                        && task.getEndTime()!=null &&
+                                        !(t.getNewValue()).after(task.getEndTime()))
+                                    || task.getEndTime()==null) {
+                                task.setStartTime(t.getNewValue());
+                            }
                         } catch (DateTimeParseException exception) {
                             MainUI.alertError(null, "Please enter the date in the format of yyyy-MM-dd");
                         }
                     }
                 }
         );
-        endTime.setCellFactory(TextFieldTableCell.forTableColumn(stringToDateConverter));
+        //endTime.setCellFactory(TextFieldTableCell.forTableColumn(new TaskStringToDateConverter()));
+        endTime.setCellFactory(col -> new TextFieldTableCell<Task, Date>(new TaskStringToDateConverter()) {
+            @Override
+            public void updateItem(Date item, boolean empty) {
+                if (empty) {
+                    super.updateItem(item, empty) ;
+                } else {
+                    // if out of range, revert to previous value;
+                    Task task = (Task) getTableView().getItems().get(table.getFocusModel().getFocusedCell().getRow());
+                    if (item!=null && item.equals(task.getEndTime())) {
+
+                    } else if (item!=null && item.before(task.getStartTime())) {
+                        item = getItem();
+                        MainUI.alertWarning(null, "End date of the task must be after its start date");
+                    }
+                    super.updateItem(item, empty);
+                }
+            }
+        });
         endTime.setOnEditCommit(
                 new EventHandler<TableColumn.CellEditEvent<Task, Date>>() {
                     @Override
@@ -410,7 +453,14 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                         try {
                             Task task = (Task) t.getTableView().getItems().get(
                                     t.getTablePosition().getRow());
-                            task.setEndTime(t.getNewValue());
+                            if (t.getNewValue()==null
+                                    || (t.getNewValue()!=null
+                                        && task.getStartTime()!=null
+                                        && !(t.getNewValue()).before(task.getStartTime()))
+                                    || task.getStartTime()==null) {
+                                task.setEndTime(t.getNewValue());
+                            }
+
                         } catch (DateTimeParseException exception) {
                             MainUI.alertError(null ,"Please enter a date in the format of yyyy-MM-dd");
                         }
@@ -419,7 +469,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         );
     }
 
-    static final StringConverter stringToDateConverter = new StringConverter<Date>() {
+    public static class TaskStringToDateConverter extends StringConverter<Date> {
 
         @Override
         public String toString(Date t) {
@@ -433,6 +483,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
 
         @Override
         public Date fromString(String string) {
+            if (string.equals("")) return null;
             try {
                 return Date.valueOf(LocalDate.parse(string, dateFormat));
             } catch (DateTimeParseException | IllegalStateException e) {
