@@ -50,6 +50,7 @@
     -fx-font-weight: bold;
     -fx-font-size: 11px;
     -fx-font-family: "GT-Regular";
+    -fx-pref-height: 20;
 }
 /*icons font-awesome*/
 .icons:hover{
