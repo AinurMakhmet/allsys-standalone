@@ -61,14 +61,12 @@ public class LargeDatasetGenerator {
     private static void generateProjects(PrintWriter writer) {
         StringBuilder builder = new StringBuilder();
         String projectLine = "INSERT INTO `project` (`name`, `price`) VALUES ('";
-        Integer price;
         Random rand = new Random();
-
-
+        
         int i=0;
         while(i<numberOfProjects) {
             value1 = new StringBuilder().append("Project").append(((Integer)(i+1)).toString()).toString();
-            value2 = ((Integer)rand.nextInt(500)).toString();
+            value2 = ((Integer)rand.nextInt(2000)).toString();
             builder.append(projectLine);
             builder.append(value1);
             builder.append("', '");
