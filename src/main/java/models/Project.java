@@ -69,7 +69,7 @@ public class Project extends DatabaseEntity{
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
         ProjectUtils.updateEntity(this);
     }

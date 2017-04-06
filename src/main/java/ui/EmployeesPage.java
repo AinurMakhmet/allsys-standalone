@@ -212,7 +212,8 @@ public class EmployeesPage extends AbstractPage {
             @Override
             public void handle(TableColumn.CellEditEvent<Employee, Integer> event) {
                 Integer salary = event.getNewValue();
-                if (salary!=null && salary>=0) {
+                if (salary!=null && salary<=0) {
+                } else {
                     ((Employee) event.getTableView().getItems().get(
                             event.getTablePosition().getRow())
                     ).setDailySalary(salary);

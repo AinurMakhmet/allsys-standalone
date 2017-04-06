@@ -63,7 +63,7 @@ public class Employee extends DatabaseEntity{
         return dailySalary;
     }
 
-    public void setDailySalary(int dailySalary) {
+    public void setDailySalary(Integer dailySalary) {
         this.dailySalary = dailySalary;
         EmployeeUtils.updateEntity(this);
     }

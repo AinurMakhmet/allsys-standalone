@@ -339,9 +339,10 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                     @Override
                     public void handle(TableColumn.CellEditEvent<Project, Integer> t) {
                         Integer price = t.getNewValue();
-                        if (price!=null && price>=0) {
+                        if (price!=null && price<=0) {
+                        } else {
                             Project project = (Project) t.getTableView().getItems().get(t.getTablePosition().getRow());
-                            project.setPrice(t.getNewValue());
+                            project.setPrice(price);
                         }
                     }
                 }
