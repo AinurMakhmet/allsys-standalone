@@ -12,7 +12,7 @@ import java.util.*;
  * Created by nura on 16/02/17.
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfEmployees = 20;
+    public static final int numberOfEmployees = 5;
     public static final int numberOfTasks = numberOfEmployees*2;
     public static final int numberOfProjects = numberOfTasks/4;
     public static final int numberOfSkillLevels = 1;
@@ -62,7 +62,7 @@ public class LargeDatasetGenerator {
         StringBuilder builder = new StringBuilder();
         String projectLine = "INSERT INTO `project` (`name`, `price`) VALUES ('";
         Random rand = new Random();
-        
+
         int i=0;
         while(i<numberOfProjects) {
             value1 = new StringBuilder().append("Project").append(((Integer)(i+1)).toString()).toString();

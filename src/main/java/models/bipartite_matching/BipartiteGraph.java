@@ -117,7 +117,6 @@ public class BipartiteGraph {
             }
         }
 
-
         if (!strategyClass.equals(GreedyStrategy.class)) {
             removeCandiatesWithTimeOverlappingTasks(task);
         }

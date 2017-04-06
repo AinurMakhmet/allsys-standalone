@@ -10,6 +10,7 @@ import servers.LocalServer;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by nura on 20/11/16.
@@ -21,12 +22,21 @@ public class StrategyContext {
             numOfUnallocatedProjects,
             numOfProjectsInvalidForAllocation,
             totalProfitFromSelectedProjects;
+    private List selectedEntitiesToAllocate;
 
     private Logger logger;
     private long begTime, endTime;
 
-    public StrategyContext(Strategy allocationAlgorithm, List selectedEntitiesToAllocate) {
+    public StrategyContext(Strategy allocationAlgorithm, List entitiesToAllocate) {
         strategy = allocationAlgorithm;
+        selectedEntitiesToAllocate = new LinkedList();
+        selectedEntitiesToAllocate.addAll(entitiesToAllocate);
+        SystemData.getAllTasksMap().values().forEach(task -> {
+            if (task.getRecommendedAssignee()!=null) {
+                task.setRecommendedAssignee(null);
+                System.out.println("task reset:"+task.getName());
+            }
+        });
         if (strategy.getClass().equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.mpLogger;
             computeAllocationForProjects((List<Project>)selectedEntitiesToAllocate);
@@ -46,7 +56,6 @@ public class StrategyContext {
         while(it.hasNext()) {
             Task task = (Task)it.next();
             try {
-                task.setRecommendedAssignee(null);
                 if(task.getEmployee()==null && task.getEndTime()!=null && task.getStartTime()!=null && task.getSkills().size()>0) {
                     continue;
                 }
@@ -75,7 +84,6 @@ public class StrategyContext {
         //distribute tasks of different priority into separate list to deal with them separately.
         for (Task task: tasksToAllocate) {
             try {
-                task.setRecommendedAssignee(null);
                 if(task.getEmployee()==null && task.getEndTime()!=null && task.getStartTime()!=null && task.getSkills().size()>0) {
                     switch (task.getPriority()) {
                         case HIGH:
@@ -138,7 +146,6 @@ public class StrategyContext {
                 } else {
                     for (Task t : project.getTasks()) {
                         Task task = SystemData.getAllTasksMap().get(t.getId());
-                        task.setRecommendedAssignee(null);
                         if (t.getStartTime() == null || t.getEndTime() == null || task.getSkills().size() <= 0) {
                             numOfProjectsInvalidForAllocation++;
                             iter.remove();

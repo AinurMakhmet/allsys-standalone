@@ -202,7 +202,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                 ((Task)newSelection).getId().toString(),
                                 ((Task)newSelection).getName(),
                                 ((Task) newSelection).getDescription(),
-                                ((Task) newSelection).getProject()==null ? "is not part of a project" : ((Task) newSelection).getProject().getId().toString(),
+                                ((Task) newSelection).getProject()==null ? "task is not part of a project" : ((Task) newSelection).getProject().getId().toString(),
                                 ((Task) newSelection).getStartTime()==null ? "" : ((Task) newSelection).getStartTime().toString(),
                                 ((Task) newSelection).getEndTime()==null ? "" : ((Task) newSelection).getEndTime().toString(),
                                 ((Task) newSelection).getPriority().toString(),
@@ -329,9 +329,11 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                     @Override
                     public void handle(TableColumn.CellEditEvent<Task, Integer> t) {
                         Integer employeeId = t.getNewValue();
-                        if (employeeId!=null) {
+                        if (employeeId!=null && employeeId<1) {
+                        } else {
                             Employee employee = SystemData.getAllEmployeesMap().get(employeeId);
-                            if (employee != null) {
+                            if (employeeId!=null && employee == null) {
+                            } else {
                                 ((Task) t.getTableView().getItems().get(
                                         t.getTablePosition().getRow())
                                 ).setEmployee(employee);
@@ -369,9 +371,11 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                     @Override
                     public void handle(TableColumn.CellEditEvent<Task, Integer> t) {
                         Integer projectId = t.getNewValue();
-                        if (projectId!=null && projectId>0) {
+                        if (projectId!=null && projectId<1) {
+                        } else {
                             Project project = SystemData.getAllProjectsMap().get(projectId);
-                            if (project != null) {
+                            if (projectId!=null && project == null) {
+                            } else {
                                 ((Task) t.getTableView().getItems().get(
                                         t.getTablePosition().getRow())
                                 ).setProject(project);

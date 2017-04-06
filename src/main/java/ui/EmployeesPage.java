@@ -233,6 +233,7 @@ public class EmployeesPage extends AbstractPage {
         public Integer fromString(String value) {
             // If the invlid format show the dialog
             try {
+                if (value.equals("")) return null;
                 Integer.valueOf(value);
                 return  super.fromString(value);
             } catch (NumberFormatException  | ClassCastException e) {
