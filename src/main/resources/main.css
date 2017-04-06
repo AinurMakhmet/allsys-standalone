@@ -1,8 +1,30 @@
+@font-face {
+    font-family: 'GT-Regular';
+    src: url('GT-Sectra-Display-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'GT-Bold';
+    src: url('GT-Sectra-Display-Bold.ttf');
+}
+@font-face {
+    font-family: 'GT-Light';
+    src: url('GT-Sectra-Display-Light.ttf');
+}
+@font-face {
+    font-family: 'GT-Super';
+    src: url('GT-Sectra-Display-Super.ttf');
+}
+@font-face {
+    font-family: 'GT-Medium';
+    src: url('GT-Sectra-Display-Medium.ttf');
+}
 .root{
     /* A bright blue for highlighting/accenting objects.  For example: selected
      * text; selected items in menus, lists, trees, and tables; progress bars;
      * default buttons.
      */
+    -fx-font-family: "GT-Bold";
     -fx-accent: #a4a7b2;
 
     /* A bright blue for the focus indicator of objects. Typically used as the
@@ -22,6 +44,13 @@
     -fx-effect: innershadow(three-pass-box, derive(-icons-color,-70%), 0.1em, 0.0, 0.07em, 0.07em);
     -fx-text-fill: linear-gradient(to bottom, derive(-icons-color,20%) 10%, derive(-icons-color,-40%) 80%);
 }
+
+.simple {
+    -fx-pref-width: 110;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-font-family: "GT-Regular";
+}
 /*icons font-awesome*/
 .icons:hover{
     -fx-effect: dropshadow( three-pass-box, derive(-icons-color,0%), 0.01em, 0.0, 0, 0);
@@ -35,6 +64,7 @@
 .sidebar-item {
     -fx-padding: 12;
     -fx-text-fill: #494949;
+    -fx-font-family: "GT-Super";
     -fx-font-style: normal;
     -fx-font-weight: bold;
     -fx-border-style: hidden;
@@ -47,7 +77,10 @@
 }
 .menu-title {
     -fx-text-fill: #2d2d2d;
+    -fx-font-family: "GT-Super";
+    -fx-font-weight: bold;
     -fx-padding: 15, 15, 12, 15;
+    -fx-font-size: 14;
 }
 .filter-pane {
     -fx-background-color: #f4f4f4;
@@ -68,6 +101,11 @@
 
 .card {
     -fx-text-fill: #494949;
+}
+
+.card-property-name{
+    -fx-font-family: "GT-Bold";
+    -fx-font-weight: bold;
 }
 
 .text-area {

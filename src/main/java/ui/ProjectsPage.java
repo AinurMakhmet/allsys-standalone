@@ -130,9 +130,11 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     }
 
     private void constructAllocationMode() {
-        maxProfitRecButton = new Button("MaxProfit REC");
+        maxProfitRecButton = new Button("PROFIT REC");
+        maxProfitRecButton.getStyleClass().add("simple");
         maxProfitRecButton.setOnAction(this);
-        allocateButton = new Button("Allocate");
+        allocateButton = new Button("ALLOCATE");
+        allocateButton.getStyleClass().add("simple");
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -156,7 +158,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         });
 
 
-        deAllocateButton = new Button("Deallocate");
+        deAllocateButton = new Button("DEALLOCATE");
+        deAllocateButton.getStyleClass().add("simple");
         deAllocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

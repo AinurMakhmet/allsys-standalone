@@ -254,10 +254,13 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         greedyRecButton = new Button("GREEDY REC");
         greedyRecButton.setTooltip(new Tooltip("Greedy strategy"));
         greedyRecButton.setOnAction(this);
+        greedyRecButton.getStyleClass().add("simple");
         ekRecButton = new Button("EK REC");
         ekRecButton.setTooltip(new Tooltip("Edmonds-Karp strategy"));
         ekRecButton.setOnAction(this);
-        allocateButton = new Button("Allocate");
+        ekRecButton.getStyleClass().add("simple");
+        allocateButton = new Button("ALLOCATE");
+        allocateButton.getStyleClass().add("simple");
         allocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -272,7 +275,8 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
             }
         });
 
-        deAllocateButton = new Button("Deallocate");
+        deAllocateButton = new Button("DEALLOCATE");
+        deAllocateButton.getStyleClass().add("simple");
         deAllocateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

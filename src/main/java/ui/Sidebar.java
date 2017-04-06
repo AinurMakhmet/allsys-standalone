@@ -14,7 +14,7 @@ import javafx.scene.text.FontWeight;
  * Creates sidebar that contains menu
  */
 public class Sidebar extends VBox implements EventHandler {
-    private Hyperlink tasksLink =  new Hyperlink("Assignments");
+    private Hyperlink tasksLink =  new Hyperlink("Tasks");
     private Hyperlink employeesLink =  new Hyperlink("Employees");
     private Hyperlink skillsLink =  new Hyperlink("Skills");
     private Hyperlink projectsLink =  new Hyperlink("Projects");
@@ -24,12 +24,12 @@ public class Sidebar extends VBox implements EventHandler {
         this.setPadding(new Insets(0));
         this.setSpacing(0);
         this.getStyleClass().add("sidebar");
-        this.setMinWidth(120);
-        this.setWidth(120);
-        this.setMaxWidth(120);
+        this.setMinWidth(110);
+        this.setWidth(110);
+        this.setMaxWidth(110);
 
         Label title = new Label("Menu");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        //title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         title.getStyleClass().add("menu-title");
         title.setAlignment(Pos.TOP_LEFT);
         title.prefWidthProperty().bind(this.widthProperty());

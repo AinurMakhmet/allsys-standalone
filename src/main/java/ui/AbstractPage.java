@@ -78,7 +78,7 @@ public abstract class AbstractPage extends BorderPane{
     TableView addTable(String pageName) {
         TableView table = new TableView();
         final Label label = new Label(pageName);
-        label.setFont(new Font("Arial", 20));
+        //label.setFont(new Font("Arial", 20));
 
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -126,27 +126,27 @@ public abstract class AbstractPage extends BorderPane{
     }
 
     void setNewCard(String[] propertyValues, DatabaseEntity dEntity) {
-        //ObservableList<Node> children = cardVBoxInner.getChildren();
-//        children.remove(1, children.size());
         cardVBoxInner = new VBox();
         cardVBoxInner.setPrefWidth(400);
         scrollPane.setContent(cardVBoxInner);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
-
         for (int i=0; i<propertyValues.length; i++) {
+            Separator separator = new Separator();
+            separator.setMaxHeight(0.2);
+            separator.setOrientation(Orientation.HORIZONTAL);
 
             Text propertyName = new Text(cardPropertyNames[i]+": ");
-            propertyName.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+            propertyName.getStyleClass().add("card-property-name");
             Text propertyValue = new Text(propertyValues[i]);
-            propertyValue.setFont(Font.font("Arial", 12));
+            propertyValue.getStyleClass().add("card-property-value");
             propertyValue.setTextAlignment(TextAlignment.JUSTIFY);
 
             BorderPane borderPane = new BorderPane();
             borderPane.setPadding(new Insets(0, 3, 0, 3));
             HBox hbox = new HBox();
-            hbox.setPadding(new Insets(0, 5, 0, 0));
+            hbox.setPadding(new Insets(5, 10, 0, 0));
             borderPane.setCenter(hbox);
             String propertyNameValue = propertyName.getText().toLowerCase();
             String skillsNameProperty = "skills";
@@ -155,10 +155,8 @@ public abstract class AbstractPage extends BorderPane{
             if (propertyNameValue.contains(descriptionNameProperty)) {
                 HBox hboxInner = new HBox();
                 hboxInner.getChildren().add(propertyName);
-                hboxInner.setPadding(new Insets(5,0,0,0));
                 hbox.getChildren().add(hboxInner);
                 descriptionTextArea.setText(propertyValues[i]);
-                descriptionTextArea.setFont(Font.font("Arial", 12));
                 descriptionTextArea.setWrapText(true);
                 setEditSaveDescriptionButton(dEntity);
                 borderPane.setRight(editDescriptionValueButton);
@@ -176,6 +174,9 @@ public abstract class AbstractPage extends BorderPane{
                 hbox.getChildren().add(propertyValue);
             }
             cardVBoxInner.getChildren().add(borderPane);
+            if (i<propertyValues.length-1) {
+                cardVBoxInner.getChildren().add(separator);
+            }
         }
         cardHBox.getChildren().remove(1,1);
         if (dEntity==null) {
