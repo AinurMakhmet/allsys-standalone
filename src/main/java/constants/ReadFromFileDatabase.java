@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class ReadFromFileDatabase {
 
-	public static void createInsertQueries(String employeeFile, String taskFile, String skillFile, String employeeSkillFile, String taskSkillFile) throws FileNotFoundException {
+	public static void createInsertQueries(String employeeFile, String taskFile, String skillFile, String employeeSkillFile, String taskSkillFile, String projectFile) throws FileNotFoundException {
 		Scanner scanner = new Scanner(new File(employeeFile));
 		DefaultDatabase.InsertQueriesEmployee = new String[LargeDatasetGenerator.numberOfEmployees];
 		int i=0;
@@ -43,6 +43,14 @@ public class ReadFromFileDatabase {
 		while(scanner.hasNextLine()) {
 			DefaultDatabase.InsertQueriesTaskSkill[i++] = scanner.nextLine();
 		}
+
+		scanner = new Scanner(new File(projectFile));
+		DefaultDatabase.InsertQueriesProject = new String[LargeDatasetGenerator.numberOfProjects];
+		i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesProject[i++] = scanner.nextLine();
+		}
+
 	}
 
 	public static String[] InsertQueriesEmployee;

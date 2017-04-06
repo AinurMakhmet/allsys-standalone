@@ -12,17 +12,18 @@ import java.util.*;
  * Created by nura on 16/02/17.
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfEmployees = 6;
+    public static final int numberOfEmployees = 20;
     public static final int numberOfTasks = numberOfEmployees*2;
+    public static final int numberOfProjects = numberOfTasks/4;
     public static final int numberOfSkillLevels = 1;
     public static final int totalNumberOfSkills = numberOfSkillLevels*12;
-    public static final int maxNumberOfSkillsPerEmployee = 4;
+    public static final int maxNumberOfSkillsPerEmployee = 3;
     public static final int maxNumberOfSkillsPerTask = 1;
-    public static final int monthsRange = 5;
+    public static final int monthsRange = 12;
     public static int numberOfEmployeeSkillsRows = 0;
     public static int numberOfTaskSkillsRows = 0;
 
-    private static String value1="", value2="", value3="", value4="";
+    private static String value1="", value2="", value3="", value4="", value5="";
 
     public static void generateTestFiles() {
         try{
@@ -47,14 +48,41 @@ public class LargeDatasetGenerator {
             generateTasks(writer);
             writer.close();
 
+            writer = new PrintWriter("src/main/resources/large_dataset/Projects.txt", "UTF-8");
+            generateProjects(writer);
+            writer.close();
+
+
         } catch (IOException e) {
             // do something
         }
     }
 
+    private static void generateProjects(PrintWriter writer) {
+        StringBuilder builder = new StringBuilder();
+        String projectLine = "INSERT INTO `project` (`name`, `price`) VALUES ('";
+        Integer price;
+        Random rand = new Random();
+
+
+        int i=0;
+        while(i<numberOfProjects) {
+            value1 = new StringBuilder().append("Project").append(((Integer)(i+1)).toString()).toString();
+            value2 = ((Integer)rand.nextInt(500)).toString();
+            builder.append(projectLine);
+            builder.append(value1);
+            builder.append("', '");
+            builder.append(value2);
+            builder.append("');");
+            writer.println(builder.toString());
+            builder.delete(0, builder.length());
+            i++;
+        }
+    }
+
     private static void generateTasks(PrintWriter writer) {
         StringBuilder builder = new StringBuilder();
-        String taskLine = "INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('";
+        String taskLine = "INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('";
         Date startDate;
         Date endDate;
         Random rand = new Random();
@@ -71,6 +99,7 @@ public class LargeDatasetGenerator {
             }
             value3 = getDateValueInString(startDate);
             value4 = getDateValueInString(endDate);
+            value5 = ((Integer)rand.nextInt(numberOfProjects)).toString();
             builder.append(taskLine);
             builder.append(value1);
             builder.append("', '");
@@ -79,6 +108,8 @@ public class LargeDatasetGenerator {
             builder.append(value3);
             builder.append("', '");
             builder.append(value4);
+            builder.append("', '");
+            builder.append(value5);
             builder.append("');");
             writer.println(builder.toString());
             builder.delete(0, builder.length());
@@ -114,41 +145,25 @@ public class LargeDatasetGenerator {
         return builder.toString();
     }
 
-    /*
-     * http://stackoverflow.com/a/3985467
-     */
-    private static Date getRandomDate() {
-        long ms;
-
-        // Get a new random instance, seeded from the clock
-        Random rnd = new Random();
-
-        // Get an Epoch value roughly between 1940 and 2010
-        // -946771200000L = January 1, 1940
-        // Add up to 70 years to it (using modulus on the next long)
-        ms = -946771200000L + (Math.abs(rnd.nextLong()) % (70L * 365 * 24 * 60 * 60 * 1000));
-
-        // Construct a date
-
-        return new Date(ms);
-    }
-
     /**
      * @param writer
      * @throws FileNotFoundException
      */
     private static void generateEmployees(PrintWriter writer) throws FileNotFoundException {
         StringBuilder builder = new StringBuilder();
-        String employeeLineStart = "INSERT INTO `employee` (`first_name`, `last_name`) VALUES ('";
-
+        String employeeLineStart = "INSERT INTO `employee` (`first_name`, `last_name`,  `daily_salary`) VALUES ('";
+        Random rand = new Random();
         int i=0;
         value1 = "Employee";
         while(i<numberOfEmployees) {
             value2 = i+1+"";
+            value3 = ((Integer)(rand.nextInt(5) + 1)).toString();
             builder.append(employeeLineStart);
             builder.append(value1);
             builder.append("', '");
             builder.append(value2);
+            builder.append("', '");
+            builder.append(value3);
             builder.append("');");
             writer.println(builder.toString());
             builder.delete(0, builder.length());

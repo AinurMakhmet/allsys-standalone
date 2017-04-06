@@ -114,15 +114,16 @@ public class SqlServerConnection {
 			Dao<TaskSkill, Integer> taskSkillDao = DaoManager.createDao(connection, TaskSkill.class);
 			Dao<Project, Integer> projectDao = DaoManager.createDao(connection, Project.class);
 
-			/*LargeDatasetGenerator.generateTestFiles();
+			LargeDatasetGenerator.generateTestFiles();
 
 			ReadFromFileDatabase.createInsertQueries(
 					"src/main/resources/large_dataset/Employees.txt",
 					"src/main/resources/large_dataset/Tasks.txt",
 					"src/main/resources/large_dataset/Skills.txt",
 					"src/main/resources/large_dataset/EmployeeSkills.txt",
-					"src/main/resources/large_dataset/TaskSkills.txt"
-			);*/
+					"src/main/resources/large_dataset/TaskSkills.txt",
+					"src/main/resources/large_dataset/Projects.txt"
+			);
 
 			for (String q : DefaultDatabase.InsertQueriesEmployee) {
 				employeeDao.executeRaw(q);
