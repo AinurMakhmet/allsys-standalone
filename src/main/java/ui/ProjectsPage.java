@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by nura on 06/12/16.
+ * models gui page Projects
  */
 public class ProjectsPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Project> data = FXCollections.observableArrayList(SystemData.getAllProjectsMap().values());

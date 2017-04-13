@@ -18,22 +18,32 @@ import java.util.*;
 public class GreedyStrategy implements Strategy {
     public int numOfUnallocatedTasks =0;
 
-    protected long begTime;
-    protected long endTime;
+    private long begTime;
+    private long endTime;
 
     private List<Pair<Integer, ArrayList>> listOfAdjacencyLists;
 
     private static GreedyStrategy ourInstance = new GreedyStrategy();
 
+    /**
+     * Singleton pattern
+     * @return a single instance created of the MaximumProfitStrategy class
+     */
     public static GreedyStrategy getInstance() {
         return ourInstance;
     }
 
+    /**
+     * O(et^2)
+     * Compute allocation for a list of tasks provided as an a parameter
+     * @param tasksToAllocate a list of tasks selected for allocation
+     */
     @Override
     public void allocate(List<Task> tasksToAllocate) {
         numOfUnallocatedTasks =tasksToAllocate.size();
 
         begTime = System.currentTimeMillis();
+        //O(ets^2)
         BipartiteGraph graph = new BipartiteGraph(GreedyStrategy.class, tasksToAllocate);
         listOfAdjacencyLists = graph.getListOfAdjacencyLists();
         endTime = System.currentTimeMillis();
@@ -52,12 +62,14 @@ public class GreedyStrategy implements Strategy {
                 else return 1;
             }
         });
+        //O(e*(t^2))
         while (!listOfAdjacencyLists.isEmpty()) {
 
             int indexWithMinPossibleEmployees = listOfAdjacencyLists.size() - 1;
 
             //Greedy algorithm allocates the task to the first available employee in the list.
             Task toAllocate = SystemData.getAllTasksMap().get(listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getKey());
+            //O(et)
             Employee chosenEmployee = findAvailableEmployee(toAllocate, indexWithMinPossibleEmployees);
 
             if (chosenEmployee!=null) {
@@ -80,6 +92,7 @@ public class GreedyStrategy implements Strategy {
         return numOfUnallocatedTasks;
     }
 
+    //O(e*t)
     private Employee findAvailableEmployee(Task toAllocate, int indexWithMinPossibleEmployees) {
         choosingNextEmployee:
         for (Employee employee: (ArrayList<Employee>) listOfAdjacencyLists.get(indexWithMinPossibleEmployees).getValue()) {

@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * Model to represent a particular skill of a particular employee.
+ * Model to represent a relationship between a particular skill and an employee that possess that skill.
  */
 @DatabaseTable(tableName = "employee_skill")
 public class EmployeeSkill extends DatabaseEntity{

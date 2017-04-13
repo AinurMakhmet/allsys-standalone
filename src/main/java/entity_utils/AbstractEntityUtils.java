@@ -12,6 +12,10 @@ import java.util.List;
 /**
  * A helper class for manipulating the database objects.
  * It provides code that can be reused.
+ *
+ * The class has been taken from the source code of another software developed in
+ * 2nd year Software Engineering Group project at King's College London-
+ * https://github.com/musalbas/Nuclibook/blob/master/src/main/java/nuclibook/entity_utils/AbstractEntityUtils.java
  */
 public abstract class AbstractEntityUtils {
 

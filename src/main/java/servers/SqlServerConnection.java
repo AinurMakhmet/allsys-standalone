@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
+ * The class is based on class of another software developed in
+ * 2nd year Software Engineering Group project at King's College London-
+ * https://github.com/musalbas/Nuclibook/blob/master/src/main/java/nuclibook/server/SqlServerConnection.java
+ *
  * This singleton class initialises and manages the SQL connection
  */
 public class SqlServerConnection {
@@ -103,8 +107,6 @@ public class SqlServerConnection {
 
 	private static void insertData(ConnectionSource connection) throws FileNotFoundException {
 
-
-		//TODO: add execution of queries that instnatiat database with the default values
 		//export default database
 		try {
 			Dao<Employee, Integer> employeeDao = DaoManager.createDao(connection, Employee.class);

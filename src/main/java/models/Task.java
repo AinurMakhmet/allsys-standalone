@@ -217,7 +217,9 @@ public class Task extends DatabaseEntity{
 
     /**
      * Gets a list of skills that this task requires.
-     *
+     * The method has been developed in the context
+     * of another project -  2nd year Software Engineering Group project at King's College London-
+     * https://github.com/musalbas/Nuclibook
      * @return a list of skills that this task requires.
      * @see models.Skill
      */
@@ -234,15 +236,6 @@ public class Task extends DatabaseEntity{
                 skill = iterator.next().getSkill();
                 if (skill != null) output.add(skill);
             }
-
-            //TODO: review sorting
-            // sort by sequence
-            /*output.sort(new Comparator<Skill>() {
-                @Override
-                public int compare(Skill o1, Skill o2) {
-                    return o1.getSequence() - o2.getSequence();
-                }
-            });*/
         }
         return output;
     }

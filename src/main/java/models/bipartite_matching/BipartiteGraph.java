@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by nura on 15/01/17.
+ *  models Maximum Alloctaion and MAximum Profit problems
  */
 public class BipartiteGraph {
     private Map<Vertex, Map<Vertex, Boolean>> taskMap = new HashMap<>();
@@ -26,6 +26,11 @@ public class BipartiteGraph {
     Class strategyClass;
     private Logger logger;
 
+    /**
+     * Creates a bipartite graph that models Maximum Alloctaion and MAximum Profit problems
+     * @param strategyClass - allocation strategy chosen.
+     * @param tasksToAllocate a list of tasks to be allocated
+     */
     public BipartiteGraph(Class strategyClass, List<Task> tasksToAllocate) {
         this.strategyClass = strategyClass;
         if (strategyClass.equals(GreedyStrategy.class)) {
@@ -35,6 +40,7 @@ public class BipartiteGraph {
         } else if (strategyClass.equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.gLogger;
         }
+        //O(te(s^2)) - greedy, O(et*s^2)+ O(e*t^2) max flow
         for (Task task: tasksToAllocate) {
             //creates a temporary list of skills and adds list of skills in a task to that list, for future opearations
             ArrayList<Skill> taskSkills = null;
@@ -42,7 +48,7 @@ public class BipartiteGraph {
 
                 taskSkills = new ArrayList<>(task.getSkills());
 
-                // finds the index of the skill that is possessed by smallest amount of employees.
+                // O(s). finds the index of the skill that is possessed by smallest amount of employees.
                 int indexOfScarceSkill = getIndexOfScarceSkill(taskSkills);
 
                 task.possibleAssignees = (ArrayList<Employee>) taskSkills.get(indexOfScarceSkill).getEmployees();
@@ -50,6 +56,7 @@ public class BipartiteGraph {
                 taskSkills.remove(indexOfScarceSkill);
 
                 ArrayList<Employee> scarceSkillEmployees = (ArrayList<Employee>) task.getSkills().get(indexOfScarceSkill).getEmployees();
+                //O(s*e*s ), for max flow = //O(e*s^2) + O(e*t)
                 filterPossibleAssignees(task, taskSkills, scarceSkillEmployees);
 
                 logger.trace("number of possible assignee for task {} is {}", task.getName(), task.possibleAssignees.size());
@@ -67,6 +74,7 @@ public class BipartiteGraph {
         }
     }
 
+    //Complexity - O(e)
     private void createGraphEdgesFor(Task task) {
         Vertex taskVertex = new Vertex(task.getId(), VertexType.TASK);
         Map<Vertex, Boolean> adjacentVerticesOfTask = new HashMap<>();
@@ -97,6 +105,7 @@ public class BipartiteGraph {
         taskMap.put(taskVertex, adjacentVerticesOfTask);
     }
 
+    //O(s*e*s ) - complexity for Greedy, //O(e*s^2 + et) - for MaxFlow
     private void filterPossibleAssignees(Task task, ArrayList<Skill> taskSkills, ArrayList<Employee> scarceSkillEmployees) throws IOException {
         for (Skill s : taskSkills){
             for (int i=0; i<scarceSkillEmployees.size(); i++) {
@@ -106,22 +115,18 @@ public class BipartiteGraph {
                         break;
                     }
                     else if (j == employeeSkills.size()-1) {
-                        //logger.trace("Employee " + employees.get(i) + " doesn'task have skill " + s.getName());
-                        //logger.trace("Employee skill: " + employees.get(i).getSkills());
-
-                        //the employee doesn'task have all the required taskSkills to complete the task,
-                        //so it will be removed from the list of candidates
                         task.possibleAssignees.remove(scarceSkillEmployees.get(i));
                     }
                 }
             }
         }
-
+        //O(e*t) - complexity
         if (!strategyClass.equals(GreedyStrategy.class)) {
             removeCandiatesWithTimeOverlappingTasks(task);
         }
     }
 
+    //O(e*t) - complexity
     private void removeCandiatesWithTimeOverlappingTasks(Task task) {
         Iterator it = task.possibleAssignees.iterator();
 
@@ -153,6 +158,12 @@ public class BipartiteGraph {
         }
     }
 
+    /**
+     * O(s)
+     * @param taskSkills
+     * @return the index of the scarce skill in the list of skills of a considering task,
+     * @throws IOException
+     */
     int getIndexOfScarceSkill(ArrayList<Skill> taskSkills) throws IOException {
         //index of the skill in the taskSkills that have a minimum number of Employees that posses this skill
         int indexSmallestSize = 0;
@@ -195,14 +206,26 @@ public class BipartiteGraph {
         logger.trace("==============================BIPARTITE GRAPH END==============\n");
     }
 
+    /**
+     * Used by MaximumFlowAlgorithm class and its subclasses
+     * @return set of task vertices with its connected edges
+     */
     public Map<Vertex, Map<Vertex, Boolean>> getTaskMap() {
         return taskMap;
     }
 
+    /**
+     * Used by MaximumFlowAlgorithm class and its subclasses
+     * @return set of employee vertices with its connected edges
+     */
     public Map<Vertex, Map<Vertex, Boolean>> getEmployeeMap() {
         return employeeMap;
     }
 
+    /**
+     * Used by Greedy strategy only.
+     * @return a list of task ids  with the corresponding list of possible assignees for that task.
+     */
     public List<Pair<Integer, ArrayList>> getListOfAdjacencyLists() {
         return listOfAdjacencyLists;
     }

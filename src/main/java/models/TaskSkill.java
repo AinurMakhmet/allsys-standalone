@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * Model to represent a particular skill that a particular task requires.
+ * Model to represent a relationship between a particular skill and a task that requires that skill.
  */
 @DatabaseTable(tableName = "task_skill")
 public class TaskSkill extends DatabaseEntity{

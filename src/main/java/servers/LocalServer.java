@@ -12,6 +12,10 @@ import ui.MainUI;
 import java.io.File;
 
 /**
+ * The class is based on class of another software developed in
+ * 2nd year Software Engineering Group project at King's College London-
+ * https://github.com/musalbas/Nuclibook/blob/master/src/main/java/nuclibook/server/LocalServer.java
+ *
  * This class creates and manages the server for the entire system.
  * Its main jobs are to set up the server, route pages, and handle top-level security.
  */

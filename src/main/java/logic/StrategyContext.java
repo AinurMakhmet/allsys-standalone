@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by nura on 20/11/16.
+ * A class that determines what strategy to call base on the constrcutor parameters.
  */
 public class StrategyContext {
     private Strategy strategy;
@@ -27,6 +27,13 @@ public class StrategyContext {
     private Logger logger;
     private long begTime, endTime;
 
+    /**
+     *
+     * @param allocationAlgorithm depends on the user selection.
+     *                            Either EdmondsKarpStrategy or GreedyStrategy if a list of tasks was selected.
+     *                            If a list of projects was selected, MaximumrProfitStrategy.
+     * @param entitiesToAllocate either a list of tasks, or a list of projects.
+     */
     public StrategyContext(Strategy allocationAlgorithm, List entitiesToAllocate) {
         strategy = allocationAlgorithm;
         selectedEntitiesToAllocate = new LinkedList();
@@ -49,9 +56,11 @@ public class StrategyContext {
         }
     }
 
-    public void computeAllocationForTasksEK(List<Task> tasksToAllocate){
+    private void computeAllocationForTasksEK(List<Task> tasksToAllocate){
         numOfUnallocatedTasks = 0;
         numOfTasksInvalidForAllocation = 0;
+
+        //O(t)
         Iterator it = tasksToAllocate.iterator();
         while(it.hasNext()) {
             Task task = (Task)it.next();
@@ -74,7 +83,7 @@ public class StrategyContext {
     }
 
 
-    public void computeAllocationForTasksGreedy(List<Task> tasksToAllocate){
+    private void computeAllocationForTasksGreedy(List<Task> tasksToAllocate){
         numOfUnallocatedTasks = 0;
         numOfTasksInvalidForAllocation = 0;
         List<Task> highPriorityTasks = new ArrayList<>();
@@ -115,8 +124,8 @@ public class StrategyContext {
     }
 
     /**
-     *
-     * @param listOfTasks lists of tasks to Allocate. All the tasks in the list are of one priority level.
+     * A method that is called by all strategies.
+     * @param listOfTasks lists of tasks to Allocate.
      * @param priority priority level for logging purposes.
      */
     private void startAllocatingTasks(List<Task> listOfTasks, String priority) {
@@ -130,7 +139,7 @@ public class StrategyContext {
         }
     }
 
-    public void computeAllocationForProjects(List<Project> projectsToAllocate){
+    private void computeAllocationForProjects(List<Project> projectsToAllocate){
         numOfUnallocatedProjects =0;
         numOfProjectsInvalidForAllocation=0;
         totalProfitFromSelectedProjects = 0;
@@ -195,7 +204,7 @@ public class StrategyContext {
     }
 
     /**
-     * the method is used only for debugging purposes by computeAllocationForProjects method.
+     * the method is used only for debugging and logging purposes by computeAllocationForProjects method.
      */
     private void getTasksInfo(List<Project> projectsToAllocate) {
         Set<Pair<Task, Task>> taskPairs = new HashSet<>();

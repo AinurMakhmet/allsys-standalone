@@ -15,10 +15,19 @@ import java.util.*;
 public class MaximumProfitStrategy extends MaximumFlowAlgorithm {
     private static MaximumProfitStrategy ourInstance = new MaximumProfitStrategy();
 
+    /**
+     * Singleton pattern
+     * @return a single instance created of the MaximumProfitStrategy class
+     */
     public static MaximumProfitStrategy getInstance() {
         return ourInstance;
     }
 
+
+    /**
+     * Compute allocation for a list of tasks provided as an a parameter
+     * @param tasksToAllocate a list of tasks in a project that has been selected for allocation
+     */
     @Override
     public void allocate(List<Task> tasksToAllocate) {
         strategyClass = this.getClass();
@@ -26,6 +35,11 @@ public class MaximumProfitStrategy extends MaximumFlowAlgorithm {
         super.allocate(tasksToAllocate);
     }
 
+    /**
+     * performs Successive Shortest Path algorithm
+     * @param remainingTasksToAllocate
+     * @return updated remainingTasksToAllocate list
+     */
     @Override
     List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();

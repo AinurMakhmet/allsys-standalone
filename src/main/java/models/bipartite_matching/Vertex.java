@@ -5,12 +5,14 @@ import models.SystemData;
 import java.util.Comparator;
 
 /**
- * Created by nura on 15/01/17.
+ *  A class to model a vertex of the bipartite graph and flow network.
  */
 public class Vertex {
     private Integer vertexId;
     private VertexType vertexType;
     private int shortestPathWeightFromSource;
+
+    // cost represent the weight of the edge.
     private int cost;
 
     public Vertex() {

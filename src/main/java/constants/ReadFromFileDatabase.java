@@ -6,6 +6,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * Class to read sql statements from the files created using LargeDatasetGeenrator
+ * and write data to the DefaultDatabase.
+ */
 public class ReadFromFileDatabase {
 
 	public static void createInsertQueries(String employeeFile, String taskFile, String skillFile, String employeeSkillFile, String taskSkillFile, String projectFile) throws FileNotFoundException {

@@ -1,7 +1,9 @@
 package constants;
 
 /**
- * Taken from http://www.jensd.de/wordpress/?p=132
+ * Class is taken from the tutorial material on how to use FontAwesome icons in JavaFX applications
+ * http://www.jensd.de/wordpress/?p=132
+ * String-code names of FontAwesome icons.
  */
 public class AwesomeIcons {
 

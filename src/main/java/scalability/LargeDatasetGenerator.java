@@ -1,6 +1,5 @@
 package scalability;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,7 +8,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 /**
- * Created by nura on 16/02/17.
+ * Class used to generate data of different volume in scalability testing
  */
 public class LargeDatasetGenerator {
     public static final int numberOfTasks = 400;//numberOfEmployees*2;
@@ -26,6 +25,9 @@ public class LargeDatasetGenerator {
 
     private static String value1="", value2="", value3="", value4="", value5="";
 
+    /**
+     * generate files that contains sql statements for each entity type.
+     */
     public static void generateTestFiles() {
         try{
             PrintWriter writer = new PrintWriter("src/main/resources/large_dataset/Employees.txt", "UTF-8");
@@ -235,7 +237,8 @@ public class LargeDatasetGenerator {
     }
 
     /**
-     * http://stackoverflow.com/a/8409831
+     * The method is taken from http://stackoverflow.com/a/8409831
+     * Used to generate random skills for each employee and for task entities
      * @param array
      * @param n
      * @return

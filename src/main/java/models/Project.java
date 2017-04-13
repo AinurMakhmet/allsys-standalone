@@ -145,9 +145,11 @@ public class Project extends DatabaseEntity{
     }
 
     /**
-     * Gets a list of tasks that the project includes.
-     *
-     * @return a list of tasks that the project includes.
+     * Gets a list of project tasks.
+     * The method has been developed in the context
+     * of another project -  2nd year Software Engineering Group project at King's College London-
+     * https://github.com/musalbas/Nuclibook
+     * @return a list of project.
      * @see models.Task
      */
     public List<Task> getTasks() throws IOException {
@@ -163,15 +165,6 @@ public class Project extends DatabaseEntity{
                 task = iterator.next();
                 if (task != null) output.add(task);
             }
-
-            //TODO: review sorting
-            // sort by sequence
-            /*output.sort(new Comparator<Task>() {
-                @Override
-                public int compare(Task o1, Task o2) {
-                    return o1.getSequence() - o2.getSequence();
-                }
-            });*/
         }
         return output;
     }

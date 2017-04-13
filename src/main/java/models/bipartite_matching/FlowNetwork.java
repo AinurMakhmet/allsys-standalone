@@ -11,7 +11,7 @@ import servers.LocalServer;
 import java.util.*;
 
 /*
- *Created by nura on 15/01/17.
+ * A network used to model maximum flow  and minimum cost flow problems
 */
 public class FlowNetwork {
     private Map<Vertex, Map<Vertex, Boolean>> mapFromSource;
@@ -39,9 +39,9 @@ public class FlowNetwork {
             SOURCE = new Pair(SOURCE_VERTEX, new TreeMap<>(new Vertex.VertexComparator()));
         }
 
-        //initialises mapFromSource for Network flow
+        //initialises mapFromSource for flow network
         mapFromSource = bipartiteGraph.getTaskMap();
-        //initialises mapToSink for Network flow
+        //initialises mapToSink for flow network
         mapToSink = new HashMap<>();
         bipartiteGraph.getEmployeeMap().keySet().forEach(employeeVertex -> {
             Map<Vertex, Boolean> adjacentVertices = new HashMap();

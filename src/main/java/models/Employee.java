@@ -70,7 +70,9 @@ public class Employee extends DatabaseEntity{
 
     /**
      * Gets a list of skills that the employee possess.
-     *
+     * The method has been developed in the context
+     * of another project -  2nd year Software Engineering Group project at King's College London-
+     * https://github.com/musalbas/Nuclibook
      * @return a list of skills that the employee possess.
      * @see models.Skill
      */
@@ -87,15 +89,6 @@ public class Employee extends DatabaseEntity{
                 skill = iterator.next().getSkill();
                 if (skill != null) output.add(skill);
             }
-
-            //TODO: review sorting
-            // sort by sequence
-            /*output.sort(new Comparator<Skill>() {
-                @Override
-                public int compare(Skill o1, Skill o2) {
-                    return o1.getSequence() - o2.getSequence();
-                }
-            });*/
         }
         return output;
     }
@@ -111,7 +104,9 @@ public class Employee extends DatabaseEntity{
 
     /**
      * Gets a list of tasks that the employee is assigned to.
-     *
+     * The method has been developed in the context
+     * of another project -  2nd year Software Engineering Group project at King's College London-
+     * https://github.com/musalbas/Nuclibook
      * @return a list of tasks the employee is assigned to.
      * @see models.Task
      */
@@ -128,15 +123,6 @@ public class Employee extends DatabaseEntity{
                 task = iterator.next();
                 if (task != null) output.add(task);
             }
-
-            //TODO: review sorting
-            // sort by sequence
-            /*output.sort(new Comparator<Task>() {
-                @Override
-                public int compare(Task o1, Task o2) {
-                    return o1.getSequence() - o2.getSequence();
-                }
-            });*/
         }
         return output;
     }

@@ -12,15 +12,23 @@ import java.util.*;
 
 /**
  * Algorithm finds largest matching possible for a given set of tasks.
- * The algorithm based on Edmonds-Karp method (does breadth-first-search to find augmenting path).
+ * The algorithm based on Edmonds-Karp method (uses breadth-first-search to find anaugmenting path).
  */
 public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
     private static EdmondsKarpStrategy ourInstance = new EdmondsKarpStrategy();
 
+    /**
+     * Singleton pattern
+     * @return a single instance of the EdmondsKarpStrategy class
+     */
     public static EdmondsKarpStrategy getInstance() {
         return ourInstance;
     }
 
+    /**
+     * Compute allocation for a list of tasks provided as an a parameter
+     * @param tasksToAllocate a list of tasks selected for allocation
+     */
     @Override
     public void allocate(List<Task> tasksToAllocate) {
         strategyClass = this.getClass();
@@ -28,12 +36,16 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
         super.allocate(tasksToAllocate);
     }
 
+    /**O(VE^2) = O((t+e)*E^2) = O((t+e)t^2*e) = O(et^3+(te)^2)
+     * performs Edmonds-Karp algorithm
+     * @param remainingTasksToAllocate
+     * @return updated remainingTasksToAllocate list
+     */
     @Override
     List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
         //Starts constructing a path from the source;
         residualNetwork.printGraph();
-        //TODO: BFS, DFS is non-deterministic!!!!!!!
         while (findAugmentingPathBFS()) {
             constructResidualNetwork();
             residualNetwork.printGraph();

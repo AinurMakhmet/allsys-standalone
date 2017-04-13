@@ -26,7 +26,10 @@ public abstract class MaximumFlowAlgorithm implements Strategy{
     Map<Vertex, Pair<Vertex, Integer>> shortestPathMap;
     Map<Vertex, Vertex> augmentingPathBFS;
 
-
+    /**
+     * Compute allocation for a list of tasks provided as an a parameter
+     * @param tasksToAllocate a list of tasks selected for allocation
+     */
     @Override
     public void allocate(List<Task> tasksToAllocate) {
         List<Task> remainingTasksToAllocate = tasksToAllocate;
@@ -140,6 +143,10 @@ public abstract class MaximumFlowAlgorithm implements Strategy{
         }
     }
 
+    /**
+     *
+     * @return number of unallocated tasks
+     */
     @Override
     public int getNumberOfUnallocatedTasks() {
         return numOfUnallocatedTasks;

@@ -13,7 +13,7 @@ import models.Skill;
 import models.SystemData;
 
 /**
- * Created by nura on 06/12/16.
+ * models gui page Skills
  */
 public class SkillsPage extends AbstractPage{
     final ObservableList<Skill> data = FXCollections.observableArrayList(SystemData.allSkills);

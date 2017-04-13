@@ -7,7 +7,9 @@ import javafx.scene.control.LabelBuilder;
 
 
 /**
- * Taken from http://www.jensd.de/wordpress/?p=132
+ * Class is taken from the tutorial material on how to use FontAwesome icons in JavaFX applications
+ * http://www.jensd.de/wordpress/?p=132
+ * Create icons of FontAwesome libary to be used in GUI.
  */
 public class AwesomeDude {
 

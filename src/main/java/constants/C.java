@@ -5,6 +5,11 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  * A class for loading and storing constants from a database.properties file
+ *
+ * The class is taken from the source code of another software developed in
+ * 2nd year Software Engineering Group project at King's College London-
+ * https://github.com/musalbas/Nuclibook/blob/master/src/main/java/nuclibook/constants/C.java
+ *
  */
 public class C {
 

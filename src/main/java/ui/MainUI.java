@@ -46,6 +46,11 @@ public class MainUI {
         return pStage;
     }
 
+    /**
+     * Displays warning popup window
+     * @param header
+     * @param message
+     */
     public static void alertWarning(String header, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.initOwner(MainUI.getPrimaryStage());
@@ -59,6 +64,11 @@ public class MainUI {
         alert.showAndWait();
     }
 
+    /**
+     * Displays error popup window
+     * @param header
+     * @param message
+     */
     public static void alertError(String header, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.initOwner(MainUI.getPrimaryStage());
@@ -69,7 +79,11 @@ public class MainUI {
         alert.showAndWait();
     }
 
-
+    /**
+     * Displays infomration popup window
+     * @param header
+     * @param message
+     */
     public static void alertInformation(String header, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.initOwner(MainUI.getPrimaryStage());

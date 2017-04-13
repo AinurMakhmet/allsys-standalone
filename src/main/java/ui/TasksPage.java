@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by nura on 06/12/16.
+ * models gui page Tasks
  */
 public class TasksPage extends AbstractPage implements ChangeListener, EventHandler<ActionEvent>{
     final ObservableList<Task> data = FXCollections.observableArrayList(SystemData.getAllTasksMap().values());
@@ -395,12 +395,12 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 } else {
                     // if out of range, revert to previous value;
                     Task task = (Task) getTableView().getItems().get(table.getFocusModel().getFocusedCell().getRow());
-                    if (item!=null && item.equals(task.getStartTime())) {
+                    /*if (item!=null && item.equals(task.getStartTime())) {
 
                     } else if (item!=null && item.after(task.getEndTime())) {
                         item = getItem();
-                        MainUI.alertWarning(null, "Start date of the task must be before its end date");
-                    }
+                        //MainUI.alertWarning(null, "Start date of the task must be before its end date");
+                    }*/
                     super.updateItem(item, empty);
                 }
             }
@@ -419,6 +419,8 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                         !(t.getNewValue()).after(task.getEndTime()))
                                     || task.getEndTime()==null) {
                                 task.setStartTime(t.getNewValue());
+                            } else {
+                                MainUI.alertWarning(null, "Start date of the task must be before its end date");
                             }
                         } catch (DateTimeParseException exception) {
                             MainUI.alertError(null, "Please enter the date in the format of yyyy-MM-dd");
@@ -435,12 +437,12 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 } else {
                     // if out of range, revert to previous value;
                     Task task = (Task) getTableView().getItems().get(table.getFocusModel().getFocusedCell().getRow());
-                    if (item!=null && item.equals(task.getEndTime())) {
+                    /*if (item!=null && item.equals(task.getEndTime())) {
 
                     } else if (item!=null && item.before(task.getStartTime())) {
                         item = getItem();
-                        MainUI.alertWarning(null, "End date of the task must be after its start date");
-                    }
+                        //MainUI.alertWarning(null, "End date of the task must be after its start date");
+                    }*/
                     super.updateItem(item, empty);
                 }
             }
@@ -459,6 +461,8 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                                         && !(t.getNewValue()).before(task.getStartTime()))
                                     || task.getStartTime()==null) {
                                 task.setEndTime(t.getNewValue());
+                            } else {
+                                MainUI.alertWarning(null, "End date of the task must be after its start date");
                             }
 
                         } catch (DateTimeParseException exception) {

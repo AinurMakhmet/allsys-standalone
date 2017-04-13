@@ -1,7 +1,7 @@
 package models.bipartite_matching;
 
 /**
- * Created by nura on 18/01/17.
+ * Type of vertices
  */
 public enum VertexType {
     TASK,

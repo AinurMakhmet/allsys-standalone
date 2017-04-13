@@ -29,7 +29,7 @@ import java.util.*;
 
 
 /**
- * Created by nura on 06/12/16.
+ * Creates the carcas for all pages in the system.
  */
 public abstract class AbstractPage extends BorderPane{
     private VBox cardVBox;

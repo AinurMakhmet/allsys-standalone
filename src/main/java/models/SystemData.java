@@ -46,7 +46,7 @@ public class SystemData {
         getAllTasksMap();
         getAllEmployeesMap();
         getAllProjectsMap();
-        //skills is already initialised as it is final;
+        //list of skills is already populated when initialised;
     }
 
 

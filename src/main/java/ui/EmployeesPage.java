@@ -18,7 +18,7 @@ import models.Task;
 import java.io.IOException;
 
 /**
- * Created by nura on 06/12/16.
+ * models gui page Employees
  */
 public class EmployeesPage extends AbstractPage {
     final ObservableList<Employee> data = FXCollections.observableArrayList(SystemData.getAllEmployeesMap().values());
