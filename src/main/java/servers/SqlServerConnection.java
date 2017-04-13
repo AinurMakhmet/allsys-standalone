@@ -85,20 +85,20 @@ public class SqlServerConnection {
 
 	private static void dropTables(ConnectionSource connection) throws SQLException {
 		TableUtils.dropTable(connection, Employee.class, false);
-		TableUtils.dropTable(connection, Task.class, false);
 		TableUtils.dropTable(connection, Skill.class, false);
-		TableUtils.dropTable(connection, Project.class, false);
 		TableUtils.dropTable(connection, EmployeeSkill.class, false);
+		TableUtils.dropTable(connection, Task.class, false);
 		TableUtils.dropTable(connection, TaskSkill.class, false);
+		TableUtils.dropTable(connection, Project.class, false);
 	}
 
 	private static void createTables(ConnectionSource connection) throws SQLException {
 		TableUtils.createTableIfNotExists(connection, Employee.class);
-		TableUtils.createTableIfNotExists(connection, Task.class);
 		TableUtils.createTableIfNotExists(connection, Skill.class);
-		TableUtils.createTableIfNotExists(connection, Project.class);
 		TableUtils.createTableIfNotExists(connection, EmployeeSkill.class);
+		TableUtils.createTableIfNotExists(connection, Task.class);
 		TableUtils.createTableIfNotExists(connection, TaskSkill.class);
+		TableUtils.createTableIfNotExists(connection, Project.class);
 	}
 
 	private static void insertData(ConnectionSource connection) throws FileNotFoundException {
@@ -114,7 +114,7 @@ public class SqlServerConnection {
 			Dao<TaskSkill, Integer> taskSkillDao = DaoManager.createDao(connection, TaskSkill.class);
 			Dao<Project, Integer> projectDao = DaoManager.createDao(connection, Project.class);
 
-			LargeDatasetGenerator.generateTestFiles();
+			/*LargeDatasetGenerator.generateTestFiles();
 
 			ReadFromFileDatabase.createInsertQueries(
 					"src/main/resources/large_dataset/Employees.txt",
@@ -123,7 +123,7 @@ public class SqlServerConnection {
 					"src/main/resources/large_dataset/EmployeeSkills.txt",
 					"src/main/resources/large_dataset/TaskSkills.txt",
 					"src/main/resources/large_dataset/Projects.txt"
-			);
+			);*/
 
 			for (String q : DefaultDatabase.InsertQueriesEmployee) {
 				employeeDao.executeRaw(q);
@@ -133,6 +133,7 @@ public class SqlServerConnection {
 				taskDao.executeRaw(q);
 			}
 
+
 			for (String q : DefaultDatabase.InsertQueriesSkill) {
 				skillDao.executeRaw(q);
 			}
@@ -140,6 +141,7 @@ public class SqlServerConnection {
 			for (String q : DefaultDatabase.InsertQueriesEmployeeSkill) {
 				employeeSkillDao.executeRaw(q);
 			}
+
 
 			for (String q : DefaultDatabase.InsertQueriesTaskSkill) {
 				taskSkillDao.executeRaw(q);

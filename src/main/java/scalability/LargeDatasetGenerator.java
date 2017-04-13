@@ -12,9 +12,10 @@ import java.util.*;
  * Created by nura on 16/02/17.
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfEmployees = 5;
-    public static final int numberOfTasks = numberOfEmployees*2;
-    public static final int numberOfProjects = numberOfTasks/4;
+    public static final int numberOfTasks = 400;//numberOfEmployees*2;
+    public static final int numberOfProjects = numberOfTasks/10;
+
+    public static final int numberOfEmployees = 10;
     public static final int numberOfSkillLevels = 1;
     public static final int totalNumberOfSkills = numberOfSkillLevels*12;
     public static final int maxNumberOfSkillsPerEmployee = 3;
@@ -92,7 +93,7 @@ public class LargeDatasetGenerator {
             value2 = priorities[rand.nextInt(3)];
             startDate = getValidRandomDate();
             endDate = getValidRandomDate();
-            while (endDate.before(startDate)) {
+            while (!endDate.after(startDate)) {
                 endDate = getValidRandomDate();
             }
             value3 = getDateValueInString(startDate);

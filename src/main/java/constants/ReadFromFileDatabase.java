@@ -9,19 +9,20 @@ import java.util.Scanner;
 public class ReadFromFileDatabase {
 
 	public static void createInsertQueries(String employeeFile, String taskFile, String skillFile, String employeeSkillFile, String taskSkillFile, String projectFile) throws FileNotFoundException {
-		Scanner scanner = new Scanner(new File(employeeFile));
-		DefaultDatabase.InsertQueriesEmployee = new String[LargeDatasetGenerator.numberOfEmployees];
+		Scanner scanner = new Scanner(new File(taskFile));
+		DefaultDatabase.InsertQueriesTask = new String[LargeDatasetGenerator.numberOfTasks];
 		int i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesTask[i++] = scanner.nextLine();
+		}
+
+		scanner = new Scanner(new File(employeeFile));
+		DefaultDatabase.InsertQueriesEmployee = new String[LargeDatasetGenerator.numberOfEmployees];
+		i=0;
 		while(scanner.hasNextLine()) {
 			DefaultDatabase.InsertQueriesEmployee[i++] = scanner.nextLine();
 		}
 
-		scanner = new Scanner(new File(taskFile));
-		DefaultDatabase.InsertQueriesTask = new String[LargeDatasetGenerator.numberOfTasks];
-		i=0;
-		while(scanner.hasNextLine()) {
-			DefaultDatabase.InsertQueriesTask[i++] = scanner.nextLine();
-		}
 
 		scanner = new Scanner(new File(skillFile));
 		DefaultDatabase.InsertQueriesSkill = new String[LargeDatasetGenerator.totalNumberOfSkills];
