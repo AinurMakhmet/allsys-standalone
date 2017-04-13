@@ -3,7 +3,7 @@ package models;
 import com.j256.ormlite.field.DatabaseField;
 
 /**
- * Created by nura on 19/11/16.
+ * Models database entity.
  */
 public abstract class DatabaseEntity {
     @DatabaseField(generatedId = true)
