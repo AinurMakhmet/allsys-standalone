@@ -7,7 +7,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import scala.App;
 
 /**
  * Class that constructs UI
@@ -31,8 +30,11 @@ public class MainUI {
         Scene scene = new Scene(borderPane);
         scene.setFill(Color.GHOSTWHITE);
         scene.getStylesheets().add(String.valueOf(getClass().getClassLoader().getResource("main.css")));
-        Font.loadFont(App.class.getResource("/fontawesome-webfont.ttf").
+        /*Font.loadFont(App.class.getResource("/fontawesome-webfont.ttf").
+                toExternalForm(), 12);*/
+        Font.loadFont(getClass().getResource("/fontawesome-webfont.ttf").
                 toExternalForm(), 12);
+
 
 
         borderPane.setLeft(Sidebar.getInstance());

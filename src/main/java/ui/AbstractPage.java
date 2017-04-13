@@ -22,8 +22,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 import models.*;
-import org.junit.Assert;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -118,7 +116,6 @@ public abstract class AbstractPage extends BorderPane{
 
         setNewCard(propertyValues, null);
 
-        Assert.assertNotNull(scrollPane);
         cardVBox.getChildren().add(scrollPane);
         cardHBox.getChildren().add(cardVBox);
 
@@ -229,9 +226,7 @@ public abstract class AbstractPage extends BorderPane{
                                     for (TaskSkill tSkill: task.getTaskSkillObjects()) {
                                         if (tSkill.equals(taskSkill)) {
                                             taskSkill = tSkill;
-                                            Assert.assertNotNull(taskSkill.getId());
                                             TaskSkillUtils.deleteEntity(TaskSkill.class, taskSkill);
-                                            Assert.assertNull(TaskSkillUtils.getTaskSkill(taskSkill.getId()));
                                         }
                                     }
                                 } catch (IOException e1) {
@@ -252,7 +247,6 @@ public abstract class AbstractPage extends BorderPane{
                                 taskSkill.setSkill(skill);
                                 taskSkill.setTask((Task) dEntity);
                                 TaskSkillUtils.createEntity(TaskSkill.class, taskSkill);
-                                Assert.assertNotNull(taskSkill.getId());
                             }
 
                         });
@@ -286,9 +280,7 @@ public abstract class AbstractPage extends BorderPane{
                                     for (EmployeeSkill eSkill: employee.getEmployeeSkillObjects()) {
                                         if (eSkill.equals(employeeSkill)) {
                                             employeeSkill = eSkill;
-                                            Assert.assertNotNull(employeeSkill.getId());
                                             EmployeeSkillUtils.deleteEntity(EmployeeSkill.class, employeeSkill);
-                                            Assert.assertNull(EmployeeSkillUtils.getEntityById(EmployeeSkill.class, employeeSkill.getId()));
                                         }
                                     }
                                 } catch (IOException e1) {
@@ -309,7 +301,6 @@ public abstract class AbstractPage extends BorderPane{
                                 employeeSkill.setSkill(skill);
                                 employeeSkill.setEmployee((Employee) dEntity);
                                 EmployeeSkillUtils.createEntity(EmployeeSkill.class, employeeSkill);
-                                Assert.assertNotNull(employeeSkill.getId());
                             }
                         });
                         EmployeeUtils.updateEntity(employee);
