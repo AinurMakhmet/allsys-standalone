@@ -45,7 +45,6 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
     List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
         //Starts constructing a path from the source;
-        residualNetwork.printGraph();
         while (findAugmentingPathBFS()) {
             constructResidualNetwork();
             residualNetwork.printGraph();

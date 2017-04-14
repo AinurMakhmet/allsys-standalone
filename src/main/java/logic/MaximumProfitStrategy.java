@@ -44,15 +44,12 @@ public class MaximumProfitStrategy extends MaximumFlowAlgorithm {
     List<Task> runAllocationRound(List<Task> remainingTasksToAllocate) {
         matching = new HashMap<>();
         //Starts constructing a path from the source;
-        residualNetwork.printGraph();
         //TODO: compute a shortest-path tree T in G from v to all nodes reachable from v;
         while (findShortestAugmentingPath()) {
             constructResidualNetwork();
             residualNetwork.printGraph();
             findMatching();
         }
-        residualNetwork.printGraph();
-
         matching.forEach((a, b)-> {
             Task task = SystemData.getAllTasksMap().get(a.getVertexId());
             remainingTasksToAllocate.remove(task);

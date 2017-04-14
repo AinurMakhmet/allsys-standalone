@@ -44,14 +44,14 @@ public abstract class MaximumFlowAlgorithm implements Strategy{
             }
         }
         endTime = System.currentTimeMillis();
-        logger.info("Time for running algorithm: {} ms", (endTime-begTime));
+        //logger.info("Time for running algorithm: {} ms", (endTime-begTime));
     }
 
     boolean canAllocateMoreTasks(List<Task> remainingTasksToAllocate) {
         begTime = System.currentTimeMillis();
         residualNetwork = new FlowNetwork(new BipartiteGraph(strategyClass, remainingTasksToAllocate));
         endTime = System.currentTimeMillis();
-        logger.info("Time for constrcuting data structure: {} ms", (endTime-begTime));
+        //logger.info("Time for constrcuting data structure: {} ms", (endTime-begTime));
         return residualNetwork.getSource().getValue().size()>0;
     }
 

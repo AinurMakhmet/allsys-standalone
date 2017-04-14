@@ -521,13 +521,16 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
         }
         tasksToAllocate = selectedTasks;
         if (((Button)event.getSource()).equals(greedyRecButton)) {
-            LocalServer.gLogger.info("GREEDY");
+            LocalServer.gLogger.info("GREEDY STRATEGY");
             new StrategyContext(GreedyStrategy.getInstance(), tasksToAllocate);
         } else if (((Button)event.getSource()).equals(ekRecButton)) {
-            LocalServer.ekLogger.info("EK");
+            LocalServer.ekLogger.info("EDMONDS-KARP STRATEGY");
             new StrategyContext(EdmondsKarpStrategy.getInstance(), tasksToAllocate);
         } else {
             return;
+        }
+        for (Task task: SystemData.getAllTasksMap().values()) {
+            LocalServer.iLogger.info(task.getRecommendation());
         }
         table.refresh();
         MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnallocatedTasks()

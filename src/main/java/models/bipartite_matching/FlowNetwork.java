@@ -50,9 +50,10 @@ public class FlowNetwork {
             //LocalServer.ekLogger.trace("employee "+ employeeId);
         });
 
-
         //initialises source
         mapFromSource.keySet().forEach(taskVertex ->  SOURCE.getValue().put(taskVertex, false));
+
+        printGraph();
     }
 
     public Map<Vertex, Map<Vertex, Boolean>> getMapFromSource() {
@@ -73,7 +74,7 @@ public class FlowNetwork {
 
     public void printGraph() {
         logger.trace("\n==========================NETWORK START==============");
-        logger.trace("------------------------Edges from SOURCE to---------: ");
+        logger.trace("------------------------Edges from SOURCE ---------: ");
         Map<Vertex, Boolean> sourceEdges = SOURCE.getValue();
         sourceEdges.forEach((vertex, isVisited) -> logger.trace("\tsource: {}", vertex.toString()));
         logger.trace("-------------------------Edges from SET 1---------: ");

@@ -136,4 +136,11 @@ public class Skill extends DatabaseEntity{
         return getId().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "Skill{" +
+                "name='" + name + '\'' +
+               //", level='" + level + '\'' +
+                '}';
+    }
 }

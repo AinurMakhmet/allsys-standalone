@@ -8,7 +8,10 @@ import javafx.scene.control.LabelBuilder;
 
 /**
  * Class is taken from the tutorial material on how to use FontAwesome icons in JavaFX applications
+ * (see the link below.)
+ * The font size has been changed from original 16 to 14.
  * http://www.jensd.de/wordpress/?p=132
+ *
  * Create icons of FontAwesome libary to be used in GUI.
  */
 public class AwesomeDude {

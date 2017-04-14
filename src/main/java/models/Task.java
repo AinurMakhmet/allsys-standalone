@@ -266,7 +266,7 @@ public class Task extends DatabaseEntity{
         return true;
     }
 
-    public String toString() {
+    /*public String toString() {
         String toReturn =  "Task "+ name + "(ID = " + getId()+")"
                 + " that starts on " + startTime+ " and ends on " + endTime;
 
@@ -276,7 +276,68 @@ public class Task extends DatabaseEntity{
         } else {
             toReturn+=" with no recommended assignee";
         }
+        String skillsString = "";
+        try {
+            for (Skill s: getSkills()) {
+                skillsString += s.toString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        toReturn+=" requires skills "+ skillsString;
+
             return toReturn;
+    }*/
+
+    @Override
+    public String toString() {
+        String toReturn="";
+
+        if (recommendedAssignee!=null) {
+            toReturn = "Task{" +
+                    "name='" + name + '\'' +
+                    '}';
+            toReturn += " is recommended to be assigned to employee " + recommendedAssignee.getFirstName()
+                    + " " + recommendedAssignee.getLastName() + "(ID = " + recommendedAssignee.getId() + ")";
+        } else {
+
+            String skillsString = "";
+            try {
+                for (Skill s: getSkills()) {
+                    skillsString += s.toString();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            toReturn = "Task{" +
+                    "name='" + name + '\'' +
+                    ", priority=" + priority +
+                    ", endTime=" + endTime +
+                    ", startTime=" + startTime +
+                    //", employee=" + employee +
+                    //", project=" + project +
+                    ", requiredSkills=[" + skillsString +"]"+
+                    //", possibleAssignees=" + possibleAssignees +
+                    //", recommendedAssignee=" + recommendedAssignee +
+                    //", recommendedAssigneeName='" + recommendedAssigneeName + '\'' +
+                    //", employeeName='" + employeeName + '\'' +
+                    '}';
+        }
+
+        return toReturn;
     }
 
+    public String getRecommendation() {
+        String toReturn="Task{" +
+                "name='" + name + '\'' +
+                '}';
+
+        if (recommendedAssignee!=null) {
+            toReturn += " is recommended to be assigned to employee " + recommendedAssignee.getFirstName()
+                    + " " + recommendedAssignee.getLastName() + "(ID = " + recommendedAssignee.getId() + ")";
+        } else {
+            toReturn+=" with no recommended assignee";
+        }
+        return toReturn;
+    }
 }

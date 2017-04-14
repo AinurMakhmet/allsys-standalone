@@ -155,4 +155,29 @@ public class Employee extends DatabaseEntity{
     public int hashCode() {
         return getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+        String matchedTasksString = "";
+        for (Task t: matchedTasks) {
+            matchedTasksString += t.toString()+ ", ";
+        }
+
+        String skillsString = "";
+        try {
+            for (Skill s: getSkills()) {
+                skillsString += s.toString()+ ", ";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "Employee{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dailySalary=" + dailySalary +
+                ", skills=[" + skillsString +"]"+
+                //", matchedTasks=[" + matchedTasksString +"]"+
+                '}';
+    }
 }

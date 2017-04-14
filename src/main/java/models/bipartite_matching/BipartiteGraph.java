@@ -38,7 +38,7 @@ public class BipartiteGraph {
         } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
         } else if (strategyClass.equals(MaximumProfitStrategy.class)) {
-            logger = LocalServer.gLogger;
+            logger = LocalServer.mpLogger;
         }
         //O(te(s^2)) - greedy, O(et*s^2)+ O(e*t^2) max flow
         for (Task task: tasksToAllocate) {
@@ -72,6 +72,7 @@ public class BipartiteGraph {
                 e.printStackTrace();
             }
         }
+        printGraph();
     }
 
     //Complexity - O(e)
