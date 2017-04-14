@@ -27,16 +27,16 @@ public class DefaultDatabase {
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee5', 'Emin', 3);",
 */
 //Evaluation
-			/*"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '1', 1);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '1', 1);",
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '2', 2);",
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '3', 3);",
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '4', 4);",
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '5', 5);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '6', 6);"*/
-//Evaluation
-			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '1', 3);",
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '6', 6);"
+//Test1 -task
+			/*"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '1', 3);",
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '2', 2);",
-			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '3', 4);"
+			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '3', 4);"*/
 
 };
 
@@ -52,7 +52,6 @@ public class DefaultDatabase {
 			//"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task2', 'LOW', '2017-1-7', '2017-1-29', 1);",
 			//"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task3', 'LOW', '2017-1-7', '2017-1-28', 1);",
 			//Evaluation
-/*
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task1', 'HIGH', '2017-5-4', '2017-5-29');",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task2', 'MEDIUM', '2017-1-3', '2017-2-13');",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task3', 'MEDIUM', '2017-3-27', '2017-4-4');",
@@ -65,9 +64,14 @@ public class DefaultDatabase {
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task10', 'HIGH', '2017-1-1', '2017-3-20');",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task11', 'MEDIUM', '2017-4-8', '2017-5-8');",
 			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`) VALUES ('Task12', 'MEDIUM', '2017-4-4', '2017-5-8');"
-*///Test1 - MP
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task1', 'LOW', '2017-1-7', '2017-1-24', 1);",
-			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task2', 'LOW', '2017-1-26', '2017-1-29', 1);",
+//Test1 - MP
+/*
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task1', 'HIGH', '2017-1-7', '2017-1-4', 1);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task2', 'HIGH', '2017-1-26', '2017-1-29', 1);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task3', 'MEDIUM', '2017-1-26', '2017-1-29', 1);",
+			"INSERT INTO `task` (`name`, `priority`, `start_time`, `end_time`, `project_id`) VALUES ('Task4', 'MEDIUM', '2017-1-26', '2017-1-29', 1);",
+*/
+
 
 
 
@@ -112,7 +116,7 @@ public class DefaultDatabase {
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('4', '3');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('5', '1');"*/
 			//Evaluation
-				/*"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '4');",
+				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '4');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '12');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '3');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '1');",
@@ -122,14 +126,19 @@ public class DefaultDatabase {
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('5', '5');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('5', '10');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('6', '8');",
-				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('6', '12');"*/
+				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('6', '12');"
 				//Test1-MP
-				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '1');",
+/*				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '1');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '2');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '1');",
 				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '2');",
-				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '2');"
-};
+				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('3', '2');"*/
+//Test 1- Task
+				/*"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '1');",
+				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('1', '2');",
+				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '3');",
+				"INSERT INTO `employee_skill` (`employee_id`, `skill_id`) VALUES ('2', '1');"*/
+        };
 	public static String[] InsertQueriesTaskSkill = new String[]{
 			//Test1
 			/*"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '1');",
@@ -138,11 +147,11 @@ public class DefaultDatabase {
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('4', '4');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('5', '5');",
 	*/		//Test2
-			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '1');",
+/*			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '1');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('2', '2');",
-			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('3', '3');",
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('3', '3');",*/
 			//Evaluation
-			/*"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '12');",
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '12');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('2', '10');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('3', '6');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('4', '12');",
@@ -153,10 +162,12 @@ public class DefaultDatabase {
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('9', '4');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('10', '9');",
 			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('11', '2');",
-			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('12', '12');"*/
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('12', '12');"
 			//Test1-MP
-			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '1');",
-			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('2', '2');"
+/*			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('1', '1');",
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('2', '2');",
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('3', '3');",
+			"INSERT INTO `task_skill` (`task_id`, `skill_id`) VALUES ('4', '3');"*/
 
 
 };

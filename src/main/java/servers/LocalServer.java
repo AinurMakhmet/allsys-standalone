@@ -3,6 +3,8 @@ package servers;
 import constants.C;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import models.Employee;
+import models.Task;
 import models.SystemData;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +36,12 @@ public class LocalServer extends Application{
             C.initConstants();
             SqlServerConnection.acquireConnection();
             SystemData.getDataFromDatabase();
+            for (Employee employee: SystemData.getAllEmployeesMap().values()) {
+                iLogger.info(employee.toString());
+            }
+            for (Task task: SystemData.getAllTasksMap().values()) {
+                iLogger.info(task.toString());
+            }
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
