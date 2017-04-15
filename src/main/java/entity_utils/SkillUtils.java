@@ -5,7 +5,6 @@ import models.Skill;
 import java.util.List;
 
 /**
- *
  * A class for reading data from the Skill table in the database.
  * The class is based on utill classes of another software developed in
  * 2nd year Software Engineering Group project at King's College London-

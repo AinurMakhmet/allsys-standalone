@@ -14,6 +14,9 @@ import java.util.List;
 
 /**
  * A class for reading data from the Task table in the database.
+ * The class is based on utill classes of another software developed in
+ * 2nd year Software Engineering Group project at King's College London-
+ * https://github.com/musalbas/Nuclibook
  */
 public class TaskUtils extends AbstractEntityUtils {
 	private static final String QUERY_TASKS_VALID_FOR_ALLOCATION =
@@ -113,10 +116,7 @@ public class TaskUtils extends AbstractEntityUtils {
 			}
 		}
 		return null;
-
-
 	}
-
 
 	/**
 	 * Updates the specified record in the database.
