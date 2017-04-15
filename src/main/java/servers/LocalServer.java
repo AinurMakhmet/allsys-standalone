@@ -36,12 +36,6 @@ public class LocalServer extends Application{
             C.initConstants();
             SqlServerConnection.acquireConnection();
             SystemData.getDataFromDatabase();
-            for (Employee employee: SystemData.getAllEmployeesMap().values()) {
-                iLogger.info(employee.toString());
-            }
-            for (Task task: SystemData.getAllTasksMap().values()) {
-                iLogger.info(task.toString());
-            }
         } catch (ConfigurationException e) {
             e.printStackTrace();
         }
