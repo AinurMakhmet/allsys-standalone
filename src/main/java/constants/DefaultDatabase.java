@@ -1,7 +1,13 @@
 package constants;
 
+import scalability.LargeDatasetGenerator;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 /**
- *The class is based on class of another software developed in
+ *The insiparation of having this class is taken from a class of another software developed in
  * 2nd year Software Engineering Group project at King's College London-
  * https://github.com/musalbas/Nuclibook/blob/master/src/main/java/nuclibook/constants/DefaultDatabase.java
 
@@ -9,6 +15,61 @@ package constants;
  * Used to test software during development process.
  */
 public class DefaultDatabase {
+	/**
+	 * reads sql statements from the files created using LargeDatasetGeenrator
+	 * and write data to the DefaultDatabase.
+	 * @param employeeFile file that contains sql insert statements of employee entities
+	 * @param taskFile file that contains sql insert statements of task entities
+	 * @param skillFile file that contains sql insert statements of skill entities
+	 * @param employeeSkillFile file that contains sql insert statements of employeeSkill entities
+	 * @param taskSkillFile file that contains sql insert statements of taskSkill entities
+	 * @param projectFile file that contains sql insert statements of project entities
+	 * @throws FileNotFoundException
+	 */
+	public static void createInsertQueries(String employeeFile, String taskFile, String skillFile, String employeeSkillFile, String taskSkillFile, String projectFile) throws FileNotFoundException {
+		Scanner scanner = new Scanner(new File(taskFile));
+		DefaultDatabase.InsertQueriesTask = new String[LargeDatasetGenerator.numberOfTasks];
+		int i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesTask[i++] = scanner.nextLine();
+		}
+
+		scanner = new Scanner(new File(employeeFile));
+		DefaultDatabase.InsertQueriesEmployee = new String[LargeDatasetGenerator.numberOfEmployees];
+		i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesEmployee[i++] = scanner.nextLine();
+		}
+
+		scanner = new Scanner(new File(skillFile));
+		DefaultDatabase.InsertQueriesSkill = new String[LargeDatasetGenerator.totalNumberOfSkills];
+		i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesSkill[i++] = scanner.nextLine();
+		}
+
+		scanner = new Scanner(new File(employeeSkillFile));
+		DefaultDatabase.InsertQueriesEmployeeSkill = new String[LargeDatasetGenerator.numberOfEmployeeSkillsRows];
+		i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesEmployeeSkill[i++] = scanner.nextLine();
+		}
+
+		scanner = new Scanner(new File(taskSkillFile));
+		DefaultDatabase.InsertQueriesTaskSkill = new String[LargeDatasetGenerator.numberOfTaskSkillsRows];
+		i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesTaskSkill[i++] = scanner.nextLine();
+		}
+
+		scanner = new Scanner(new File(projectFile));
+		DefaultDatabase.InsertQueriesProject = new String[LargeDatasetGenerator.numberOfProjects];
+		i=0;
+		while(scanner.hasNextLine()) {
+			DefaultDatabase.InsertQueriesProject[i++] = scanner.nextLine();
+		}
+	}
+
 	public static String[] InsertQueriesEmployee = new String[]{
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '1', 3);",
 			"INSERT INTO `employee` (`first_name`, `last_name`, `daily_salary`) VALUES ('Employee', '2', 2);",

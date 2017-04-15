@@ -7,7 +7,6 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import constants.C;
 import constants.DefaultDatabase;
-import constants.ReadFromFileDatabase;
 import models.*;
 import scalability.LargeDatasetGenerator;
 
@@ -71,19 +70,14 @@ public class SqlServerConnection {
 	 * @param connection The connection source, linked to the DB to be used.
 	 */
 	public static void initDB(ConnectionSource connection) throws SQLException, IOException {
-
 		try {
 			dropTables(connection);
-
 			createTables(connection);
-
 		} catch (NullPointerException | SQLException e) {
 			e.printStackTrace();
 			LocalServer.fatalError("database tables could not be fully created");
 		}
-
 		insertData(connection);
-
 		//TODO: close connection to DB
 	}
 
@@ -106,7 +100,6 @@ public class SqlServerConnection {
 	}
 
 	private static void insertData(ConnectionSource connection) throws FileNotFoundException {
-
 		//export default database
 		try {
 			Dao<Employee, Integer> employeeDao = DaoManager.createDao(connection, Employee.class);
@@ -116,43 +109,34 @@ public class SqlServerConnection {
 			Dao<TaskSkill, Integer> taskSkillDao = DaoManager.createDao(connection, TaskSkill.class);
 			Dao<Project, Integer> projectDao = DaoManager.createDao(connection, Project.class);
 
-			/*LargeDatasetGenerator.generateTestFiles();
+			LargeDatasetGenerator.generateTestFiles();
 
-			ReadFromFileDatabase.createInsertQueries(
+			DefaultDatabase.createInsertQueries(
 					"src/main/resources/large_dataset/Employees.txt",
 					"src/main/resources/large_dataset/Tasks.txt",
 					"src/main/resources/large_dataset/Skills.txt",
 					"src/main/resources/large_dataset/EmployeeSkills.txt",
 					"src/main/resources/large_dataset/TaskSkills.txt",
 					"src/main/resources/large_dataset/Projects.txt"
-			);*/
-
+			);
 			for (String q : DefaultDatabase.InsertQueriesEmployee) {
 				employeeDao.executeRaw(q);
 			}
-
 			for (String q : DefaultDatabase.InsertQueriesTask) {
 				taskDao.executeRaw(q);
 			}
-
-
 			for (String q : DefaultDatabase.InsertQueriesSkill) {
 				skillDao.executeRaw(q);
 			}
-
 			for (String q : DefaultDatabase.InsertQueriesEmployeeSkill) {
 				employeeSkillDao.executeRaw(q);
 			}
-
-
 			for (String q : DefaultDatabase.InsertQueriesTaskSkill) {
 				taskSkillDao.executeRaw(q);
 			}
-
 			for (String q : DefaultDatabase.InsertQueriesProject) {
 				projectDao.executeRaw(q);
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 			LocalServer.fatalError("database tables could not be fully initialised");
