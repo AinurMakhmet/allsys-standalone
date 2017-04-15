@@ -1,7 +1,6 @@
 package logic;
 
 import javafx.util.Pair;
-import models.DatabaseEntity;
 import models.Project;
 import models.SystemData;
 import models.Task;
@@ -10,7 +9,6 @@ import servers.LocalServer;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A class that determines what strategy to call base on the constrcutor parameters.
@@ -49,49 +47,24 @@ public class StrategyContext {
             computeAllocationForProjects((List<Project>)selectedEntitiesToAllocate);
         } else if (strategy.getClass().equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
-            computeAllocationForTasksEK((List<Task>)selectedEntitiesToAllocate);
+            computeAllocationForTasks((List<Task>)selectedEntitiesToAllocate);
         } else if (strategy.getClass().equals(GreedyStrategy.class)) {
             logger = LocalServer.gLogger;
-            computeAllocationForTasksGreedy((List<Task>)selectedEntitiesToAllocate);
+            computeAllocationForTasks((List<Task>)selectedEntitiesToAllocate);
         }
     }
 
-    private void computeAllocationForTasksEK(List<Task> tasksToAllocate){
-        numOfUnallocatedTasks = 0;
-        numOfTasksInvalidForAllocation = 0;
-
-        //O(t)
-        Iterator it = tasksToAllocate.iterator();
-        while(it.hasNext()) {
-            Task task = (Task)it.next();
-            try {
-                if(task.getEmployee()==null && task.getEndTime()!=null && task.getStartTime()!=null && task.getSkills().size()>0) {
-                    continue;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            it.remove();
-            numOfTasksInvalidForAllocation++;
-        }
-        numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
-        begTime = System.currentTimeMillis();
-        startAllocatingTasks(tasksToAllocate, "all");
-        endTime = System.currentTimeMillis();
-        logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
-    }
-
-
-    private void computeAllocationForTasksGreedy(List<Task> tasksToAllocate){
+    private void computeAllocationForTasks(List<Task> tasksToAllocate){
         numOfUnallocatedTasks = 0;
         numOfTasksInvalidForAllocation = 0;
         List<Task> highPriorityTasks = new ArrayList<>();
         List<Task> mediumPriorityTasks = new ArrayList<>();
         List<Task> lowPriorityTasks = new ArrayList<>();
 
-        //distribute tasks of different priority into separate list to deal with them separately.
-        for (Task task: tasksToAllocate) {
+        //O(t)
+        Iterator it = tasksToAllocate.iterator();
+        while(it.hasNext()) {
+            Task task = (Task)it.next();
             try {
                 if(task.getEmployee()==null && task.getEndTime()!=null && task.getStartTime()!=null && task.getSkills().size()>0) {
                     switch (task.getPriority()) {
@@ -110,21 +83,21 @@ public class StrategyContext {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            it.remove();
             numOfTasksInvalidForAllocation++;
         }
         numOfUnallocatedTasks = numOfTasksInvalidForAllocation;
-
         begTime = System.currentTimeMillis();
         startAllocatingTasks(highPriorityTasks, "high");
         startAllocatingTasks(mediumPriorityTasks, "medium");
         startAllocatingTasks(lowPriorityTasks, "low");
         endTime = System.currentTimeMillis();
         logger.info(strategy.getClass().getSimpleName()+": Total time: {} ms", (endTime-begTime));
-        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
+        logger.info("Total number of unallocated tasks: {}. Among them number of tasks invalid for allocation: {}\n", numOfUnallocatedTasks, numOfTasksInvalidForAllocation);
     }
 
     /**
-     * A method that is called by all strategies.
+     * A method that is used by all strategies.
      * @param listOfTasks lists of tasks to Allocate.
      * @param priority priority level for logging purposes.
      */
@@ -209,7 +182,7 @@ public class StrategyContext {
     private void getTasksInfo(List<Project> projectsToAllocate) {
         Set<Pair<Task, Task>> taskPairs = new HashSet<>();
         for (Project project : projectsToAllocate) {
-            logger.info(project.getName().toString());
+            LocalServer.iLogger.info(project.getName().toString());
             try {
                 for (Task task1: project.getTasks()) {
                     project.getTasks().forEach(task2 -> {
@@ -219,13 +192,13 @@ public class StrategyContext {
                                 taskPairs.add(new Pair(task1, task2));
                         }
                     });
-                    logger.info(task1.toString());
+                    LocalServer.iLogger.info(task1.toString());
                 }
                 for (Pair<Task, Task> taskPair: taskPairs) {
                     Task task0 = taskPair.getKey();
                     Task task1 = taskPair.getValue();
                     if (task0.timeOverlapWith(task1)) {
-                        logger.info("Task {} has timeOverllaping with Task {}", task0.getId(), task1.getId());
+                        LocalServer.iLogger.info("Task {} has timeOverllaping with Task {}", task0.getId(), task1.getId());
                     }
                 }
             } catch (IOException e) {

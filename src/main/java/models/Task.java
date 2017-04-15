@@ -312,10 +312,10 @@ public class Task extends DatabaseEntity{
             toReturn = "Task{" +
                     "name='" + name + '\'' +
                     ", priority=" + priority +
-                    ", endTime=" + endTime +
                     ", startTime=" + startTime +
+                    ", endTime=" + endTime +
                     //", employee=" + employee +
-                    //", project=" + project +
+                    ", project=" + project +
                     ", requiredSkills=[" + skillsString +"]"+
                     //", possibleAssignees=" + possibleAssignees +
                     //", recommendedAssignee=" + recommendedAssignee +

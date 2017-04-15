@@ -21,7 +21,7 @@ public class FlowNetwork {
     public static final Vertex SOURCE_VERTEX = new Vertex(SOURCE_ID, VertexType.SOURCE);
     public static final Vertex SINK_VERTEX = new Vertex(SINK_ID, VertexType.SINK);
 
-    private Pair<Vertex, Map<Vertex, Boolean>> SOURCE;// = new Pair(SOURCE_VERTEX, new HashMap<>());
+    private Pair<Vertex, Map<Vertex, Boolean>> SOURCE = new Pair(SOURCE_VERTEX, new HashMap<>());
     private final Pair<Vertex, Map<Vertex, Boolean>> SINK = new Pair(SINK_VERTEX, new HashMap<>());
 
     private Class strategyClass;
@@ -33,10 +33,8 @@ public class FlowNetwork {
         strategyClass = bipartiteGraph.strategyClass;
         if (strategyClass.equals(MaximumProfitStrategy.class)) {
             logger = LocalServer.mpLogger;
-            SOURCE = new Pair(SOURCE_VERTEX, new HashMap<>());
         } else if (strategyClass.equals(EdmondsKarpStrategy.class)) {
             logger = LocalServer.ekLogger;
-            SOURCE = new Pair(SOURCE_VERTEX, new TreeMap<>(new Vertex.VertexComparator()));
         }
 
         //initialises mapFromSource for flow network
