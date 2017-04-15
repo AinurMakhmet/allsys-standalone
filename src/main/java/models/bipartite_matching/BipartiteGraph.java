@@ -230,5 +230,4 @@ public class BipartiteGraph {
     public List<Pair<Integer, ArrayList>> getListOfAdjacencyLists() {
         return listOfAdjacencyLists;
     }
-
 }

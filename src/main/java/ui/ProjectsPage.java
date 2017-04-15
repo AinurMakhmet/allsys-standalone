@@ -35,7 +35,6 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     private ListChangeListener<Project> multipleSelectionListener;
     ChangeListener changeListener;
 
-
     private static ProjectsPage ourInstance = new ProjectsPage();
 
     public static ProjectsPage getInstance() {
@@ -319,6 +318,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                 }
         );
 
+        //based on http://stackoverflow.com/a/34701925
         price.setCellFactory(col -> new TextFieldTableCell<Project, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {

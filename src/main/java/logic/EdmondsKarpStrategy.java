@@ -16,7 +16,6 @@ import java.util.*;
  */
 public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
     private static EdmondsKarpStrategy ourInstance = new EdmondsKarpStrategy();
-
     /**
      * Singleton pattern
      * @return a single instance of the EdmondsKarpStrategy class
@@ -63,7 +62,7 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
 
     /**
      * O(m), where m is the number of edges in the residual graph.
-     * @return
+     * @return true if path is found, otherwise returns false
      */
     private boolean findAugmentingPathBFS() {
         augmentingPathBFS = new HashMap<>();
@@ -86,6 +85,11 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
         return false;
     }
 
+    /**
+     *
+     * @param parentVertex
+     * @return vertex that is child of parentVertex
+     */
     @Override
     Vertex findUnvisitedChild(Vertex parentVertex) {
         Map<Vertex, Boolean> adjacentVertices=null;
@@ -119,6 +123,4 @@ public class EdmondsKarpStrategy extends MaximumFlowAlgorithm {
         }
         return vertexToReturn;
     }
-
-
 }

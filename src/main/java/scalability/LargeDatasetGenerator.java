@@ -11,10 +11,9 @@ import java.util.*;
  * Class used to generate data of different volume in scalability testing
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfTasks = 400;//numberOfEmployees*2;
-    public static final int numberOfProjects = numberOfTasks/10;
-
-    public static final int numberOfEmployees = 10;
+    public static final int numberOfTasks = 20;//numberOfEmployees*2;
+    public static final int numberOfProjects = numberOfTasks/5;
+    public static final int numberOfEmployees = 20;
     public static final int numberOfSkillLevels = 1;
     public static final int totalNumberOfSkills = numberOfSkillLevels*12;
     public static final int maxNumberOfSkillsPerEmployee = 3;
@@ -195,8 +194,6 @@ public class LargeDatasetGenerator {
                 builder.delete(0, builder.length());
             }
         }
-
-
     }
 
     private static void generateEmployeeSkills(PrintWriter writer) {
@@ -233,7 +230,6 @@ public class LargeDatasetGenerator {
                 builder.delete(0, builder.length());
             }
         }
-
     }
 
     /**
@@ -256,7 +252,6 @@ public class LargeDatasetGenerator {
         Arrays.sort(answer);
 
         return answer;
-
     }
 
 

@@ -300,7 +300,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     }
 
     private void setEditableCells() {
-
+        //based on http://stackoverflow.com/a/34701925
         employeeId.setCellFactory(col -> new TextFieldTableCell<Task, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {

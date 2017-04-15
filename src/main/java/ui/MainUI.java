@@ -34,9 +34,6 @@ public class MainUI {
                 toExternalForm(), 12);*/
         Font.loadFont(getClass().getResource("/fontawesome-webfont.ttf").
                 toExternalForm(), 12);
-
-
-
         borderPane.setLeft(Sidebar.getInstance());
         borderPane.setCenter(TasksPage.getInstance());
         borderPane.setRight(TasksPage.getInstance().addCard());
@@ -95,5 +92,4 @@ public class MainUI {
         alert.setResizable(true);
         alert.showAndWait();
     }
-
 }

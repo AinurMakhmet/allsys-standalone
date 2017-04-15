@@ -23,7 +23,6 @@ import java.io.IOException;
 public class EmployeesPage extends AbstractPage {
     final ObservableList<Employee> data = FXCollections.observableArrayList(SystemData.getAllEmployeesMap().values());
     private TableColumn firstName, lastName, dailySalary;
-
     private static EmployeesPage ourInstance = new EmployeesPage();
 
     public static EmployeesPage getInstance() {
@@ -89,29 +88,21 @@ public class EmployeesPage extends AbstractPage {
         firstName = new TableColumn("First Name");
         lastName= new TableColumn("Last Name");
         dailySalary = new TableColumn("Daily Salary");
-
         id.setMinWidth(50);
         id.setCellValueFactory(
                 new PropertyValueFactory<Employee, String>("id"));
-
         firstName.setMinWidth(100);
         firstName.setCellValueFactory(
                 new PropertyValueFactory<Employee, String>("firstName"));
-
         lastName.setMinWidth(150);
         lastName.setCellValueFactory(
                 new PropertyValueFactory<Employee, String>("lastName"));
-
         dailySalary.setMinWidth(100);
         dailySalary.setCellValueFactory(
                 new PropertyValueFactory<Employee, String>("dailySalary"));
-
-
         table.getColumns().addAll(id, firstName, lastName, dailySalary);
         table.setItems(data);
-
         setEditableCells();
-
         table.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection!=null) {
                 try {
@@ -146,7 +137,6 @@ public class EmployeesPage extends AbstractPage {
                 //setNewCard(newSelection.toString());
             }
         });
-
         deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -191,8 +181,7 @@ public class EmployeesPage extends AbstractPage {
                 ).setLastName(name);
             }
         });
-
-        //http://stackoverflow.com/a/34701925
+        //based on http://stackoverflow.com/a/34701925
         dailySalary.setCellFactory(col -> new TextFieldTableCell<Employee, Integer>(new EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {

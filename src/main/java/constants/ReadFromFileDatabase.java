@@ -11,6 +11,11 @@ import java.util.Scanner;
  * and write data to the DefaultDatabase.
  */
 public class ReadFromFileDatabase {
+	public static String[] InsertQueriesEmployee;
+	public static String[] InsertQueriesTask;
+	public static String[] InsertQueriesSkill;
+	public static String[] InsertQueriesEmployeeSkill;
+	public static String[] InsertQueriesTaskSkill;
 
 	public static void createInsertQueries(String employeeFile, String taskFile, String skillFile, String employeeSkillFile, String taskSkillFile, String projectFile) throws FileNotFoundException {
 		Scanner scanner = new Scanner(new File(taskFile));
@@ -26,7 +31,6 @@ public class ReadFromFileDatabase {
 		while(scanner.hasNextLine()) {
 			DefaultDatabase.InsertQueriesEmployee[i++] = scanner.nextLine();
 		}
-
 
 		scanner = new Scanner(new File(skillFile));
 		DefaultDatabase.InsertQueriesSkill = new String[LargeDatasetGenerator.totalNumberOfSkills];
@@ -55,17 +59,5 @@ public class ReadFromFileDatabase {
 		while(scanner.hasNextLine()) {
 			DefaultDatabase.InsertQueriesProject[i++] = scanner.nextLine();
 		}
-
 	}
-
-	public static String[] InsertQueriesEmployee;
-
-	public static String[] InsertQueriesTask;
-
-	public static String[] InsertQueriesSkill;
-
-	public static String[] InsertQueriesEmployeeSkill;
-
-	public static String[] InsertQueriesTaskSkill;
-
 }

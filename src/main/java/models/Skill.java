@@ -28,7 +28,6 @@ public class Skill extends DatabaseEntity{
     @ForeignCollectionField(eager = true)
     private ForeignCollection<TaskSkill> tasks;
 
-
     /**
      * Blank constructor for ORM.
      */
@@ -140,7 +139,7 @@ public class Skill extends DatabaseEntity{
     public String toString() {
         return "Skill{" +
                 "name='" + name + '\'' +
-               //", level='" + level + '\'' +
+               ", level='" + level + '\'' +
                 '}';
     }
 }

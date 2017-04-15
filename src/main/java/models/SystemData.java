@@ -48,6 +48,4 @@ public class SystemData {
         getAllProjectsMap();
         //list of skills is already populated when initialised;
     }
-
-
 }

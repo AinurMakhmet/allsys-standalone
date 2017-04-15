@@ -205,7 +205,6 @@ public class StrategyContext {
                 e.printStackTrace();
             }
         }
-
     }
 
     public static int getNumOfTasksInvalidForAllocation() {

@@ -11,7 +11,6 @@ public class Vertex {
     private Integer vertexId;
     private VertexType vertexType;
     private int shortestPathWeightFromSource;
-
     // cost represent the weight of the edge.
     private int cost;
 

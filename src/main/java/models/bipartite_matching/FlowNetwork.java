@@ -20,15 +20,11 @@ public class FlowNetwork {
     private static final Integer SINK_ID = -2;
     public static final Vertex SOURCE_VERTEX = new Vertex(SOURCE_ID, VertexType.SOURCE);
     public static final Vertex SINK_VERTEX = new Vertex(SINK_ID, VertexType.SINK);
-
     private Pair<Vertex, Map<Vertex, Boolean>> SOURCE = new Pair(SOURCE_VERTEX, new HashMap<>());
     private final Pair<Vertex, Map<Vertex, Boolean>> SINK = new Pair(SINK_VERTEX, new HashMap<>());
-
     private Class strategyClass;
     private Logger logger;
-    public FlowNetwork() {
 
-    }
     public FlowNetwork(BipartiteGraph bipartiteGraph) {
         strategyClass = bipartiteGraph.strategyClass;
         if (strategyClass.equals(MaximumProfitStrategy.class)) {

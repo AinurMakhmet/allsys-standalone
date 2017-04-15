@@ -25,7 +25,6 @@ import models.*;
 import java.io.IOException;
 import java.util.*;
 
-
 /**
  * Creates the carcas for all pages in the system.
  */
@@ -49,7 +48,6 @@ public abstract class AbstractPage extends BorderPane{
     private VBox cardVBoxInner;
     ScrollPane scrollPane;
 
-
     public AbstractPage() {
         super();
         setPadding(new Insets(10));
@@ -57,19 +55,15 @@ public abstract class AbstractPage extends BorderPane{
         top.setPadding(new Insets(10, 0, 10, 0));
         top.setSpacing(8);
         //search = new TextField();
-
         //top.getChildren().add(search);
         setTop(top);
-
         bottom = new HBox();
         bottom.setPadding(new Insets(10, 0, 10, 0));
         bottom.setSpacing(8);
         setBottom(bottom);
-
         deleteEntryButton.setTooltip(new Tooltip("Delete"));
         editDescriptionValueButton.setTooltip(new Tooltip("Edit Description"));
         saveDescriptionValueButton.setTooltip(new Tooltip("Save"));
-
         editSkillsValueButton.setTooltip(new Tooltip("Edit Skills"));
     }
 
@@ -77,7 +71,6 @@ public abstract class AbstractPage extends BorderPane{
         TableView table = new TableView();
         final Label label = new Label(pageName);
         //label.setFont(new Font("Arial", 20));
-
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
@@ -87,22 +80,17 @@ public abstract class AbstractPage extends BorderPane{
         Separator separator = new Separator();
         separator.setMaxWidth(0.2);
         separator.setOrientation(Orientation.VERTICAL);
-
         cardHBox = new HBox();
         cardHBox.getChildren().add(separator);
         cardHBox.setMinWidth(350);
-
         //Delete button
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.TOP_RIGHT);
         hbox.getChildren().add(deleteEntryButton);
         hbox.setPadding(new Insets(0, 2, 10, 0));
-
-
         scrollPane = new ScrollPane();
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
-
         cardVBox = new VBox();
         cardVBox.setPadding(new Insets(20, 10, 10, 10));
         cardVBox.setSpacing(10);
@@ -110,12 +98,9 @@ public abstract class AbstractPage extends BorderPane{
         cardPropertyNames = propertyNames;
         cardVBox.setMaxWidth(430);
         cardVBox.getChildren().add(hbox);
-
         descriptionTextArea  = new TextArea();
         descriptionTextArea.getStyleClass().add("text-area");
-
         setNewCard(propertyValues, null);
-
         cardVBox.getChildren().add(scrollPane);
         cardHBox.getChildren().add(cardVBox);
 
@@ -321,10 +306,6 @@ public abstract class AbstractPage extends BorderPane{
     }
 
     public void createDialog(DatabaseEntity entity) {
-
-        //Scene dialog = new Scene();
-
-
         Set<Skill> entitySkills = new HashSet<>();
         VBox vBoxForChecks = new VBox();
 
@@ -397,6 +378,4 @@ public abstract class AbstractPage extends BorderPane{
         dialog.getDialogPane().getButtonTypes().add(saveButtonType);
         dialog.getDialogPane().getButtonTypes().add(cancelButtonType);
     }
-
-
 }

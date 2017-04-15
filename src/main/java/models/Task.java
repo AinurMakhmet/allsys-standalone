@@ -266,29 +266,6 @@ public class Task extends DatabaseEntity{
         return true;
     }
 
-    /*public String toString() {
-        String toReturn =  "Task "+ name + "(ID = " + getId()+")"
-                + " that starts on " + startTime+ " and ends on " + endTime;
-
-        if (recommendedAssignee!=null) {
-            toReturn += " is recommended to be assigned to employee " + recommendedAssignee.getFirstName()
-                    + " " + recommendedAssignee.getLastName() + "(ID = " + recommendedAssignee.getId() + ")";
-        } else {
-            toReturn+=" with no recommended assignee";
-        }
-        String skillsString = "";
-        try {
-            for (Skill s: getSkills()) {
-                skillsString += s.toString();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        toReturn+=" requires skills "+ skillsString;
-
-            return toReturn;
-    }*/
-
     @Override
     public String toString() {
         String toReturn="";
@@ -314,13 +291,8 @@ public class Task extends DatabaseEntity{
                     ", priority=" + priority +
                     ", startTime=" + startTime +
                     ", endTime=" + endTime +
-                    //", employee=" + employee +
                     ", project=" + project +
                     ", requiredSkills=[" + skillsString +"]"+
-                    //", possibleAssignees=" + possibleAssignees +
-                    //", recommendedAssignee=" + recommendedAssignee +
-                    //", recommendedAssigneeName='" + recommendedAssigneeName + '\'' +
-                    //", employeeName='" + employeeName + '\'' +
                     '}';
         }
 

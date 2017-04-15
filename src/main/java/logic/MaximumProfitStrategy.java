@@ -119,6 +119,11 @@ public class MaximumProfitStrategy extends MaximumFlowAlgorithm {
         shortestPathMap.put(FlowNetwork.SINK_VERTEX, new Pair(null, Integer.MAX_VALUE));
     }
 
+    /**
+     *
+     * @param parentVertex
+     * @return vertex that is child of parentVertex
+     */
     @Override
     Vertex findUnvisitedChild(Vertex parentVertex) {
         Map<Vertex, Boolean> adjacentVertices = null;

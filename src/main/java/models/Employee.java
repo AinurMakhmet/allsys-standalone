@@ -28,7 +28,6 @@ public class Employee extends DatabaseEntity{
     private ForeignCollection<EmployeeSkill> skills;
     private Set<Task> matchedTasks = new HashSet<>();
 
-
     /**
      * Blank constructor for ORM.
      */
