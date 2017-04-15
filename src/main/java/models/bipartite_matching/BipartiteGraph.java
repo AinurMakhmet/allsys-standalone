@@ -72,7 +72,7 @@ public class BipartiteGraph {
                 e.printStackTrace();
             }
         }
-        printGraph();
+        //printGraph();
     }
 
     //Complexity - O(e)

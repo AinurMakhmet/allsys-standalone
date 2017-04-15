@@ -152,10 +152,12 @@ public class MaximumProfitStrategy extends MaximumFlowAlgorithm {
                         }
                     }*/
                     for (Vertex vertex : matching.keySet()) {
-                        Task matchedTask = SystemData.getAllTasksMap().get(vertex.getVertexId());
-                        if (taskToMatch.timeOverlapWith(matchedTask)) {
-                            adjacentVertices.put(childVertex, true);
-                            continue;
+                        if (matching.get(vertex).equals(childVertex)) {
+                            Task matchedTask = SystemData.getAllTasksMap().get(vertex.getVertexId());
+                            if (taskToMatch.timeOverlapWith(matchedTask)) {
+                                adjacentVertices.put(childVertex, true);
+                                continue;
+                            }
                         }
                     }
                 }
