@@ -32,13 +32,13 @@ public class LocalServer extends Application{
      */
     public static void main(String[] args) {
         //initialise constants
-        try {
-            C.initConstants();
+        //try {
+            //C.initConstants();
             SqlServerConnection.acquireConnection();
             SystemData.getDataFromDatabase();
-        } catch (ConfigurationException e) {
+        /*} catch (ConfigurationException e) {
             e.printStackTrace();
-        }
+        }*/
         launch(args);
     }
 

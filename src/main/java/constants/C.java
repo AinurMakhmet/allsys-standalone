@@ -16,9 +16,9 @@ public class C {
     public static String path = "database.properties";
 
 	// server
-	public static String MYSQL_URI;
-	public static String MYSQL_USERNAME;
-	public static String MYSQL_PASSWORD;
+	public static String MYSQL_URI = "jdbc:mysql://localhost:3306/allsyssmall";
+	public static String MYSQL_USERNAME = "allsys";
+	public static String MYSQL_PASSWORD = "allsys";
 
 	// security
 	public static int AUTOMATIC_TIMEOUT;
