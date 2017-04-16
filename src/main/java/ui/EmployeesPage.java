@@ -31,7 +31,6 @@ public class EmployeesPage extends AbstractPage {
 
     private EmployeesPage() {
         super();
-        //search.setPromptText("Search employees");
         setCenter(addTable("Employees"));
 
         final TextField addFirstName = new TextField();
@@ -134,13 +133,11 @@ public class EmployeesPage extends AbstractPage {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                //setNewCard(newSelection.toString());
             }
         });
         deleteEntryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //int selectdIndex = table.getSelectionModel().getSelectedCells();
                 ObservableList selectedCells = table.getSelectionModel().getSelectedCells();
                 TablePosition tablePosition = (TablePosition) selectedCells.get(0);
                 Employee toRemove = ((Employee) table.getItems().get(tablePosition.getRow()));
@@ -153,8 +150,6 @@ public class EmployeesPage extends AbstractPage {
                 } else {
                     MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
                 }
-                //delete the selected item in data
-                //data.remove(selectdIndex);
             }
         });
         return table;
@@ -181,7 +176,8 @@ public class EmployeesPage extends AbstractPage {
                 ).setLastName(name);
             }
         });
-        //based on http://stackoverflow.com/a/34701925
+
+        //The following snippet of code is based on http://stackoverflow.com/a/34701925
         dailySalary.setCellFactory(col -> new TextFieldTableCell<Employee, Integer>(new EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {
@@ -197,6 +193,7 @@ public class EmployeesPage extends AbstractPage {
                 }
             }
         });
+
         dailySalary.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Employee, Integer>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<Employee, Integer> event) {

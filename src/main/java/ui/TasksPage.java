@@ -300,7 +300,8 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
     }
 
     private void setEditableCells() {
-        //based on http://stackoverflow.com/a/34701925
+
+        //The following snippet of code is based on http://stackoverflow.com/a/34701925
         employeeId.setCellFactory(col -> new TextFieldTableCell<Task, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {
@@ -324,6 +325,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 }
             }
         });
+
         employeeId.setOnEditCommit(
                 new EventHandler<TableColumn.CellEditEvent<Task, Integer>>() {
                     @Override
@@ -343,7 +345,7 @@ public class TasksPage extends AbstractPage implements ChangeListener, EventHand
                 }
         );
 
-        //http://stackoverflow.com/a/34701925
+        //The following snippet of code is based on http://stackoverflow.com/a/34701925
         projectId.setCellFactory(col -> new TextFieldTableCell<Task, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {

@@ -26,9 +26,7 @@ public class SkillsPage extends AbstractPage{
 
     private SkillsPage() {
         super();
-        //search.setPromptText("Search skills");
         setCenter(addTable("Skills"));
-
         final TextField addName = new TextField();
         addName.setPromptText("Name");
         addName.setMaxWidth(80);
@@ -122,8 +120,6 @@ public class SkillsPage extends AbstractPage{
                 } else {
                     MainUI.alertError("Cannot delete", "There might be some problem connecting to the database.");
                 }
-                //delete the selected item in data
-                //data.remove(selectdIndex);
             }
         });
         return table;

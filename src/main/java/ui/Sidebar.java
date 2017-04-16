@@ -29,7 +29,6 @@ public class Sidebar extends VBox implements EventHandler {
         this.setMaxWidth(110);
 
         Label title = new Label("Menu");
-        //title.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         title.getStyleClass().add("menu-title");
         title.setAlignment(Pos.TOP_LEFT);
         title.prefWidthProperty().bind(this.widthProperty());
@@ -59,36 +58,6 @@ public class Sidebar extends VBox implements EventHandler {
             }
             pageHyperlinks[i].prefWidthProperty().bind(this.widthProperty());
         }
-
-        /*VBox filterPane = new VBox();
-        this.getChildren().add(filterPane);
-        //this.setMargin(filterPane, new Insets(50, 0, 0, 0));
-        filterPane.prefWidthProperty().bind(this.widthProperty());
-        filterPane.getStyleClass().add("filter-pane");
-        filterPane.prefHeightProperty().bind(this.heightProperty());
-
-        Label filterTitle = new Label("Filters");
-        filterTitle.setFont(Font.font("Arial"));
-        filterTitle.prefWidthProperty().bind(this.widthProperty());
-        filterTitle.getStyleClass().add("sidebar-item");
-        filterTitle.getStyleClass().add("filter-title");
-
-        filterPane.getChildren().add(filterTitle);
-        filterPane.setAlignment(Pos.TOP_LEFT);
-
-        Hyperlink filterOptions[] = new Hyperlink[] {
-                new Hyperlink("Allocated"),
-                new Hyperlink("Unallocated")
-        };
-
-        for (int i=0; i<filterOptions.length; i++) {
-            VBox.setMargin(filterOptions[i], new Insets(0, 0, 0, 8));
-            filterOptions[i].prefWidthProperty().bind(this.widthProperty());
-            filterOptions[i].getStyleClass().add("sidebar-item");
-            filterOptions[i].getStyleClass().add("filter-item");
-            filterPane.getChildren().add(filterOptions[i]);
-        }
-*/
     }
 
     public static Sidebar getInstance() {
@@ -119,7 +88,6 @@ public class Sidebar extends VBox implements EventHandler {
             MainUI.borderPane.setRight(SkillsPage.getInstance().addCard());
             SkillsPage.getInstance().table.refresh();
         }
-
         visitedPageLink = (Hyperlink)event.getSource();
     }
 }

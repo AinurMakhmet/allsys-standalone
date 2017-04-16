@@ -43,8 +43,6 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
 
     private ProjectsPage() {
         super();
-        //search.setPromptText("Search projects");
-
         final ToggleGroup group = new ToggleGroup();
         RadioButton viewModeButton = new RadioButton("View Mode");
         viewModeButton.setToggleGroup(group);
@@ -318,7 +316,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                 }
         );
 
-        //based on http://stackoverflow.com/a/34701925
+        //The following snippet of code is based on http://stackoverflow.com/a/34701925
         price.setCellFactory(col -> new TextFieldTableCell<Project, Integer>(new EmployeesPage.EditIntegerStringConverter()) {
             @Override
             public void updateItem(Integer item, boolean empty) {
@@ -334,6 +332,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                 }
             }
         });
+
         price.setOnEditCommit(
                 new EventHandler<TableColumn.CellEditEvent<Project, Integer>>() {
                     @Override

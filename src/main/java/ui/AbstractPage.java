@@ -36,7 +36,6 @@ public abstract class AbstractPage extends BorderPane{
     String[] cardValues;
     HBox top;
     HBox bottom;
-    //TextField search;
     Button deleteEntryButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_TRASH);
     TextArea descriptionTextArea;
     Button editDescriptionValueButton = AwesomeDude.createIconButton(AwesomeIcons.ICON_PENCIL);
@@ -54,8 +53,6 @@ public abstract class AbstractPage extends BorderPane{
         top = new HBox();
         top.setPadding(new Insets(10, 0, 10, 0));
         top.setSpacing(8);
-        //search = new TextField();
-        //top.getChildren().add(search);
         setTop(top);
         bottom = new HBox();
         bottom.setPadding(new Insets(10, 0, 10, 0));
@@ -70,7 +67,6 @@ public abstract class AbstractPage extends BorderPane{
     TableView addTable(String pageName) {
         TableView table = new TableView();
         final Label label = new Label(pageName);
-        //label.setFont(new Font("Arial", 20));
         table.setEditable(true);
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         return table;
@@ -324,7 +320,6 @@ public abstract class AbstractPage extends BorderPane{
         for (int j = 0; j < SystemData.allSkills.size(); j++) {
             final Skill skill= SystemData.allSkills.get(j);
             final CheckBox checkBox = new CheckBox(skill.getName()+ " (Level " +skill.getLevel()+")");
-            //cbs[j] = checkBox;
             vBoxForChecks.getChildren().add(checkBox);
             if (task!=null) {
                 try {
