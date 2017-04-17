@@ -1,5 +1,6 @@
 package constants;
 /**
+ * The class contains the database properties.
  * The class is based on class of another software developed in
  * 2nd year Software Engineering Group project at King's College London-
  * https://github.com/musalbas/Nuclibook/blob/master/src/main/java/nuclibook/constants/C.java
