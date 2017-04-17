@@ -16,9 +16,9 @@ public class C {
     public static String path = "database.properties";
 
 	// server
-	public static String MYSQL_URI = "jdbc:mysql://localhost:3306/allsyssmall";
-	public static String MYSQL_USERNAME = "allsys";
-	public static String MYSQL_PASSWORD = "allsys";
+	public static final String MYSQL_URI = "jdbc:mysql://localhost:3306/allsyssmall";
+	public static final String MYSQL_USERNAME = "allsys";
+	public static final String MYSQL_PASSWORD = "allsys";
 
 	// security
 	public static int AUTOMATIC_TIMEOUT;
@@ -31,12 +31,12 @@ public class C {
      * Loads the constants from the .properties file using a
      * PropertiesConfiguration object
      */
-	public static void initConstants() throws ConfigurationException {
+	/*public static void initConstants() throws ConfigurationException {
 		PropertiesConfiguration config = new PropertiesConfiguration(path);
 		MYSQL_URI = config.getString("database.URI");
 		MYSQL_USERNAME = config.getString("database.user.name");
 		MYSQL_PASSWORD = config.getString("database.user.password");
 		AUTOMATIC_TIMEOUT = config.getInt("security.automatictimeout");
-	}
+	}*/
 
 }
