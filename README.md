@@ -16,11 +16,12 @@ NOTE: In order to be able to run application and provided jar file: A database n
 The application can be launched directly from IDE or using the provided executable jar file located in app folder. The lib folder 	presented there is neccessary to successdully run the jar file. Instructions on how to generate a new executable file can be found below.
 Using command line cd into directory where the executable file is located and run command java -jar allsys-1.0-jfx.jar
 
-Note: With every launch of the application, a new database schema is created.
+NOTE: With every launch of the application, a new database schema is created.
 
 
 ******************************************
 Generating a New Executable File
+
 1. Ensure that maven is installed on the machine (https://maven.apache.org/download.cgi).
 2. In the C.java file of 'constants' package located in allsys-standalone/src/main/java/ directory change the values of the following three fields from default to the appropriate one.
 

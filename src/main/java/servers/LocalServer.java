@@ -1,17 +1,11 @@
 package servers;
 
-import constants.C;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import models.Employee;
-import models.Task;
 import models.SystemData;
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ui.MainUI;
-
-import java.io.File;
 
 /**
  * The class is based on class of another software developed in
@@ -31,14 +25,8 @@ public class LocalServer extends Application{
      * @param args Any command line arguments; ignored in this application.
      */
     public static void main(String[] args) {
-        //initialise constants
-        //try {
-            //C.initConstants();
-            SqlServerConnection.acquireConnection();
-            SystemData.getDataFromDatabase();
-        /*} catch (ConfigurationException e) {
-            e.printStackTrace();
-        }*/
+        SqlServerConnection.acquireConnection();
+        SystemData.getDataFromDatabase();
         launch(args);
     }
 
@@ -54,7 +42,6 @@ public class LocalServer extends Application{
     public static void fatalError(String message) {
         System.out.println("A fatal error occurred:" + message + " Please restart the server and try again.");
         System.exit(1);
-
     }
 
     public static Logger createLogger() {
