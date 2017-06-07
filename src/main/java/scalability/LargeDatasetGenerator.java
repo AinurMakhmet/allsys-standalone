@@ -11,7 +11,7 @@ import java.util.*;
  * Class used to generate data of different volume in scalability testing
  */
 public class LargeDatasetGenerator {
-    public static final int numberOfTasks = 20;//numberOfEmployees*2;
+    public static final int numberOfTasks = 80;//numberOfEmployees*2;
     public static final int numberOfProjects = numberOfTasks/5;
     public static final int numberOfEmployees = 20;
     public static final int numberOfSkillLevels = 1;

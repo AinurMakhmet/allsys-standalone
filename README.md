@@ -1,7 +1,9 @@
 Allsys is a prototype for a computer-aided decision system that can be used in employee staffing process at IT consulting company. It has been developed in the context of Computer Science final year project.
-Allsys is a standalone application designed to run on one local machine only, where both a server and application client will be running.
+Allsys is a standalone JavaFX application designed to run on one local machine only, where both a server and application client will be running.
 
-The instructions below can also be found in User Guide in the Appendix
+The instructions below can also be found in User Guide in the Appendix B.
+Source code is located in allsys-standalone folder.
+Executable file is located in app folder.
 
 ********************************************
 Installation
@@ -13,10 +15,10 @@ For the installation of MySQL database, follow a tutorial from http://www.tutori
 NOTE: In order to be able to run application from IDE or using the provided jar file, the following is required: a database created in the local machine should be named ‘allsyssmall’ and should use port 3306, so that the URI of the database is  jdbc:mysql://localhost:3306/allsyssmall; create MySQL user with a name ‘allsys’ an a password ‘allsys’; assign all user privileges to the user for ‘allsyssmall’ database.
 
 2. Run the application.
-The application can be launched directly from IDE or using the provided executable jar file located in app folder. The lib folder presented there is neccessary to successdully run the jar file. Instructions on how to generate a new executable file can be found below.
+The application can be launched directly from IDE (main method is located in LocalServer class of 'servers' package) or using the provided executable jar file located in app folder. The lib folder presented there is neccessary to successdully run the jar file. Instructions on how to generate a new executable file can be found below.
 Using command line cd into the directory where the executable file is located and run command 'java -jar allsys-1.0-jfx.jar'.
 
-NOTE:  With every launch of the application, a new database schema is created. Therefore, all changes made to the database will vanish every time the application is rerun.
+NOTE:  With every launch of the application, a new database schema is created. Therefore, all changes made to the database will vanish every time the application is rerun. Also with every launch of the application using an executable file the src folder is created in the same directory as the executable file located in. This folder contains log files.
 
 
 ******************************************

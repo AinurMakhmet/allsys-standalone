@@ -151,7 +151,7 @@ public class StrategyContext {
                 Integer projectPrimeCost = 0;
                 if (numOfUnallocatedTasks >0) {
                     for(Task task: project.getTasks()) {
-                        task.setRecommendedAssignee(null);
+                        SystemData.getAllTasksMap().get(task.getId()).setRecommendedAssignee(null);
                     }
                     numOfUnallocatedProjects++;
                 } else {

@@ -145,6 +145,11 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                                 TaskUtils.updateEntity(task);
                             }
                         });
+                        project.setCost(project.getEstimatedCost());
+                        project.setProfit(project.getEstimatedProfit());
+                        project.setEstimatedCost(null);
+                        project.setEstimatedProfit(null);
+                        ProjectUtils.updateEntity(project);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -169,6 +174,9 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                                 TaskUtils.updateEntity(task);
                             }
                         });
+                        project.setCost(null);
+                        project.setProfit(null);
+                        ProjectUtils.updateEntity(project);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -234,7 +242,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         estimatedProfit.setCellValueFactory(
                 new PropertyValueFactory<Task, String>("estimatedProfit"));
 
-        table.getColumns().addAll(id, name, startTime, endTime, price, cost, estimatedCost, estimatedProfit);
+        table.getColumns().addAll(id, name, startTime, endTime, price, estimatedCost, estimatedProfit);
         table.setItems(data);
 
         setEditableCells();
@@ -262,6 +270,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
                                 project.getDescription(),
                                 project.getStartTime()==null ? "" : project.getStartTime().toString(),
                                 project.getEndTime()==null ? "" : project.getEndTime().toString(),
+                                project.getCost()==null ? "" : project.getCost().toString(),
+                                project.getProfit()==null ? "" : project.getProfit().toString(),
                                 tasks,
                         };
                         setNewCard(cardValues, (Project) newSelection);
@@ -349,7 +359,7 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
     }
 
     HBox addCard() {
-        String[] names = {"ID", "Name", "Description", "Start date", "End Date",  "Tasks"};
+        String[] names = {"ID", "Name", "Description", "Start date", "End Date", "Cost", "Profit", "Tasks"};
         cardValues = new String[]{"", "", "", "", "", ""};
         return super.addCard(names, cardValues);
     }
@@ -373,8 +383,8 @@ public class ProjectsPage extends AbstractPage implements ChangeListener, EventH
         LocalServer.iLogger.info("MAX_PROFIT");
         new StrategyContext(MaximumProfitStrategy.getInstance(),selectedProjects);
         table.refresh();
-        MainUI.alertInformation("Allocation result", "Total number of unallocated tasks: "+ StrategyContext.getNumOfUnallocatedProjects()
-                + ". \nAmong them number of tasks invalid for allocation: "+ StrategyContext.getNumOfProjectsInvalidForAllocation()
+        MainUI.alertInformation("Allocation result", "Total number of unallocated projects: "+ StrategyContext.getNumOfUnallocatedProjects()
+                + ". \nAmong them number of projects invalid for allocation: "+ StrategyContext.getNumOfProjectsInvalidForAllocation()
                 + ". \nTotal profit from the selected projects is equal to: "+ StrategyContext.getTotalProfitFromSelectedProjects());
     }
 

@@ -54,7 +54,7 @@ public class SqlServerConnection {
 				connection = new JdbcConnectionSource(uri);
 				((JdbcConnectionSource) connection).setUsername(username);
 				((JdbcConnectionSource) connection).setPassword(password);
-				initDB(connection);
+				//initDB(connection);
 			} catch (Exception e) {
 				e.printStackTrace();
 				LocalServer.fatalError("a connection could not be made to the database");
@@ -111,7 +111,7 @@ public class SqlServerConnection {
 
 			//Uncomment out the following code line if random data needs to be used.
 			//Works only when the application  is launched from IDE.
-			//generateRandomData();
+			generateRandomData();
 
 			for (String q : DefaultDatabase.InsertQueriesEmployee) {
 				employeeDao.executeRaw(q);
